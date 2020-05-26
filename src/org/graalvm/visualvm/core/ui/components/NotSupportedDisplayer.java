@@ -42,10 +42,10 @@ public final class NotSupportedDisplayer extends JPanel {
 //     * Not supported for this application.
 //     */
 //    public static final String APPLICATION = NbBundle.getMessage(NotSupportedDisplayer.class, "MSG_application");   // NOI18N
-//    /**
-//     * Not supported for this JVM.
-//     */
-//    public static final String JVM = NbBundle.getMessage(NotSupportedDisplayer.class, "MSG_JVM");   // NOI18N
+    /**
+     * Not supported for this JVM.
+     */
+    public static final String JVM ="Not supported for this JVM.";   // NOI18N
 //    /**
 //     * Not supported for this host.
 //     */

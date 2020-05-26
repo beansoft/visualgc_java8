@@ -6,6 +6,7 @@ import com.sun.jvmstat.graph.Line;
 import github.beansoftapp.visualgc.Exceptions;
 import github.beansoftapp.visualgc.GetProcessID;
 import github.beansoftapp.visualgc.JpsHelper;
+import org.graalvm.visualvm.core.ui.components.DataViewComponent;
 import org.graalvm.visualvm.core.ui.components.NotSupportedDisplayer;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
@@ -38,6 +39,7 @@ public class VisualGCPane implements ActionListener {
   private static final Color EVEN_LIGHTER_GRAY = new Color(242, 242, 242);
 
   private Timer timer;
+  private final boolean modelAvailable = false;
 
   private MasterViewSupport masterViewSupport;
 
@@ -49,6 +51,22 @@ public class VisualGCPane implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
 
+  }
+
+  protected DataViewComponent createComponent() {
+    if (!this.modelAvailable) {
+      DataViewComponent.MasterView masterView = new DataViewComponent.MasterView("LBL_VisualGC", null, (JComponent) new NotSupportedDisplayer(NotSupportedDisplayer.JVM));
+      DataViewComponent.MasterViewConfiguration masterViewConfiguration = new DataViewComponent.MasterViewConfiguration(true);
+      return new DataViewComponent(masterView, masterViewConfiguration);
+    }
+    this.masterViewSupport = new MasterViewSupport(this.timer);
+
+    DataViewComponent.MasterView monitoringMasterView = new DataViewComponent.MasterView("LBL_VisualGC", null, this.masterViewSupport);
+
+    DataViewComponent.MasterViewConfiguration monitoringMasterConfiguration = new DataViewComponent.MasterViewConfiguration(false);
+    DataViewComponent dvc = new DataViewComponent(monitoringMasterView, monitoringMasterConfiguration);
+
+    return dvc;
   }
 
   private static class MasterViewSupport extends JPanel {
@@ -64,10 +82,10 @@ public class VisualGCPane implements ActionListener {
       initComponents();
     }
 
-//    public DataViewComponent.MasterView getMasterView() {
-//      return new DataViewComponent.MasterView(
-//              NbBundle.getMessage(VisualGCView.class, "LBL_VisualGC"), null, this);
-//    }
+    public DataViewComponent.MasterView getMasterView() {
+      return new DataViewComponent.MasterView(
+             "LBL_VisualGC", null, this);
+    }
 
     private void initComponents() {
       setLayout(new BorderLayout());
@@ -508,7 +526,7 @@ public class VisualGCPane implements ActionListener {
     VisualGCPane gcPane = new VisualGCPane();
     JFrame frame = new JFrame();
     frame.setTitle("GC Pane");
-    frame.getContentPane().add(gcPane.masterViewSupport, "Center");
+    frame.getContentPane().add(gcPane.createComponent(), "Center");
     frame.pack();
     frame.setVisible(true);
 
