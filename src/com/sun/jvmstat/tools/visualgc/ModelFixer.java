@@ -7,7 +7,7 @@ import sun.jvmstat.monitor.MonitoredVm;
 import java.lang.reflect.Field;
 
 public class ModelFixer {
-  public static final boolean fixMetaspace(MonitoredVmModel testModel, MonitoredVm monitoredVm) {
+  public static boolean fixMetaspace(MonitoredVmModel testModel, MonitoredVm monitoredVm) {
     try {
       Field PERM_SIZE = MonitoredVmModel.class.getDeclaredField("permSize");
       Field PERM_CAPACITY = MonitoredVmModel.class.getDeclaredField("permCapacity");

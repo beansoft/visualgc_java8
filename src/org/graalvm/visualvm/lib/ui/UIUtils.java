@@ -87,15 +87,7 @@ public final class UIUtils {
     private static Color disabledLineColor;
 
     //~ Methods ------------------------------------------------------------------------------------------------------------------
-    
-    public static void decorateProfilerPanel(JPanel panel) {
-        Color panelBackground = UIManager.getColor(UIConstants.PROFILER_PANELS_BACKGROUND);
-        if (panelBackground != null) {
-            panel.setOpaque(true);
-            panel.setBackground(panelBackground);
-        }
-    }
-    
+
     public static JPanel createFillerPanel() {
         JPanel fillerPanel = new JPanel(null) {
             public Dimension getPreferredSize() {

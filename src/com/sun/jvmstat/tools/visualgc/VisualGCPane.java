@@ -1,5 +1,6 @@
 package com.sun.jvmstat.tools.visualgc;
 
+import beansoft.swing.OptionPane;
 import com.sun.jvmstat.graph.GridDrawer;
 import com.sun.jvmstat.graph.Level;
 import com.sun.jvmstat.graph.Line;
@@ -22,13 +23,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 // 单面板模式
 public class VisualGCPane implements ActionListener {
+  private static final Logger LOGGER = Logger.getLogger(VisualGCPane.class.getName());
   private static volatile boolean active = true;
   private static volatile boolean terminated = false;
   private static Arguments arguments;
@@ -39,33 +46,202 @@ public class VisualGCPane implements ActionListener {
   private static final Color EVEN_LIGHTER_GRAY = new Color(242, 242, 242);
 
   private Timer timer;
-  private final boolean modelAvailable = false;
-
+  private boolean modelAvailable = false;
   private MasterViewSupport masterViewSupport;
 
-  public VisualGCPane() {
-    this.timer = new Timer(1 * 1000, this);
-    this.masterViewSupport = new MasterViewSupport(this.timer);
+  private GraphGCViewSupport graphGCViewSupport;
+
+  private HistogramViewSupport histogramViewSupport;
+
+  private SpacesViewSupport spacesViewSupport;
+
+  private boolean histogramSupported = true;
+
+  private MonitoredVmModel model;
+
+  private boolean hasMetaspace;
+
+  private Executor executor = Executors.newSingleThreadExecutor();
+  private String vmIdString;
+  private VmIdentifier vmId;
+
+
+  static {
+    customizeColors();
   }
 
-  @Override
-  public void actionPerformed(ActionEvent e) {
+  public VisualGCPane() {
+  }
 
+  public void startMonitor(String vmIdString) {
+    this.vmIdString = vmIdString;
+    try {
+      this.vmId = new VmIdentifier(this.vmIdString);
+    } catch (URISyntaxException var7) {
+      OptionPane.showErrorMessageDialog(null, "Malformed VM Identifier: " + this.vmIdString, "Error");
+    }
+
+    this.modelAvailable = initializeModel();
+    if (this.modelAvailable) {
+      this.timer = new Timer( 1000, this);
+    }
+
+//    MonitoredVmModel monitoredvmmodel = null;
+//    MonitoredHost monitoredhost = null;
+//    MonitoredVm monitoredvm = null;
+//    try {
+//      VmIdentifier vmidentifier = arguments.vmId();
+//      monitoredhost = MonitoredHost.getMonitoredHost(vmidentifier);
+//      monitoredvm = monitoredhost.getMonitoredVm(vmidentifier, 500);// Refresh rate?
+//      monitoredvmmodel = new MonitoredVmModel(monitoredvm);
+//      ModelFixer.fixMetaspace(monitoredvmmodel, monitoredvm);
+//
+//      class TerminationHandler
+//          implements HostListener {
+//
+//        final int lvmid;
+//        final MonitoredHost host;
+//
+//        TerminationHandler(int i, MonitoredHost monitoredhost) {
+//          lvmid = i;
+//          host = monitoredhost;
+//        }
+//
+//        public void vmStatusChanged(VmStatusChangeEvent vmstatuschangeevent) {
+//          if (vmstatuschangeevent.getTerminated().contains(lvmid) || !vmstatuschangeevent.getActive().contains(lvmid))
+//            VisualGCPane.terminated = true;
+//        }
+//
+//        public void disconnected(HostEvent hostevent) {
+//          if (host == hostevent.getMonitoredHost())
+//            VisualGCPane.terminated = true;
+//        }
+//      }
+//
+//      if (vmidentifier.getLocalVmId() != 0)
+//        monitoredhost.addHostListener(new TerminationHandler(vmidentifier.getLocalVmId(), monitoredhost));
+//    } catch (MonitorException monitorexception) {
+//      if (monitorexception.getMessage() != null) {
+//        System.err.println(monitorexception.getMessage());
+//      } else {
+//        Throwable throwable = monitorexception.getCause();
+//        if (throwable != null && throwable.getMessage() != null)
+//          System.err.println(throwable.getMessage());
+//        else
+//          monitorexception.printStackTrace();
+//      }
+//      if (monitoredhost != null && monitoredvm != null) {
+//        try {
+//          monitoredhost.detach(monitoredvm);
+//        } catch (Exception ignored) {
+//        }
+//      }
+//    }
+  }
+
+  private boolean initializeModel() {
+    MonitoredVm monitoredVm = null;
+    try {
+      monitoredVm = getMonitoredVm();
+      if (monitoredVm != null) {
+        MonitoredVmModel testModel = new MonitoredVmModel(monitoredVm);
+        this.hasMetaspace = ModelFixer.fixMetaspace(testModel, monitoredVm);
+        GCSample gcsample = new GCSample(testModel);
+        this.histogramSupported = gcsample.ageTableSizes != null;
+        this.model = testModel;
+        return true;
+      }
+    } catch (MonitorException ex) {
+      LOGGER.log(java.util.logging.Level.INFO, "Could not get MonitoredVM", (Throwable)ex);
+    } catch (Exception ex) {
+      LOGGER.log(java.util.logging.Level.INFO, "Could not create GCSample", ex);
+    }
+    if (monitoredVm != null)
+      monitoredVm.detach();
+    return false;
+  }
+
+  private MonitoredVm getMonitoredVm() throws MonitorException {
+    if (this.vmIdString == null || this.vmId == null)
+      return null;
+
+    try {
+      MonitoredHost monitoredHost = MonitoredHost.getMonitoredHost(this.vmId);
+      int refreshInterval = 1000;
+      return monitoredHost.getMonitoredVm(this.vmId, refreshInterval);
+    } catch (Exception ex) {
+      LOGGER.log(java.util.logging.Level.INFO, "getMonitoredVm failed", ex);
+      return null;
+    }
+  }
+
+  protected void removed() {
+    if (!this.modelAvailable)
+      return;
+    this.timer.stop();
+    this.vmIdString = null;
+    this.model = null;
+  }
+
+  public void actionPerformed(ActionEvent e) {
+    refresh();
+  }
+
+  private void refresh() {
+    if (!this.timer.isRunning())
+      return;
+    if (this.model == null) {
+      removed();
+    } else {
+      executor.execute(new Runnable() {
+        public void run() {
+          try {
+            final GCSample gcsample = new GCSample(model);
+            SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                graphGCViewSupport.refresh(gcsample);
+                histogramViewSupport.refresh(gcsample);
+                spacesViewSupport.refresh(gcsample, graphGCViewSupport, histogramViewSupport);
+              }
+            });
+          } catch (Exception e) {
+            timer.stop();
+          }
+        }
+      });
+    }
   }
 
   protected DataViewComponent createComponent() {
     if (!this.modelAvailable) {
-      DataViewComponent.MasterView masterView = new DataViewComponent.MasterView("LBL_VisualGC", null, (JComponent) new NotSupportedDisplayer(NotSupportedDisplayer.JVM));
+      DataViewComponent.MasterView masterView = new DataViewComponent.MasterView("Visual GC", null, (JComponent) new NotSupportedDisplayer(NotSupportedDisplayer.JVM));
       DataViewComponent.MasterViewConfiguration masterViewConfiguration = new DataViewComponent.MasterViewConfiguration(true);
       return new DataViewComponent(masterView, masterViewConfiguration);
     }
     this.masterViewSupport = new MasterViewSupport(this.timer);
+    this.graphGCViewSupport = new GraphGCViewSupport();
+    this.histogramViewSupport = new HistogramViewSupport();
+    this.spacesViewSupport = new SpacesViewSupport();
 
-    DataViewComponent.MasterView monitoringMasterView = new DataViewComponent.MasterView("LBL_VisualGC", null, this.masterViewSupport);
+    DataViewComponent.MasterView monitoringMasterView = new DataViewComponent.MasterView("Visual GC", "Hotspot GC Chart", this.masterViewSupport);
 
     DataViewComponent.MasterViewConfiguration monitoringMasterConfiguration = new DataViewComponent.MasterViewConfiguration(false);
     DataViewComponent dvc = new DataViewComponent(monitoringMasterView, monitoringMasterConfiguration);
-
+    dvc.configureDetailsView(new DataViewComponent.DetailsViewConfiguration(0.3D, 0.15D, -1.0D, -1.0D, 0.66D, 0.85D));
+    dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
+         "Graphs", true), DataViewComponent.TOP_RIGHT);
+    dvc.addDetailsView(this.graphGCViewSupport.getDetailsView(), DataViewComponent.TOP_RIGHT);
+//    dvc.addDetailsView( new DataViewComponent.DetailsView( "Graphs", null, 10, new JLabel("Test"), null), DataViewComponent.TOP_RIGHT);// Add a Tab
+    dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
+        "Histogram", true), DataViewComponent.BOTTOM_LEFT);
+    dvc.addDetailsView(this.histogramViewSupport.getDetailsView(), DataViewComponent.BOTTOM_LEFT);
+    if (!this.histogramSupported)
+      dvc.hideDetailsArea(DataViewComponent.BOTTOM_LEFT);
+    dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
+        "Spaces", true), DataViewComponent.TOP_LEFT);
+    dvc.addDetailsView(this.spacesViewSupport.getDetailsView(), DataViewComponent.TOP_LEFT);
+    this.timer.start();
+    refresh();
     return dvc;
   }
 
@@ -80,11 +256,6 @@ public class VisualGCPane implements ActionListener {
       this.prefs = Preferences.userRoot().node(VisualGCPane.class.getName());
       this.timer = timer;
       initComponents();
-    }
-
-    public DataViewComponent.MasterView getMasterView() {
-      return new DataViewComponent.MasterView(
-             "LBL_VisualGC", null, this);
     }
 
     private void initComponents() {
@@ -105,7 +276,7 @@ public class VisualGCPane implements ActionListener {
       combo.setEditable(false);
       combo.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          int delay = ((Integer)combo.getSelectedItem()).intValue();
+          int delay = (Integer) combo.getSelectedItem();
           VisualGCPane.MasterViewSupport.this.prefs.putInt("VisualGC.refresh", delay);
           if (delay == -1)
             delay = 1 * 1000;
@@ -113,10 +284,12 @@ public class VisualGCPane implements ActionListener {
           VisualGCPane.MasterViewSupport.this.timer.restart();
         }
       });
-      combo.setSelectedItem(Integer.valueOf(this.prefs.getInt("VisualGC.refresh", -1)));
+      combo.setSelectedItem(this.prefs.getInt("VisualGC.refresh", -1));
       combo.setRenderer(new VisualGCPane.ComboRenderer(combo));
       refreshRateContainer.add(combo);
       refreshRateContainer.add(unitsLabel);
+
+      refreshRateContainer.add(new JButton("Switch Process"));
       add(refreshRateContainer, "West");
     }
   }
@@ -225,7 +398,150 @@ public class VisualGCPane implements ActionListener {
   }
 
 
-  private static boolean hasMetaspace;
+  private class GraphGCViewSupport extends JComponent {
+    GraphGC graphGC;
+
+    private GraphGCViewSupport() {}
+
+    public DataViewComponent.DetailsView getDetailsView() {
+      return new DataViewComponent.DetailsView( "Graphs", null, 10, this, null);
+    }
+
+    void refresh(GCSample gcsample) {
+      if (this.graphGC == null) {
+        setLayout(new BorderLayout());
+        if (!ORIGINAL_UI)
+          setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.graphGC = new GraphGC(gcsample);
+        fixMetaspace(this.graphGC);
+        customizeComponents(this.graphGC.getContentPane(), null);
+        add(this.graphGC.getContentPane(), "Center");
+      }
+      this.graphGC.update(gcsample);
+      repaint();
+    }
+
+    private void fixMetaspace(GraphGC graphGC) {
+      if (hasMetaspace)
+        try {
+          Field PERM_PANEL = GraphGC.class.getDeclaredField("permPanel");
+          Field BORDER_STRING = GCSpacePanel.class.getDeclaredField("borderString");
+          PERM_PANEL.setAccessible(true);
+          BORDER_STRING.setAccessible(true);
+          GCSpacePanel permPanel = (GCSpacePanel)PERM_PANEL.get(graphGC);
+          String borderString = (String)BORDER_STRING.get(permPanel);
+          BORDER_STRING.set(permPanel, borderString.replace("Perm Gen", "Metaspace"));
+        } catch (NoSuchFieldException ex) {
+          Exceptions.printStackTrace(ex);
+        } catch (SecurityException ex) {
+          Exceptions.printStackTrace(ex);
+        } catch (IllegalArgumentException ex) {
+          Exceptions.printStackTrace(ex);
+        } catch (IllegalAccessException ex) {
+          Exceptions.printStackTrace(ex);
+        }
+    }
+  }
+
+  private static class HistogramViewSupport extends JComponent {
+    VisualAgeHistogram visualHistogram;
+
+    private HistogramViewSupport() {}
+
+    public DataViewComponent.DetailsView getDetailsView() {
+      return new DataViewComponent.DetailsView( "Histogram", null, 10, this, null);
+    }
+
+    void refresh(GCSample gcsample) {
+      if (getComponentCount() == 0) {
+        setLayout(new BorderLayout());
+        if (gcsample.ageTableSizes != null) {
+          if (!ORIGINAL_UI)
+            setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+          this.visualHistogram = new VisualAgeHistogram(gcsample);
+          if (!ORIGINAL_UI)
+            customizeHistogram(this.visualHistogram);
+          customizeComponents(this.visualHistogram.getContentPane(), null);
+          add(this.visualHistogram.getContentPane(), "Center");
+        } else {
+          add((Component)new NotSupportedDisplayer(NotSupportedDisplayer.JVM), "Center");
+        }
+        repaint();
+      } else if (this.visualHistogram != null) {
+        this.visualHistogram.update(gcsample);
+        repaint();
+      }
+    }
+
+    private void customizeHistogram(VisualAgeHistogram histogram) {
+      JPanel textPanel = histogram.textPanel;
+      JLabel ttLabel = (JLabel)textPanel.getComponent(0);
+      JLabel mttLabel = (JLabel)textPanel.getComponent(2);
+      JLabel dssLabel = (JLabel)textPanel.getComponent(4);
+      JLabel cssLabel = (JLabel)textPanel.getComponent(6);
+      textPanel.removeAll();
+      textPanel.setLayout(new BorderLayout());
+      textPanel.add(new ValuesPanel(new Component[] { new ValuePanel(ttLabel, histogram.ttField), new ValuePanel(mttLabel, histogram.mttField), new ValuePanel(dssLabel, histogram.dssField), new ValuePanel(cssLabel, histogram.cssField) }), "Center");
+    }
+  }
+
+  private class SpacesViewSupport extends JComponent {
+    private VisualHeap visualHeap;
+
+    private List<GridDrawer> gridDrawers;
+
+    private SpacesViewSupport() {}
+
+    public DataViewComponent.DetailsView getDetailsView() {
+      return new DataViewComponent.DetailsView( "Spaces", null, 10, this, null);
+    }
+
+    void refresh(GCSample gcsample, GraphGCViewSupport gvs, HistogramViewSupport hvs) {
+      if (this.visualHeap == null) {
+        setLayout(new BorderLayout());
+        if (!ORIGINAL_UI)
+          setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.visualHeap = new VisualHeap(gvs.graphGC, hvs.visualHistogram, gcsample) {
+          public void updateLevel(GCSample currentSample) {
+            super.updateLevel(currentSample);
+            for (GridDrawer gridDrawer : SpacesViewSupport.this.gridDrawers)
+              gridDrawer.setSecondaryColor(EVEN_LIGHTER_GRAY);
+          }
+
+          public void updateTextFields(GCSample gcSample) {
+            super.updateTextFields(gcSample);
+            customizeVisualHeap(this);
+          }
+        };
+        fixMetaspace(this.visualHeap);
+        this.gridDrawers = new ArrayList<GridDrawer>();
+        customizeComponents(this.visualHeap.getContentPane(), this.gridDrawers);
+//        this.visualHeap.getContentPane().getComponent(0).setVisible(false);
+        add(this.visualHeap.getContentPane(), "Center");
+      }
+      this.visualHeap.update(gcsample);
+      repaint();
+    }
+
+    private void fixMetaspace(VisualHeap visualHeap) {
+      if (hasMetaspace)
+        try {
+          Field PERM_PANEL = VisualHeap.class.getDeclaredField("permPanel");
+          PERM_PANEL.setAccessible(true);
+          JPanel permPanel = (JPanel)PERM_PANEL.get(visualHeap);
+          TitledBorder border = (TitledBorder)permPanel.getBorder();
+          border.setTitle("Metaspace");
+        } catch (NoSuchFieldException ex) {
+          Exceptions.printStackTrace(ex);
+        } catch (SecurityException ex) {
+          Exceptions.printStackTrace(ex);
+        } catch (IllegalArgumentException ex) {
+          Exceptions.printStackTrace(ex);
+        } catch (IllegalAccessException ex) {
+          Exceptions.printStackTrace(ex);
+        }
+    }
+  }
 
 //  static {
 //    customizeColors();
@@ -245,57 +561,6 @@ public class VisualGCPane implements ActionListener {
 
   private static String colorString(int r, int g, int b) {
     return Integer.toString((new Color(r, g, b)).getRGB());
-  }
-
-  private static void fixMetaspace(GraphGC graphGC) {
-    if (hasMetaspace)
-      try {
-        Field PERM_PANEL = GraphGC.class.getDeclaredField("permPanel");
-        Field BORDER_STRING = GCSpacePanel.class.getDeclaredField("borderString");
-        PERM_PANEL.setAccessible(true);
-        BORDER_STRING.setAccessible(true);
-        GCSpacePanel permPanel = (GCSpacePanel) PERM_PANEL.get(graphGC);
-        String borderString = (String) BORDER_STRING.get(permPanel);
-        BORDER_STRING.set(permPanel, borderString.replace("Perm Gen", "Metaspace"));
-      } catch (NoSuchFieldException ex) {
-        Exceptions.printStackTrace(ex);
-      } catch (SecurityException ex) {
-        Exceptions.printStackTrace(ex);
-      } catch (IllegalArgumentException ex) {
-        Exceptions.printStackTrace(ex);
-      } catch (IllegalAccessException ex) {
-        Exceptions.printStackTrace(ex);
-      }
-  }
-
-  private static void fixMetaspace(VisualHeap visualHeap) {
-    if (hasMetaspace)
-      try {
-        Field PERM_PANEL = VisualHeap.class.getDeclaredField("permPanel");
-        PERM_PANEL.setAccessible(true);
-        JPanel permPanel = (JPanel) PERM_PANEL.get(visualHeap);
-        TitledBorder border = (TitledBorder) permPanel.getBorder();
-        border.setTitle("Metaspace");
-      } catch (NoSuchFieldException ex) {
-        Exceptions.printStackTrace(ex);
-      } catch (SecurityException ex) {
-        Exceptions.printStackTrace(ex);
-      } catch (IllegalArgumentException ex) {
-        Exceptions.printStackTrace(ex);
-      } catch (IllegalAccessException ex) {
-        Exceptions.printStackTrace(ex);
-      }
-  }
-
-  private static void customizeHistogram(VisualAgeHistogram histogram) {
-    JPanel textPanel = histogram.textPanel;
-    JLabel ttLabel = (JLabel) textPanel.getComponent(0);
-    JLabel mttLabel = (JLabel) textPanel.getComponent(2);
-    JLabel dssLabel = (JLabel) textPanel.getComponent(4);
-    JLabel cssLabel = (JLabel) textPanel.getComponent(6);
-    textPanel.removeAll();
-    textPanel.setLayout(new BorderLayout());
-    textPanel.add(new ValuesPanel(new Component[]{new ValuePanel(ttLabel, histogram.ttField), new ValuePanel(mttLabel, histogram.mttField), new ValuePanel(dssLabel, histogram.dssField), new ValuePanel(cssLabel, histogram.cssField)}), "Center");
   }
 
   // Fix by beansoft
@@ -434,170 +699,17 @@ public class VisualGCPane implements ActionListener {
       System.exit(1);
     }
 
-    String s = arguments.vmIdString();
-    int i = arguments.samplingInterval();
-    MonitoredVmModel monitoredvmmodel = null;
-    MonitoredHost monitoredhost = null;
-    MonitoredVm monitoredvm = null;
-    try {
-      VmIdentifier vmidentifier = arguments.vmId();
-      monitoredhost = MonitoredHost.getMonitoredHost(vmidentifier);
-      monitoredvm = monitoredhost.getMonitoredVm(vmidentifier, i);
-      monitoredvmmodel = new MonitoredVmModel(monitoredvm);
-      hasMetaspace = ModelFixer.fixMetaspace(monitoredvmmodel, monitoredvm);
-
-      class TerminationHandler
-          implements HostListener {
-
-        final int lvmid;
-        final MonitoredHost host;
-
-        TerminationHandler(int i, MonitoredHost monitoredhost) {
-          lvmid = i;
-          host = monitoredhost;
-        }
-
-        public void vmStatusChanged(VmStatusChangeEvent vmstatuschangeevent) {
-          if (vmstatuschangeevent.getTerminated().contains(lvmid) || !vmstatuschangeevent.getActive().contains(lvmid))
-            VisualGCPane.terminated = true;
-        }
-
-        public void disconnected(HostEvent hostevent) {
-          if (host == hostevent.getMonitoredHost())
-            VisualGCPane.terminated = true;
-        }
-      }
-
-      if (vmidentifier.getLocalVmId() != 0)
-        monitoredhost.addHostListener(new TerminationHandler(vmidentifier.getLocalVmId(), monitoredhost));
-    } catch (MonitorException monitorexception) {
-      if (monitorexception.getMessage() != null) {
-        System.err.println(monitorexception.getMessage());
-      } else {
-        Throwable throwable = monitorexception.getCause();
-        if (throwable != null && throwable.getMessage() != null)
-          System.err.println(throwable.getMessage());
-        else
-          monitorexception.printStackTrace();
-      }
-      if (monitoredhost != null && monitoredvm != null)
-        try {
-          monitoredhost.detach(monitoredvm);
-        } catch (Exception ignored) {
-        }
-      System.exit(1);
-    }
-
-    GCSample gcsample = new GCSample(monitoredvmmodel);
-    int visualheap_x = Integer.getInteger("visualheap.x", 0);
-    int k = Integer.getInteger("visualheap.y", 0);
-    int l = Integer.getInteger("visualheap.width", 450);
-    int i1 = Integer.getInteger("visualheap.height", 600);
-    int j1 = Integer.getInteger("graphgc.x", visualheap_x + l);
-    int k1 = Integer.getInteger("graphgc.y", k);
-    int l1 = Integer.getInteger("graphgc.width", 450);
-    int i2 = Integer.getInteger("graphgc.height", 600);
-    int j2 = Integer.getInteger("agetable.x", visualheap_x);
-    int k2 = Integer.getInteger("agetable.y", k + i1);
-    int l2 = Integer.getInteger("agetable.width", l1 + l);
-    int i3 = Integer.getInteger("agetable.height", 200);
-    final GraphGC graphgc = new GraphGC(gcsample);
-    graphgc.setBounds(j1, k1, l1, i2);
-    fixMetaspace(graphgc);
-    if (!ORIGINAL_UI)
-      customizeComponents(graphgc.getContentPane(), null);
-
-    VisualAgeHistogram visualHistogram = null;
-    if (gcsample.ageTableSizes != null) {
-      visualHistogram = new VisualAgeHistogram(gcsample);
-      visualHistogram.setBounds(j2, k2, l2, i3);
-      if (!ORIGINAL_UI) {
-        customizeHistogram(visualHistogram);
-        customizeComponents(visualHistogram.getContentPane(), null);
-      }
-    } else {
-      JFrame frame = new JFrame();
-      frame.setTitle("Survivor Age Histogram");
-      frame.getContentPane().add((Component) new NotSupportedDisplayer("Not supported for this JVM."), "Center");
-      frame.setBounds(j2, k2, l2, i3);
-      frame.setVisible(true);
-    }
 
     VisualGCPane gcPane = new VisualGCPane();
+
     JFrame frame = new JFrame();
-    frame.setTitle("GC Pane");
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    frame.setTitle("VisualGC 3.0" + pName);
+    gcPane.startMonitor(arguments.vmIdString());
     frame.getContentPane().add(gcPane.createComponent(), "Center");
-    frame.pack();
+    frame.setSize(1024, 768);
     frame.setVisible(true);
 
-    final VisualAgeHistogram visualagehistogram1 = visualHistogram;
-    final List<GridDrawer> gridDrawers = new ArrayList<GridDrawer>();
-    final VisualHeap visualHeap = new VisualHeap(graphgc, visualagehistogram1, gcsample) {
-      public void updateLevel(GCSample currentSample) {
-        super.updateLevel(currentSample);
-        for (GridDrawer gridDrawer : gridDrawers)
-          gridDrawer.setSecondaryColor(EVEN_LIGHTER_GRAY);
-      }
-
-      public void updateTextFields(GCSample gcSample) {
-        super.updateTextFields(gcSample);
-        customizeVisualHeap(this);
-      }
-    };
-    visualHeap.setTitle("VisualGC 3.0" + pName);
-
-    visualHeap.setBounds(visualheap_x, k, l, i1);
-    fixMetaspace(visualHeap);
-    if (!ORIGINAL_UI) {
-      customizeComponents(visualHeap.getContentPane(), gridDrawers);
-    }
-//		visualheap.getContentPane().getComponent(0).setVisible(false);// Hide cmd info pane
-    if (visualagehistogram1 != null)
-      visualagehistogram1.setVisible(true);
-    visualHeap.setVisible(true);
-    graphgc.setVisible(true);
-
-    boolean flag = false;
-    GCSample gcsample1 = null;
-    while (active) {
-      try {
-        Thread.sleep(i);
-      } catch (InterruptedException interruptedexception) {
-      }
-      if (terminated) {
-        if (!flag) {
-          flag = true;
-          try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                                           public void run() {
-                                             String as[] = {
-                                                 "Monitored Java Virtual Machine Terminated", " ", "Exit visualgc?", " "
-                                             };
-                                             int j3 = JOptionPane.showConfirmDialog(visualHeap, as, "Target Terminated",
-                                                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-                                             if (j3 == 0)
-                                               System.exit(0);
-                                           }
-                                         }
-            );
-          } catch (Exception exception1) {
-            exception1.printStackTrace();
-          }
-          gcsample1 = new GCSample(monitoredvmmodel);
-        }
-      } else {
-        final GCSample gcsample2 = gcsample1 == null ? new GCSample(monitoredvmmodel) : gcsample1;
-        SwingUtilities.invokeLater(new Runnable() {
-                                     public void run() {
-                                       visualHeap.update(gcsample2);
-                                       graphgc.update(gcsample2);
-                                       if (visualagehistogram1 != null)
-                                         visualagehistogram1.update(gcsample2);
-                                     }
-                                   }
-        );
-      }
-    }
   }
 
 }
