@@ -3,6 +3,7 @@ package com.sun.jvmstat.tools.visualgc;
 import com.sun.jvmstat.graph.GridDrawer;
 import com.sun.jvmstat.graph.Level;
 import com.sun.jvmstat.graph.Line;
+import com.sun.jvmstat.tools.visualgc.resource.Res;
 import github.beansoftapp.visualgc.Exceptions;
 import github.beansoftapp.visualgc.GetProcessID;
 import github.beansoftapp.visualgc.JpsHelper;
@@ -412,7 +413,7 @@ public class VisualGCPatch {
       }
     } else {
       JFrame frame = new JFrame();
-      frame.setTitle("Survivor Age Histogram");
+      frame.setTitle(Res.getString("survivor.age.histogram"));
       frame.getContentPane().add((Component) new NotSupportedDisplayer("Not supported for this JVM."), "Center");
       frame.setBounds(j2, k2, l2, i3);
       frame.setVisible(true);

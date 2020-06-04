@@ -3,7 +3,6 @@
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/jvmstat_graph.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jvmstat_util.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/visualgc.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
