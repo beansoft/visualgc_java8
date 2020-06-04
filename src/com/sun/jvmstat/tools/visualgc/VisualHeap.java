@@ -1,6 +1,7 @@
 package com.sun.jvmstat.tools.visualgc;
 
 import com.sun.jvmstat.graph.Level;
+import com.sun.jvmstat.tools.visualgc.resource.Res;
 import com.sun.jvmstat.util.Converter;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,7 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.WindowEvent;import java.text.MessageFormat;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -68,7 +69,7 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       this.infoPanel.setLayout(new BorderLayout());
       Border var5 = BorderFactory.createEtchedBorder(Color.WHITE, Color.GRAY);
       Font var7 = new Font("Dialog", 1, 12);
-      String var4 = "Application Information";
+      String var4 = Res.getString("application.information");
       TitledBorder var6 = BorderFactory.createTitledBorder(var5, var4, 0, 0, var7, Color.WHITE);
       this.infoPanel.setBorder(var6);
       this.infoPanel.addComponentListener(this);
@@ -82,7 +83,7 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       Color var8 = Color.getColor("old.color", new Color(204, 102, 0));
       this.oldLevel = new Level(var8);
       var5 = BorderFactory.createEtchedBorder(var8, Color.GRAY);
-      var4 = "Old";
+      var4 = Res.getString("old");
       var6 = BorderFactory.createTitledBorder(var5, var4, 0, 0, var7, var8);
       this.oldPanel.setBorder(var6);
       this.oldPanel.addComponentListener(this);
@@ -93,7 +94,7 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       Color var9 = Color.getColor("perm.color", new Color(240, 200, 150));
       this.permLevel = new Level(var9);
       var5 = BorderFactory.createEtchedBorder(var9, Color.GRAY);
-      var4 = "Perm";
+      var4 = Res.getString("perm");
       var6 = BorderFactory.createTitledBorder(var5, var4, 0, 0, var7, var9);
       this.permPanel.setBorder(var6);
       this.permPanel.addComponentListener(this);
@@ -104,7 +105,7 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       Color var10 = Color.getColor("eden.color", new Color(255, 150, 0));
       this.edenLevel = new Level(var10);
       var5 = BorderFactory.createEtchedBorder(var10, Color.GRAY);
-      var4 = "Eden";
+      var4 = Res.getString("eden");
       var6 = BorderFactory.createTitledBorder(var5, var4, 0, 0, var7, var10);
       this.edenPanel.setBorder(var6);
       this.edenPanel.addComponentListener(this);
@@ -115,7 +116,7 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       this.s0Panel.setLayout(new GridLayout(1, 1));
       this.s0Level = new Level(var11);
       var5 = BorderFactory.createEtchedBorder(var11, Color.GRAY);
-      var4 = "S0";
+      var4 = Res.getString("s0");
       var6 = BorderFactory.createTitledBorder(var5, var4, 0, 0, var7, var11);
       this.s0Panel.setBorder(var6);
       this.s0Panel.addComponentListener(this);
@@ -125,7 +126,7 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       this.s1Panel.setLayout(new GridLayout(1, 1));
       this.s1Level = new Level(var11);
       var5 = BorderFactory.createEtchedBorder(var11, Color.GRAY);
-      var4 = "S1";
+      var4 = Res.getString("s1");
       var6 = BorderFactory.createTitledBorder(var5, var4, 0, 0, var7, var11);
       this.s1Panel.setBorder(var6);
       this.s1Panel.addComponentListener(this);
@@ -143,10 +144,10 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
 
    private void initializeInfoPanel(GCSample var1) {
       Font var2 = new Font("Dialog", 1, 12);
-      this.livenessIndicator = new JLabel("Alive    ");
+      this.livenessIndicator = new JLabel(Res.getString("alive"));
       this.livenessIndicator.setFont(var2);
       this.livenessIndicator.setForeground(Color.green);
-      JLabel var3 = new JLabel("Elapsed Time: ");
+      JLabel var3 = new JLabel(Res.getString("elapsed.time"));
       var3.setFont(var2);
       var3.setForeground(Color.WHITE);
       this.etField = new JLabel(Converter.longToTimeString(var1.osElapsedTime, GCSample.osFrequency));
@@ -157,9 +158,9 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       var4.setFont(var2);
       var4.setForeground(Color.WHITE);
       var4.setBackground(Color.BLACK);
-      var4.append("Java Command Line: " + GCSample.javaCommand + "\n\n");
-      var4.append("Java VM Arguments: " + GCSample.vmArgs + "\n\n");
-      var4.append("Java VM Flags: " + GCSample.vmFlags + "\n\n");
+      var4.append(MessageFormat.format(Res.getString("java.command.line.0"), GCSample.javaCommand));
+      var4.append(MessageFormat.format(Res.getString("java.vm.arguments.0"), GCSample.vmArgs));
+      var4.append(MessageFormat.format(Res.getString("java.vm.flags.0"), GCSample.vmFlags));
       var4.append("java.home=" + GCSample.javaHome + "\n\n");
       var4.append("java.class.path=" + GCSample.classPath + "\n\n");
       var4.append("java.library.path=" + GCSample.libraryPath + "\n\n");
@@ -302,14 +303,14 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
 
    public void updateTextFields(GCSample var1) {
       Color var2 = Color.WHITE;
-      String var3 = "Alive     ";
+      String var3 = Res.getString("alive");
       if (var1 != this.previousSample) {
          if (var1.osElapsedTime == this.previousSample.osElapsedTime) {
             if (this.livenessIndicator.getForeground() != Color.red) {
                var2 = Color.red;
             }
 
-            var3 = "Dead     ";
+            var3 = Res.getString("dead");
          } else if (this.livenessIndicator.getForeground() != Color.green) {
             var2 = Color.green;
          }

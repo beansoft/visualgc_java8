@@ -2,6 +2,7 @@ package com.sun.jvmstat.tools.visualgc;
 
 import com.sun.jvmstat.graph.FIFOList;
 import com.sun.jvmstat.graph.Line;
+import com.sun.jvmstat.tools.visualgc.resource.Res;
 import com.sun.jvmstat.util.Converter;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -149,7 +150,7 @@ public class GCSpacePanel extends JPanel {
          var11.setBorder(var13);
       }
 
-      String var14 = this.borderString + Converter.longToKMGString(var1) + "): " + Converter.longToKMGString(var3) + ", " + var5 + " collections, " + Converter.longToTimeString(var7, var9);
+      String var14 = this.borderString + Converter.longToKMGString(var1) + "): " + Converter.longToKMGString(var3) + ", " + var5 + Res.getString("collections") + Converter.longToTimeString(var7, var9);
       var11.setTitle(var14);
    }
 

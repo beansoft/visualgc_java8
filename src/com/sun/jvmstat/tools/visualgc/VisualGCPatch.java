@@ -152,7 +152,7 @@ public class VisualGCPatch {
         BORDER_STRING.setAccessible(true);
         GCSpacePanel permPanel = (GCSpacePanel) PERM_PANEL.get(graphGC);
         String borderString = (String) BORDER_STRING.get(permPanel);
-        BORDER_STRING.set(permPanel, borderString.replace("Perm Gen", "Metaspace"));
+        BORDER_STRING.set(permPanel, borderString.replace(Res.getString("perm.gen"), Res.getString("metaspace")));
       } catch (NoSuchFieldException ex) {
         Exceptions.printStackTrace(ex);
       } catch (SecurityException ex) {
@@ -171,7 +171,7 @@ public class VisualGCPatch {
         PERM_PANEL.setAccessible(true);
         JPanel permPanel = (JPanel) PERM_PANEL.get(visualHeap);
         TitledBorder border = (TitledBorder) permPanel.getBorder();
-        border.setTitle("Metaspace");
+        border.setTitle(Res.getString("metaspace"));
       } catch (NoSuchFieldException ex) {
         Exceptions.printStackTrace(ex);
       } catch (SecurityException ex) {
@@ -414,7 +414,7 @@ public class VisualGCPatch {
     } else {
       JFrame frame = new JFrame();
       frame.setTitle(Res.getString("survivor.age.histogram"));
-      frame.getContentPane().add((Component) new NotSupportedDisplayer("Not supported for this JVM."), "Center");
+      frame.getContentPane().add((Component) new NotSupportedDisplayer(Res.getString("not.supported.for.this.jvm")), "Center");
       frame.setBounds(j2, k2, l2, i3);
       frame.setVisible(true);
     }

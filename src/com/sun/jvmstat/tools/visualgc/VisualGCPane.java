@@ -4,6 +4,7 @@ import beansoft.swing.OptionPane;
 import com.sun.jvmstat.graph.GridDrawer;
 import com.sun.jvmstat.graph.Level;
 import com.sun.jvmstat.graph.Line;
+import com.sun.jvmstat.tools.visualgc.resource.Res;
 import github.beansoftapp.visualgc.Exceptions;
 import github.beansoftapp.visualgc.GetProcessID;
 import github.beansoftapp.visualgc.JpsHelper;
@@ -227,7 +228,7 @@ public class VisualGCPane implements ActionListener {
 
     DataViewComponent.MasterViewConfiguration monitoringMasterConfiguration = new DataViewComponent.MasterViewConfiguration(false);
     DataViewComponent dvc = new DataViewComponent(monitoringMasterView, monitoringMasterConfiguration);
-    dvc.configureDetailsView(new DataViewComponent.DetailsViewConfiguration(0.3D, 0.15D, -1.0D, -1.0D, 0.66D, 0.85D));
+    dvc.configureDetailsView(new DataViewComponent.DetailsViewConfiguration(0.35D, 0.15D, -1.0D, -1.0D, 0.66D, 0.85D));
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
          "Graphs", true), DataViewComponent.TOP_RIGHT);
     dvc.addDetailsView(this.graphGCViewSupport.getDetailsView(), DataViewComponent.TOP_RIGHT);
@@ -430,7 +431,7 @@ public class VisualGCPane implements ActionListener {
           BORDER_STRING.setAccessible(true);
           GCSpacePanel permPanel = (GCSpacePanel)PERM_PANEL.get(graphGC);
           String borderString = (String)BORDER_STRING.get(permPanel);
-          BORDER_STRING.set(permPanel, borderString.replace("Perm Gen", "Metaspace"));
+          BORDER_STRING.set(permPanel, borderString.replace(Res.getString("perm.gen"), Res.getString("metaspace")));
         } catch (NoSuchFieldException ex) {
           Exceptions.printStackTrace(ex);
         } catch (SecurityException ex) {
@@ -530,7 +531,7 @@ public class VisualGCPane implements ActionListener {
           PERM_PANEL.setAccessible(true);
           JPanel permPanel = (JPanel)PERM_PANEL.get(visualHeap);
           TitledBorder border = (TitledBorder)permPanel.getBorder();
-          border.setTitle("Metaspace");
+          border.setTitle(Res.getString("metaspace"));
         } catch (NoSuchFieldException ex) {
           Exceptions.printStackTrace(ex);
         } catch (SecurityException ex) {

@@ -2,6 +2,7 @@ package com.sun.jvmstat.tools.visualgc;
 
 import com.sun.jvmstat.graph.FIFOList;
 import com.sun.jvmstat.graph.Line;
+import com.sun.jvmstat.tools.visualgc.resource.Res;
 import com.sun.jvmstat.util.Converter;
 import java.awt.Color;
 import java.awt.Container;
@@ -15,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.WindowEvent;import java.text.MessageFormat;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -53,16 +54,16 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    private long compStart;
    private boolean run;
 
-   public GraphGC(GCSample var1) {
-      this.previousSample = var1;
-      this.edenGCStart = var1.edenGCTime;
-      this.tenuredGCStart = var1.tenuredGCTime;
-      this.setTitle("Graph");
+   public GraphGC(GCSample gcSample) {
+      this.previousSample = gcSample;
+      this.edenGCStart = gcSample.edenGCTime;
+      this.tenuredGCStart = gcSample.tenuredGCTime;
+      this.setTitle(Res.getString("graph"));
       this.addWindowListener(new WindowAdapter() {
-         public void windowClosing(WindowEvent var1) {
-            Window var2 = var1.getWindow();
-            var2.dispose();
-            var2.hide();
+         public void windowClosing(WindowEvent windowEvent) {
+            Window window = windowEvent.getWindow();
+            window.dispose();
+            window.hide();
          }
       });
       this.heapPanel = new JPanel();
@@ -120,7 +121,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.timePanel = new JPanel();
       this.timePanel.setBackground(Color.BLACK);
       this.timePanel.setLayout(new GridLayout(5, 1));
-      if (var1.finalizerInitialized) {
+      if (gcSample.finalizerInitialized) {
          this.timePanel.setLayout(new GridLayout(5, 1));
          this.timePanel.add(this.finalizerQPanel);
          this.timePanel.add(this.finalizerPanel);
@@ -132,17 +133,17 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.timePanel.add(this.classPanel);
       this.timePanel.add(this.gcPanel);
       Color var10 = Color.getColor("eden.color", new Color(255, 150, 0));
-      this.edenPanel = new GCSpacePanel("Eden Space", var1.edenSize, var1.edenCapacity, var10);
+      this.edenPanel = new GCSpacePanel(Res.getString("eden.space"), gcSample.edenSize, gcSample.edenCapacity, var10);
       Color var11 = Color.getColor("survivor.color", new Color(255, 204, 102));
-      this.s0Panel = new GCSpacePanel("Survivor 0", var1.survivor0Size, var1.survivor0Capacity, var11);
-      this.s1Panel = new GCSpacePanel("Survivor 1", var1.survivor1Size, var1.survivor1Capacity, var11);
+      this.s0Panel = new GCSpacePanel(Res.getString("survivor.0"), gcSample.survivor0Size, gcSample.survivor0Capacity, var11);
+      this.s1Panel = new GCSpacePanel(Res.getString("survivor.1"), gcSample.survivor1Size, gcSample.survivor1Capacity, var11);
       Color var12 = Color.getColor("old.color", new Color(204, 102, 0));
-      this.oldPanel = new GCSpacePanel("Old Gen", var1.tenuredSize, var1.tenuredCapacity, var12);
+      this.oldPanel = new GCSpacePanel(Res.getString("old.gen"), gcSample.tenuredSize, gcSample.tenuredCapacity, var12);
       Color var13 = Color.getColor("perm.color", new Color(240, 200, 150));
-      this.permPanel = new GCSpacePanel("Perm Gen", var1.permSize, var1.permCapacity, var13);
+      this.permPanel = new GCSpacePanel(Res.getString("perm.gen"), gcSample.permSize, gcSample.permCapacity, var13);
       this.addComponentListener(this);
-      this.update(var1);
-      this.resetPanel(var1);
+      this.update(gcSample);
+      this.resetPanel(gcSample);
    }
 
    public void componentHidden(ComponentEvent var1) {
@@ -241,21 +242,21 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    private void updateTextComponents(GCSample var1) {
       this.maxFinalizerQLength = Math.max(this.maxFinalizerQLength, var1.finalizerQLength);
       TitledBorder var2 = (TitledBorder)this.finalizerQPanel.getBorder();
-      String var3 = "Finalizer Queue Length: Maximum " + var1.finalizerQMaxLength + " Current " + var1.finalizerQLength + " Local Maximum " + this.maxFinalizerQLength;
+      String var3 = MessageFormat.format(Res.getString("finalizer.queue.length.maximum.0.current.1.local.maximum.2"), var1.finalizerQMaxLength, var1.finalizerQLength, this.maxFinalizerQLength);
       var2.setTitle(var3);
       var2 = (TitledBorder)this.finalizerPanel.getBorder();
-      var3 = "Finalizer Time: " + var1.finalizerCount + " objects - " + Converter.longToTimeString(var1.finalizerTime, GCSample.osFrequency);
+      var3 = MessageFormat.format(Res.getString("finalizer.time.0.objects.1"), var1.finalizerCount, Converter.longToTimeString(var1.finalizerTime, GCSample.osFrequency));
       var2.setTitle(var3);
       var2 = (TitledBorder)this.compilePanel.getBorder();
-      var3 = "Compile Time: " + var1.totalCompile + " compiles - " + Converter.longToTimeString(var1.totalCompileTime, GCSample.osFrequency);
+      var3 = MessageFormat.format(Res.getString("compile.time.0.compiles.1"), var1.totalCompile, Converter.longToTimeString(var1.totalCompileTime, GCSample.osFrequency));
       var2.setTitle(var3);
       var2 = (TitledBorder)this.classPanel.getBorder();
-      var3 = "Class Loader Time: " + var1.classesLoaded + " loaded, " + var1.classesUnloaded + " unloaded - " + Converter.longToTimeString(var1.classLoadTime, GCSample.osFrequency);
+      var3 = MessageFormat.format(Res.getString("class.loader.time.0.loaded.1.unloaded.2"), var1.classesLoaded, var1.classesUnloaded, Converter.longToTimeString(var1.classLoadTime, GCSample.osFrequency));
       var2.setTitle(var3);
       var2 = (TitledBorder)this.gcPanel.getBorder();
-      var3 = "GC Time: " + (var1.edenGCEvents + var1.tenuredGCEvents) + " collections, " + Converter.longToTimeString(var1.edenGCTime + var1.tenuredGCTime, GCSample.osFrequency);
+      var3 = MessageFormat.format(Res.getString("gc.time.0.collections.1"), var1.edenGCEvents + var1.tenuredGCEvents, Converter.longToTimeString(var1.edenGCTime + var1.tenuredGCTime, GCSample.osFrequency));
       if (var1.lastGCCause != null && var1.lastGCCause.length() != 0) {
-         var3 = var3 + " Last Cause: " + var1.lastGCCause;
+         var3 = MessageFormat.format(Res.getString("0.last.cause.1"), var3, var1.lastGCCause);
       }
 
       var2.setTitle(var3);
