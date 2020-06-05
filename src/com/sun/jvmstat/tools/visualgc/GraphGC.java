@@ -28,6 +28,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    public JPanel heapPanel;
    public JPanel timePanel;
    public JPanel edenGcPanel;
+   public JPanel edenGcTimePanel;// eden gc time pane
    public JPanel classPanel;
    public JPanel compilePanel;
    public JPanel finalizerPanel;
@@ -42,6 +43,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    public FIFOList finalizerQLengthDataSet;
    public FIFOList compilerActiveDataSet;
    public FIFOList classLoaderActiveDataSet;
+   public FIFOList edenGcTimeDataSet;// eden gc time dataset
+   public FIFOList tenuredGCTimeDataSet;// tenure gc time dataset
    private GCSample previousSample;
    private boolean inGC = false;
    private boolean inEdGC = false;
@@ -54,6 +57,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    private boolean inComp = false;
    private long compStart;
    private boolean run;
+
+   private long lastEdenGCTimeDelta = 0;
 
    public GraphGC(GCSample gcSample) {
       this.previousSample = gcSample;
@@ -69,79 +74,94 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       });
       this.heapPanel = new JPanel();
       this.heapPanel.setBackground(Color.BLACK);
-      Font var2 = new Font("Dialog", 1, 12);
+      Font font = new Font("Dialog", 1, 12);
       this.edenGcPanel = new JPanel();
       this.edenGcPanel.setBackground(Color.BLACK);
       this.edenGcPanel.setLayout(new GridLayout(1, 1));
-      Color var5 = Color.getColor("graphgc.gc.color", Color.YELLOW);
+      Color gcColor = Color.getColor("graphgc.gc.color", Color.YELLOW);
       this.gcActiveDataSet = new FIFOList(1000, 0.0D, 1.0D);
-      Line var6 = new Line(this.gcActiveDataSet, var5);
-      Border var3 = BorderFactory.createEtchedBorder(var5, Color.GRAY);
-      TitledBorder var4 = BorderFactory.createTitledBorder(var3, "", 0, 0, var2, var5);
-      this.edenGcPanel.setBorder(var4);
-      this.edenGcPanel.add(var6);
+
+
+      Line gcActiveLine = new Line(this.gcActiveDataSet, gcColor);
+      Border etchedBorder = BorderFactory.createEtchedBorder(gcColor, Color.GRAY);
+      TitledBorder titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, gcColor);
+      this.edenGcPanel.setBorder(titledBorder);
+      this.edenGcPanel.add(gcActiveLine);
+
+      edenGcTimePanel= new JPanel();
+      this.edenGcTimePanel.setBackground(Color.BLACK);
+      this.edenGcTimePanel.setLayout(new GridLayout(1, 1));
+      this.edenGcTimeDataSet = new FIFOList(1000);
+      Line edenGcTimeLine = new Line(this.edenGcTimeDataSet, gcColor);
+      etchedBorder = BorderFactory.createEtchedBorder(gcColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "Eden Time", 0, 0, font, gcColor);
+      this.edenGcTimePanel.setBorder(titledBorder);
+      this.edenGcTimePanel.add(edenGcTimeLine);
+
       this.classPanel = new JPanel();
       this.classPanel.setBackground(Color.BLACK);
       this.classPanel.setLayout(new GridLayout(1, 1));
-      Color var7 = Color.getColor("graphgc.class.color", Color.CYAN);
+      Color classColor = Color.getColor("graphgc.class.color", Color.CYAN);
       this.classLoaderActiveDataSet = new FIFOList(1000, 0.0D, 1.0D);
-      var6 = new Line(this.classLoaderActiveDataSet, var7);
-      var3 = BorderFactory.createEtchedBorder(var7, Color.GRAY);
-      var4 = BorderFactory.createTitledBorder(var3, "", 0, 0, var2, var7);
-      this.classPanel.setBorder(var4);
-      this.classPanel.add(var6);
+      gcActiveLine = new Line(this.classLoaderActiveDataSet, classColor);
+      etchedBorder = BorderFactory.createEtchedBorder(classColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, classColor);
+      this.classPanel.setBorder(titledBorder);
+      this.classPanel.add(gcActiveLine);
       this.compilePanel = new JPanel();
       this.compilePanel.setBackground(Color.BLACK);
       this.compilePanel.setLayout(new GridLayout(1, 1));
-      Color var8 = Color.getColor("graphgc.compile.color", Color.WHITE);
+      Color compileColor = Color.getColor("graphgc.compile.color", Color.WHITE);
       this.compilerActiveDataSet = new FIFOList(1000, 0.0D, 1.0D);
-      var6 = new Line(this.compilerActiveDataSet, var8);
-      var3 = BorderFactory.createEtchedBorder(var8, Color.GRAY);
-      var4 = BorderFactory.createTitledBorder(var3, "", 0, 0, var2, var8);
-      this.compilePanel.setBorder(var4);
-      this.compilePanel.add(var6);
+      gcActiveLine = new Line(this.compilerActiveDataSet, compileColor);
+      etchedBorder = BorderFactory.createEtchedBorder(compileColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, compileColor);
+      this.compilePanel.setBorder(titledBorder);
+      this.compilePanel.add(gcActiveLine);
       this.finalizerPanel = new JPanel();
       this.finalizerPanel.setBackground(Color.BLACK);
       this.finalizerPanel.setLayout(new GridLayout(1, 1));
       Color finalizerColor = Color.getColor("graphgc.finalizer.color", Color.WHITE);
       this.finalizerActiveDataSet = new FIFOList(1000, 0.0D, 1.0D);
-      var6 = new Line(this.finalizerActiveDataSet, finalizerColor);
-      var3 = BorderFactory.createEtchedBorder(finalizerColor, Color.GRAY);
-      var4 = BorderFactory.createTitledBorder(var3, "", 0, 0, var2, finalizerColor);
-      this.finalizerPanel.setBorder(var4);
-      this.finalizerPanel.add(var6);
+      gcActiveLine = new Line(this.finalizerActiveDataSet, finalizerColor);
+      etchedBorder = BorderFactory.createEtchedBorder(finalizerColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, finalizerColor);
+      this.finalizerPanel.setBorder(titledBorder);
+      this.finalizerPanel.add(gcActiveLine);
       this.finalizerQPanel = new JPanel();
       this.finalizerQPanel.setBackground(Color.BLACK);
       this.finalizerQPanel.setLayout(new GridLayout(1, 1));
       this.finalizerQLengthDataSet = new FIFOList(1000);
-      var6 = new Line(this.finalizerQLengthDataSet, finalizerColor);
-      var3 = BorderFactory.createEtchedBorder(finalizerColor, Color.GRAY);
-      var4 = BorderFactory.createTitledBorder(var3, "", 0, 0, var2, finalizerColor);
-      this.finalizerQPanel.setBorder(var4);
-      this.finalizerQPanel.add(var6);
+      gcActiveLine = new Line(this.finalizerQLengthDataSet, finalizerColor);
+      etchedBorder = BorderFactory.createEtchedBorder(finalizerColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, finalizerColor);
+      this.finalizerQPanel.setBorder(titledBorder);
+      this.finalizerQPanel.add(gcActiveLine);
       this.timePanel = new JPanel();
       this.timePanel.setBackground(Color.BLACK);
-      this.timePanel.setLayout(new GridLayout(5, 1));
+      this.timePanel.setLayout(new GridLayout(0, 1));
       if (gcSample.finalizerInitialized) {
-         this.timePanel.setLayout(new GridLayout(5, 1));
+         this.timePanel.setLayout(new GridLayout(0, 1));
          this.timePanel.add(this.finalizerQPanel);
          this.timePanel.add(this.finalizerPanel);
       } else {
-         this.timePanel.setLayout(new GridLayout(3, 1));
+         this.timePanel.setLayout(new GridLayout(0, 1));
       }
 
       this.timePanel.add(this.compilePanel);
       this.timePanel.add(this.classPanel);
       this.timePanel.add(this.edenGcPanel);
-      Color var10 = Color.getColor("eden.color", new Color(255, 150, 0));
-      this.edenPanel = new GCSpacePanel(Res.getString("eden.space"), gcSample.edenSize, gcSample.edenCapacity, var10);
-      Color var11 = Color.getColor("survivor.color", new Color(255, 204, 102));
-      this.s0Panel = new GCSpacePanel(Res.getString("survivor.0"), gcSample.survivor0Size, gcSample.survivor0Capacity, var11);
-      this.s1Panel = new GCSpacePanel(Res.getString("survivor.1"), gcSample.survivor1Size, gcSample.survivor1Capacity, var11);
-      Color var12 = Color.getColor("old.color", new Color(204, 102, 0));
-      this.oldPanel = new GCSpacePanel(Res.getString("old.gen"), gcSample.tenuredSize, gcSample.tenuredCapacity, var12);
-      Color var13 = Color.getColor("perm.color", new Color(240, 200, 150));
-      this.permPanel = new GCSpacePanel(Res.getString("perm.gen"), gcSample.permSize, gcSample.permCapacity, var13);
+      this.timePanel.add(this.edenGcTimePanel);
+
+      Color edenColor = Color.getColor("eden.color", new Color(255, 150, 0));
+      this.edenPanel = new GCSpacePanel(Res.getString("eden.space"), gcSample.edenSize, gcSample.edenCapacity, edenColor);
+      Color survivorColor = Color.getColor("survivor.color", new Color(255, 204, 102));
+      this.s0Panel = new GCSpacePanel(Res.getString("survivor.0"), gcSample.survivor0Size, gcSample.survivor0Capacity, survivorColor);
+      this.s1Panel = new GCSpacePanel(Res.getString("survivor.1"), gcSample.survivor1Size, gcSample.survivor1Capacity, survivorColor);
+      Color oldColor = Color.getColor("old.color", new Color(204, 102, 0));
+      this.oldPanel = new GCSpacePanel(Res.getString("old.gen"), gcSample.tenuredSize, gcSample.tenuredCapacity, oldColor);
+      Color permColor = Color.getColor("perm.color", new Color(240, 200, 150));
+      this.permPanel = new GCSpacePanel(Res.getString("perm.gen"), gcSample.permSize, gcSample.permCapacity, permColor);
       this.addComponentListener(this);
       this.update(gcSample);
       this.resetPanel(gcSample);
@@ -178,16 +198,16 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
 
    }
 
-   public void update(GCSample var1) {
-      if (var1.lastModificationTime != this.previousSample.lastModificationTime) {
-         this.resetPanel(var1);
+   public void update(GCSample gcSample) {
+      if (gcSample.lastModificationTime != this.previousSample.lastModificationTime) {
+         this.resetPanel(gcSample);
          this.validate();
       }
 
-      this.updateGraph(var1);
-      this.updateTextComponents(var1);
+      this.updateGraph(gcSample);
+      this.updateTextComponents(gcSample);
       this.refreshPanels();
-      this.previousSample = var1;
+      this.previousSample = gcSample;
    }
 
    private void refreshPanels() {
@@ -202,6 +222,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.s0Panel.updateGraph(gcSample.survivor0Size, gcSample.survivor0Capacity, gcSample.survivor0Used);
       this.s1Panel.updateGraph(gcSample.survivor1Size, gcSample.survivor1Capacity, gcSample.survivor1Used);
       long gcCount = 0L;
+      long edenGCTimeDelta = 0L;
       if (!this.inGC) {
          this.inEdGC = gcSample.edenGCEvents != this.previousSample.edenGCEvents;
          this.inTnGC = gcSample.tenuredGCEvents != this.previousSample.tenuredGCEvents;
@@ -221,6 +242,9 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
          gcCount = 1L;
          if (this.inEdGC && gcSample.edenGCTime != this.edenGCStart) {
             System.out.println("edenGCTime Delta:" + (gcSample.edenGCTime - this.edenGCStart));
+            edenGCTimeDelta = gcSample.edenGCTime - this.edenGCStart;
+            lastEdenGCTimeDelta = edenGCTimeDelta;
+
             this.inEdGC = false;
          }
 
@@ -233,6 +257,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       }
 
       this.gcActiveDataSet.add((double) gcCount);
+      this.edenGcTimeDataSet.add((double)edenGCTimeDelta);
+
       this.finalizerQLengthDataSet.add((double) gcSample.finalizerQLength);
       int var4 = gcSample.finalizerTime - this.previousSample.finalizerTime == 0L ? 0 : 1;
       this.finalizerActiveDataSet.add((double) var4);
@@ -242,37 +268,42 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.compilerActiveDataSet.add((double) var6);
    }
 
-   private void updateTextComponents(GCSample var1) {
-      this.maxFinalizerQLength = Math.max(this.maxFinalizerQLength, var1.finalizerQLength);
-      TitledBorder var2 = (TitledBorder)this.finalizerQPanel.getBorder();
-      String var3 = MessageFormat.format(Res.getString("finalizer.queue.length.maximum.0.current.1.local.maximum.2"), var1.finalizerQMaxLength, var1.finalizerQLength, this.maxFinalizerQLength);
-      var2.setTitle(var3);
-      var2 = (TitledBorder)this.finalizerPanel.getBorder();
-      var3 = MessageFormat.format(Res.getString("finalizer.time.0.objects.1"), var1.finalizerCount, Converter.longToTimeString(var1.finalizerTime, GCSample.osFrequency));
-      var2.setTitle(var3);
-      var2 = (TitledBorder)this.compilePanel.getBorder();
-      var3 = MessageFormat.format(Res.getString("compile.time.0.compiles.1"), var1.totalCompile, Converter.longToTimeString(var1.totalCompileTime, GCSample.osFrequency));
-      var2.setTitle(var3);
-      var2 = (TitledBorder)this.classPanel.getBorder();
-      var3 = MessageFormat.format(Res.getString("class.loader.time.0.loaded.1.unloaded.2"), var1.classesLoaded, var1.classesUnloaded, Converter.longToTimeString(var1.classLoadTime, GCSample.osFrequency));
-      var2.setTitle(var3);
-      var2 = (TitledBorder)this.edenGcPanel.getBorder();
-      var3 = MessageFormat.format(Res.getString("gc.time.0.collections.1"), var1.edenGCEvents + var1.tenuredGCEvents, Converter.longToTimeString(var1.edenGCTime + var1.tenuredGCTime, GCSample.osFrequency));
-      if (var1.lastGCCause != null && var1.lastGCCause.length() != 0) {
-         var3 = MessageFormat.format(Res.getString("0.last.cause.1"), var3, var1.lastGCCause);
+   private void updateTextComponents(GCSample gcSample) {
+      this.maxFinalizerQLength = Math.max(this.maxFinalizerQLength, gcSample.finalizerQLength);
+      TitledBorder titledBorder = (TitledBorder)this.finalizerQPanel.getBorder();
+      String title = MessageFormat.format(Res.getString("finalizer.queue.length.maximum.0.current.1.local.maximum.2"), gcSample.finalizerQMaxLength, gcSample.finalizerQLength, this.maxFinalizerQLength);
+      titledBorder.setTitle(title);
+      titledBorder = (TitledBorder)this.finalizerPanel.getBorder();
+      title = MessageFormat.format(Res.getString("finalizer.time.0.objects.1"), gcSample.finalizerCount, Converter.longToTimeString(gcSample.finalizerTime, GCSample.osFrequency));
+      titledBorder.setTitle(title);
+      titledBorder = (TitledBorder)this.compilePanel.getBorder();
+      title = MessageFormat.format(Res.getString("compile.time.0.compiles.1"), gcSample.totalCompile, Converter.longToTimeString(gcSample.totalCompileTime, GCSample.osFrequency));
+      titledBorder.setTitle(title);
+      titledBorder = (TitledBorder)this.classPanel.getBorder();
+      title = MessageFormat.format(Res.getString("class.loader.time.0.loaded.1.unloaded.2"), gcSample.classesLoaded, gcSample.classesUnloaded, Converter.longToTimeString(gcSample.classLoadTime, GCSample.osFrequency));
+      titledBorder.setTitle(title);
+      titledBorder = (TitledBorder)this.edenGcPanel.getBorder();
+      title = MessageFormat.format(Res.getString("gc.time.0.collections.1"), gcSample.edenGCEvents + gcSample.tenuredGCEvents, Converter.longToTimeString(gcSample.edenGCTime + gcSample.tenuredGCTime, GCSample.osFrequency));
+      if (gcSample.lastGCCause != null && gcSample.lastGCCause.length() != 0) {
+         title = MessageFormat.format(Res.getString("0.last.cause.1"), title, gcSample.lastGCCause);
       }
+      titledBorder.setTitle(title);
 
-      var2.setTitle(var3);
-      this.permPanel.updateTextComponents(var1.permCapacity, var1.permUsed);
-      this.oldPanel.updateTextComponents(var1.tenuredCapacity, var1.tenuredUsed, var1.tenuredGCEvents, var1.tenuredGCTime, GCSample.osFrequency);
-      this.edenPanel.updateTextComponents(var1.edenCapacity, var1.edenUsed, var1.edenGCEvents, var1.edenGCTime, GCSample.osFrequency);
-      this.s0Panel.updateTextComponents(var1.survivor0Capacity, var1.survivor0Used);
-      this.s1Panel.updateTextComponents(var1.survivor1Capacity, var1.survivor1Used);
+      titledBorder = (TitledBorder)this.edenGcTimePanel.getBorder();
+      title = "Last eden gc time:" + Converter.longToTimeString(lastEdenGCTimeDelta, GCSample.osFrequency) + " max time:" + Converter.longToTimeString(edenGcTimeDataSet.getMaxValue(), GCSample.osFrequency);
+      titledBorder.setTitle(title);
+
+
+      this.permPanel.updateTextComponents(gcSample.permCapacity, gcSample.permUsed);
+      this.oldPanel.updateTextComponents(gcSample.tenuredCapacity, gcSample.tenuredUsed, gcSample.tenuredGCEvents, gcSample.tenuredGCTime, GCSample.osFrequency);
+      this.edenPanel.updateTextComponents(gcSample.edenCapacity, gcSample.edenUsed, gcSample.edenGCEvents, gcSample.edenGCTime, GCSample.osFrequency);
+      this.s0Panel.updateTextComponents(gcSample.survivor0Capacity, gcSample.survivor0Used);
+      this.s1Panel.updateTextComponents(gcSample.survivor1Capacity, gcSample.survivor1Used);
    }
 
-   public void resetPanel(GCSample var1) {
-      Container var2 = this.getContentPane();
-      var2.removeAll();
+   public void resetPanel(GCSample gcSample) {
+      Container contentPane = this.getContentPane();
+      contentPane.removeAll();
       this.heapPanel.removeAll();
       this.timePanel.removeAll();
       GridBagLayout var3 = new GridBagLayout();
@@ -306,7 +337,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       double var19 = 0.0D;
       double var21 = 0.0D;
       double var23 = 0.0D;
-      if (var1.finalizerInitialized) {
+      if (gcSample.finalizerInitialized) {
          var15 = 0.2D;
          var17 = 0.2D;
          var19 = 0.2D;
@@ -331,16 +362,18 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
          var19 = 0.33D;
          var21 = 0.33D;
          var23 = 0.34D;
-         this.timePanel.setLayout(new GridLayout(3, 1));
+         this.timePanel.setLayout(new GridLayout(0, 1));
       }
 
       this.timePanel.add(this.compilePanel);
       this.timePanel.add(this.classPanel);
       this.timePanel.add(this.edenGcPanel);
-      var2 = this.getContentPane();
+      this.timePanel.add(this.edenGcTimePanel);
+
+      contentPane = this.getContentPane();
       GridBagLayout var25 = new GridBagLayout();
       GridBagConstraints var26 = new GridBagConstraints();
-      var2.setLayout(var25);
+      contentPane.setLayout(var25);
       var26.fill = 1;
       var26.gridwidth = 0;
       var26.weighty = 0.2D;
@@ -350,7 +383,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       var26.weighty = 0.8D;
       var26.weightx = 1.0D;
       var25.setConstraints(this.heapPanel, var26);
-      var2.add(this.timePanel);
-      var2.add(this.heapPanel);
+      contentPane.add(this.timePanel);
+      contentPane.add(this.heapPanel);
    }
 }

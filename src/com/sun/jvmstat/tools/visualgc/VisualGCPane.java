@@ -264,7 +264,7 @@ public class VisualGCPane implements ActionListener {
       setOpaque(false);
       JPanel refreshRateContainer = new JPanel(new FlowLayout(3, 5, 5));
       refreshRateContainer.setOpaque(false);
-      refreshRateContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 15, 5));
+      refreshRateContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
       JLabel refreshRateLabel = new JLabel();
       refreshRateLabel.setFont(refreshRateLabel.getFont().deriveFont(1));
       refreshRateLabel.setText("Refresh rate");

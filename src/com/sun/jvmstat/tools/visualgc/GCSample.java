@@ -63,27 +63,27 @@ public class GCSample {
    static String extDirs;
    private static boolean initialized = false;
 
-   static synchronized void initStaticCounters(Model var0) {
+   static synchronized void initStaticCounters(Model model) {
       if (!initialized) {
-         maxTenuringThreshold = var0.getMaxTenuringThreshold();
-         osFrequency = var0.getOsFrequency();
-         javaCommand = var0.getJavaCommand();
-         javaHome = var0.getJavaHome();
-         vmArgs = var0.getVmArgs();
-         vmFlags = var0.getVmFlags();
-         vmInfo = var0.getVmInfo();
-         vmName = var0.getVmName();
-         vmVersion = var0.getVmVersion();
-         vmVendor = var0.getVmVendor();
-         vmSpecName = var0.getVmSpecName();
-         vmSpecVersion = var0.getVmSpecVersion();
-         vmSpecVendor = var0.getVmSpecVendor();
-         classPath = var0.getClassPath();
-         bootClassPath = var0.getBootClassPath();
-         libraryPath = var0.getLibraryPath();
-         bootLibraryPath = var0.getBootLibraryPath();
-         endorsedDirs = var0.getEndorsedDirs();
-         extDirs = var0.getExtDirs();
+         maxTenuringThreshold = model.getMaxTenuringThreshold();
+         osFrequency = model.getOsFrequency();
+         javaCommand = model.getJavaCommand();
+         javaHome = model.getJavaHome();
+         vmArgs = model.getVmArgs();
+         vmFlags = model.getVmFlags();
+         vmInfo = model.getVmInfo();
+         vmName = model.getVmName();
+         vmVersion = model.getVmVersion();
+         vmVendor = model.getVmVendor();
+         vmSpecName = model.getVmSpecName();
+         vmSpecVersion = model.getVmSpecVersion();
+         vmSpecVendor = model.getVmSpecVendor();
+         classPath = model.getClassPath();
+         bootClassPath = model.getBootClassPath();
+         libraryPath = model.getLibraryPath();
+         bootLibraryPath = model.getBootLibraryPath();
+         endorsedDirs = model.getEndorsedDirs();
+         extDirs = model.getExtDirs();
       }
 
    }

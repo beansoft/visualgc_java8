@@ -129,16 +129,16 @@ public class GCSpacePanel extends JPanel {
    }
 
    public void updateTextComponents(long var1, long var3) {
-      TitledBorder var5 = (TitledBorder)this.getBorder();
-      Color var6 = this.getForeground();
-      if (var5.getTitleColor() != var6) {
-         Border var7 = BorderFactory.createEtchedBorder(var6, Color.GRAY);
-         var5.setTitleColor(var6);
-         var5.setBorder(var7);
+      TitledBorder titledBorder = (TitledBorder)this.getBorder();
+      Color foreground = this.getForeground();
+      if (titledBorder.getTitleColor() != foreground) {
+         Border var7 = BorderFactory.createEtchedBorder(foreground, Color.GRAY);
+         titledBorder.setTitleColor(foreground);
+         titledBorder.setBorder(var7);
       }
 
       String var8 = this.borderString + Converter.longToKMGString(var1) + "): " + Converter.longToKMGString(var3);
-      var5.setTitle(var8);
+      titledBorder.setTitle(var8);
    }
 
    public void updateTextComponents(long var1, long var3, long var5, long var7, long var9) {
