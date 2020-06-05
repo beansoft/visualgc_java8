@@ -34,21 +34,21 @@ public class Level extends JComponent {
     this.gridDrawer.splitRange(grayLevel, Color.DARK_GRAY);
   }
 
-  public void drawLevel(Graphics var1) {
-    int var2 = this.getHeight();
-    int var3 = this.getWidth();
-    int var4 = (int)((double)(var3 * var2) * this.level);
-    int var5 = var4 / var3;
-    if (var5 > var2) {
-      var5 = var2;
+  public void drawLevel(Graphics g) {
+    int height = this.getHeight();
+    int width = this.getWidth();
+    int var4 = (int)((double)(width * height) * this.level);
+    int var5 = var4 / width;
+    if (var5 > height) {
+      var5 = height;
     }
 
     if (this.level != 0.0D && var5 == 0) {
       var5 = 1;
     }
 
-    var1.setColor(this.color);
-    var1.fill3DRect(0, var2 - var5, var3, var2, true);
+    g.setColor(this.color);
+    g.fill3DRect(0, height - var5, width, height, true);
   }
 
   public Color getColor() {
