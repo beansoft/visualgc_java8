@@ -29,30 +29,30 @@ public class GCSpacePanel extends JPanel {
    // $FF: synthetic field
    static final boolean $assertionsDisabled;
 
-   public GCSpacePanel(String var1, long var2, long var4, Color var6) {
-      this(var1, var2, var4, var6, false);
+   public GCSpacePanel(String title, long maxValue, long capacity, Color color) {
+      this(title, maxValue, capacity, color, false);
    }
 
-   public GCSpacePanel(String var1, long var2, long var4, Color var6, boolean var7) {
-      this.reservedMode = var7;
-      this.borderString = var1 + " (" + Converter.longToKMGString(var2) + ", ";
-      if (var7) {
-         this.dataset = new FIFOList(1000, 0.0D, (double)var2);
+   public GCSpacePanel(String title, long maxValue, long capacity, Color color, boolean reservedMode) {
+      this.reservedMode = reservedMode;
+      this.borderString = title + " (" + Converter.longToKMGString(maxValue) + ", ";
+      if (reservedMode) {
+         this.dataset = new FIFOList(1000, 0.0D, (double)maxValue);
       } else {
-         this.dataset = new FIFOList(1000, 0.0D, (double)var4);
+         this.dataset = new FIFOList(1000, 0.0D, (double)capacity);
       }
 
-      this.line = new Line(this.dataset, var6);
-      if (var7) {
-         this.line.updateGrayLevel(1.0D - (double)var4 / (double)var2);
+      this.line = new Line(this.dataset, color);
+      if (reservedMode) {
+         this.line.updateGrayLevel(1.0D - (double)capacity / (double)maxValue);
       }
 
-      String var8 = this.borderString + Converter.longToKMGString(var4) + "): " + " Used = ";
+      String var8 = this.borderString + Converter.longToKMGString(capacity) + "): " + " Used = ";
       Font var9 = new Font("Dialog", 1, 12);
-      Border var10 = BorderFactory.createEtchedBorder(var6, Color.GRAY);
-      TitledBorder var11 = BorderFactory.createTitledBorder(var10, var8, 0, 0, var9, var6);
+      Border var10 = BorderFactory.createEtchedBorder(color, Color.GRAY);
+      TitledBorder var11 = BorderFactory.createTitledBorder(var10, var8, 0, 0, var9, color);
       this.setBorder(var11);
-      this.setForeground(var6);
+      this.setForeground(color);
       this.setBackground(Color.BLACK);
       this.setPreferredSize(new Dimension(600, 100));
       this.setLayout(new BorderLayout());

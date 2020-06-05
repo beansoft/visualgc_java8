@@ -1,7 +1,6 @@
 <component name="libraryTable">
   <library name="jvmstat">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/jvmstat_graph.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jvmstat_util.jar!/" />
     </CLASSES>
     <JAVADOC />
