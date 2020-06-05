@@ -25,6 +25,8 @@
 
 package org.graalvm.visualvm.core.ui.components;
 
+import com.sun.jvmstat.tools.visualgc.resource.Res;
+
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -45,7 +47,7 @@ public final class NotSupportedDisplayer extends JPanel {
     /**
      * Not supported for this JVM.
      */
-    public static final String JVM ="Not supported for this JVM.";   // NOI18N
+    public static final String JVM = Res.getString("not.supported.for.this.jvm");//"Not supported for this JVM.";   // NOI18N
 //    /**
 //     * Not supported for this host.
 //     */

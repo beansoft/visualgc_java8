@@ -232,7 +232,7 @@ public class VisualGCPane implements ActionListener {
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
          "Graphs", true), DataViewComponent.TOP_RIGHT);
     dvc.addDetailsView(this.graphGCViewSupport.getDetailsView(), DataViewComponent.TOP_RIGHT);
-//    dvc.addDetailsView( new DataViewComponent.DetailsView( "Graphs", null, 10, new JLabel("Test"), null), DataViewComponent.TOP_RIGHT);// Add a Tab
+    dvc.addDetailsView( new DataViewComponent.DetailsView( "Graphs", null, 10, new JLabel("Test"), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
         "Histogram", true), DataViewComponent.BOTTOM_LEFT);
     dvc.addDetailsView(this.histogramViewSupport.getDetailsView(), DataViewComponent.BOTTOM_LEFT);
