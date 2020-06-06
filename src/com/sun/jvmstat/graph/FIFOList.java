@@ -1,7 +1,9 @@
 package com.sun.jvmstat.graph;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class FIFOList extends ArrayList<Number> {
   private int maxSize;
@@ -9,12 +11,18 @@ public class FIFOList extends ArrayList<Number> {
   private double minValue;
   private boolean autoRange;
 
+  private List<Long> timeList;
+
+  public static transient long timeStamp = 0;
+
   public FIFOList(int maxSize, double minValue, double maxValue) {
     super(maxSize);
     this.maxSize = maxSize;
     this.minValue = minValue;
     this.maxValue = maxValue;
     this.autoRange = false;
+
+    timeList = new ArrayList<Long>(maxSize);
   }
 
   public FIFOList(int maxSize, boolean autoRange) {
@@ -28,13 +36,20 @@ public class FIFOList extends ArrayList<Number> {
   }
 
   public boolean add(Number value) {
+    if(timeStamp == 0) {
+      timeStamp = System.currentTimeMillis();
+    }
+    timeList.add(timeStamp);
+
     Number firstElement = null;
     if (this.size() > this.maxSize) {
       firstElement = (Number)this.get(0);
       super.remove(0);
+      timeList.remove(0);
     }
 
     boolean added = super.add(value);
+
     if (this.autoRange) {
       if (firstElement == null) {
         this.recomputeRange(value.doubleValue());
@@ -44,6 +59,10 @@ public class FIFOList extends ArrayList<Number> {
     }
 
     return added;
+  }
+
+  public Long getTimestamp(int idx) {
+    return timeList.get(idx);
   }
 
   private void recomputeRange(double value) {

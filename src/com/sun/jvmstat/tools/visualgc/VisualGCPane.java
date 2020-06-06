@@ -1,6 +1,7 @@
 package com.sun.jvmstat.tools.visualgc;
 
 import beansoft.swing.OptionPane;
+import com.sun.jvmstat.graph.FIFOList;
 import com.sun.jvmstat.graph.GridDrawer;
 import com.sun.jvmstat.graph.Level;
 import com.sun.jvmstat.graph.Line;
@@ -186,6 +187,7 @@ public class VisualGCPane implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
     refresh();
+    FIFOList.timeStamp = System.currentTimeMillis();
   }
 
   private void refresh() {

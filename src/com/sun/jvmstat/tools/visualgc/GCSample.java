@@ -43,7 +43,7 @@ public class GCSample {
    String lastGCCause;
    String currentGCCause;
    static long maxTenuringThreshold;
-   static long osFrequency;
+   public static long osFrequency;
    static String javaCommand;
    static String javaHome;
    static String vmArgs;
