@@ -41,88 +41,81 @@ public class FIFOList extends ArrayList<Number> {
     }
     timeList.add(timeStamp);
 
-    Number firstElement = null;
+    Number removed = null;
     if (this.size() > this.maxSize) {
-      firstElement = (Number)this.get(0);
+      removed = this.get(0);
       super.remove(0);
       timeList.remove(0);
     }
 
-    boolean added = super.add(value);
+    boolean rv = super.add(value);
 
     if (this.autoRange) {
-      if (firstElement == null) {
+      if (removed == null) {
         this.recomputeRange(value.doubleValue());
       } else {
-        this.recomputeRange(firstElement.doubleValue(), value.doubleValue());
+        this.recomputeRange(removed.doubleValue(), value.doubleValue());
       }
     }
 
-    return added;
+    return rv;
   }
 
   public Long getTimestamp(int idx) {
     return timeList.get(idx);
   }
 
-  private void recomputeRange(double value) {
-    if (value > this.maxValue) {
-      this.maxValue = value;
-    } else if (value < this.minValue) {
-      this.minValue = value;
+  private void recomputeRange(double newValue) {
+    if (newValue > this.maxValue) {
+      this.maxValue = newValue;
+    } else if (newValue < this.minValue) {
+      this.minValue = newValue;
     }
 
   }
 
-  private void recomputeRange(double var1, double var3) {
-    this.maxValue = this.recomputeMaxValue(var1, var3);
-    this.minValue = this.recomputeMinValue(var1, var3);
+  private void recomputeRange(double oldValue, double newValue) {
+    this.maxValue = recomputeMaxValue(oldValue, newValue);
+    this.minValue = recomputeMinValue(oldValue, newValue);
   }
 
-  private double recomputeMaxValue(double var1, double var3) {
-    if (var3 >= this.maxValue) {
-      return var3;
-    } else {
-      return var1 == this.maxValue ? this.findMaxValue() : this.maxValue;
-    }
+
+  private double recomputeMaxValue(double oldValue, double newValue) {
+    if (newValue >= this.maxValue)
+      return newValue;
+    if (oldValue == this.maxValue)
+      return findMaxValue();
+    return this.maxValue;
   }
 
-  private double recomputeMinValue(double var1, double var3) {
-    if (var3 <= this.minValue) {
-      return var3;
-    } else {
-      return var1 == this.minValue ? this.findMinValue() : this.minValue;
-    }
+  private double recomputeMinValue(double oldValue, double newValue) {
+    if (newValue <= this.minValue)
+      return newValue;
+    if (oldValue == this.minValue)
+      return findMinValue();
+    return this.minValue;
   }
 
   private double findMinValue() {
-    double minValue = Double.MAX_VALUE;
-    Iterator var3 = this.iterator();
-
-    while(var3.hasNext()) {
-      Number var4 = (Number)var3.next();
-      double var5 = var4.doubleValue();
-      if (var5 < minValue) {
-        minValue = var5;
-      }
+    double min = Double.MAX_VALUE;
+    for (Iterator i = iterator(); i.hasNext(); ) {
+      Number n = (Number)i.next();
+      double value = n.doubleValue();
+      if (value < min)
+        min = value;
     }
-
-    return minValue;
+    return min;
   }
 
   private double findMaxValue() {
-    double var1 = Double.MIN_VALUE;
-    Iterator var3 = this.iterator();
-
-    while(var3.hasNext()) {
-      Number var4 = (Number)var3.next();
-      double var5 = var4.doubleValue();
-      if (var5 > var1) {
-        var1 = var5;
-      }
+    double max = Double.MIN_VALUE;
+    for (Iterator i = iterator(); i.hasNext(); ) {
+      Number n = (Number)i.next();
+      double value = n.doubleValue();
+      if (value > max)
+        max = value;
     }
-
-    return var1;
+    return max;
   }
 
   public boolean isAutoRange() {

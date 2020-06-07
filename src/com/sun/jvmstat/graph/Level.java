@@ -9,8 +9,8 @@ public class Level extends JComponent {
   private double level;
   private GridDrawer gridDrawer;
 
-  public Level(Color var1) {
-    this.color = var1;
+  public Level(Color color) {
+    this.color = color;
     this.gridDrawer = new GridDrawer(10, 10);
   }
 
@@ -26,29 +26,26 @@ public class Level extends JComponent {
     this.paint(g);
   }
 
-  public void updateLevel(double level) {
-    this.level = level;
+  public void updateLevel(double ratio) {
+    this.level = ratio;
   }
 
-  public void updateGrayLevel(double grayLevel) {
-    this.gridDrawer.splitRange(grayLevel, Color.DARK_GRAY);
+  public void updateGrayLevel(double ratio) {
+    this.gridDrawer.splitRange(ratio, Color.DARK_GRAY);
   }
+
 
   public void drawLevel(Graphics g) {
-    int height = this.getHeight();
-    int width = this.getWidth();
-    int var4 = (int)((double)(width * height) * this.level);
-    int var5 = var4 / width;
-    if (var5 > height) {
-      var5 = height;
-    }
-
-    if (this.level != 0.0D && var5 == 0) {
-      var5 = 1;
-    }
-
+    int height = getHeight();
+    int width = getWidth();
+    int area = (int)((width * height) * this.level);
+    int levelHeight = area / width;
+    if (levelHeight > height)
+      levelHeight = height;
+    if (this.level != 0.0D && levelHeight == 0)
+      levelHeight = 1;
     g.setColor(this.color);
-    g.fill3DRect(0, height - var5, width, height, true);
+    g.fill3DRect(0, height - levelHeight, width, height, true);
   }
 
   public Color getColor() {

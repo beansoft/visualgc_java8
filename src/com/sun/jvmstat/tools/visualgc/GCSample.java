@@ -88,51 +88,51 @@ public class GCSample {
 
    }
 
-   GCSample(Model var1) {
-      initStaticCounters(var1);
-      this.newGenMaxSize = var1.getNewGenMaxSize();
-      this.newGenMinSize = var1.getNewGenMinSize();
-      this.newGenCurSize = var1.getNewGenCurSize();
-      this.edenUsed = var1.getEdenUsed();
-      this.survivor0Used = var1.getSurvivor0Used();
-      this.survivor1Used = var1.getSurvivor1Used();
-      this.tenuredUsed = var1.getTenuredUsed();
-      this.permUsed = var1.getPermUsed();
-      this.tenuringThreshold = var1.getTenuringThreshold();
-      this.edenSize = var1.getEdenSize();
-      this.survivor0Size = var1.getSurvivor0Size();
-      this.survivor1Size = var1.getSurvivor1Size();
-      this.tenuredSize = var1.getTenuredSize();
-      this.permSize = var1.getPermSize();
-      this.edenCapacity = var1.getEdenCapacity();
-      this.survivor0Capacity = var1.getSurvivor0Capacity();
-      this.survivor1Capacity = var1.getSurvivor1Capacity();
-      this.tenuredCapacity = var1.getTenuredCapacity();
-      this.permCapacity = var1.getPermCapacity();
-      this.edenGCEvents = var1.getEdenGCEvents();
-      this.edenGCTime = var1.getEdenGCTime();
-      this.tenuredGCEvents = var1.getTenuredGCEvents();
-      this.tenuredGCTime = var1.getTenuredGCTime();
-      this.tenuringThreshold = var1.getTenuringThreshold();
-      this.desiredSurvivorSize = var1.getDesiredSurvivorSize();
-      this.ageTableSizes = var1.getAgeTableSizes();
-      this.lastGCCause = var1.getLastGCCause();
-      this.currentGCCause = var1.getCurrentGCCause();
-      this.classLoadTime = var1.getClassLoadTime();
-      this.classesLoaded = var1.getClassesLoaded();
-      this.classesUnloaded = var1.getClassesUnloaded();
-      this.classBytesLoaded = var1.getClassBytesLoaded();
-      this.classBytesUnloaded = var1.getClassBytesUnloaded();
-      this.totalCompileTime = var1.getTotalCompileTime();
-      this.totalCompile = var1.getTotalCompile();
-      var1.initializeFinalizer();
-      this.finalizerInitialized = var1.isFinalizerInitialized();
-      this.finalizerTime = var1.getFinalizerTime();
-      this.finalizerCount = var1.getFinalizerCount();
-      this.finalizerQLength = var1.getFinalizerQLength();
-      this.finalizerQMaxLength = var1.getFinalizerQMaxLength();
-      this.osElapsedTime = var1.getOsElapsedTime();
-      this.lastModificationTime = var1.getLastModificationTime();
+   GCSample(Model model) {
+      initStaticCounters(model);
+      this.newGenMaxSize = model.getNewGenMaxSize();
+      this.newGenMinSize = model.getNewGenMinSize();
+      this.newGenCurSize = model.getNewGenCurSize();
+      this.edenUsed = model.getEdenUsed();
+      this.survivor0Used = model.getSurvivor0Used();
+      this.survivor1Used = model.getSurvivor1Used();
+      this.tenuredUsed = model.getTenuredUsed();
+      this.permUsed = model.getPermUsed();
+      this.tenuringThreshold = model.getTenuringThreshold();
+      this.edenSize = model.getEdenSize();
+      this.survivor0Size = model.getSurvivor0Size();
+      this.survivor1Size = model.getSurvivor1Size();
+      this.tenuredSize = model.getTenuredSize();
+      this.permSize = model.getPermSize();
+      this.edenCapacity = model.getEdenCapacity();
+      this.survivor0Capacity = model.getSurvivor0Capacity();
+      this.survivor1Capacity = model.getSurvivor1Capacity();
+      this.tenuredCapacity = model.getTenuredCapacity();
+      this.permCapacity = model.getPermCapacity();
+      this.edenGCEvents = model.getEdenGCEvents();
+      this.edenGCTime = model.getEdenGCTime();
+      this.tenuredGCEvents = model.getTenuredGCEvents();
+      this.tenuredGCTime = model.getTenuredGCTime();
+      this.tenuringThreshold = model.getTenuringThreshold();
+      this.desiredSurvivorSize = model.getDesiredSurvivorSize();
+      this.ageTableSizes = model.getAgeTableSizes();
+      this.lastGCCause = model.getLastGCCause();
+      this.currentGCCause = model.getCurrentGCCause();
+      this.classLoadTime = model.getClassLoadTime();
+      this.classesLoaded = model.getClassesLoaded();
+      this.classesUnloaded = model.getClassesUnloaded();
+      this.classBytesLoaded = model.getClassBytesLoaded();
+      this.classBytesUnloaded = model.getClassBytesUnloaded();
+      this.totalCompileTime = model.getTotalCompileTime();
+      this.totalCompile = model.getTotalCompile();
+      model.initializeFinalizer();
+      this.finalizerInitialized = model.isFinalizerInitialized();
+      this.finalizerTime = model.getFinalizerTime();
+      this.finalizerCount = model.getFinalizerCount();
+      this.finalizerQLength = model.getFinalizerQLength();
+      this.finalizerQMaxLength = model.getFinalizerQMaxLength();
+      this.osElapsedTime = model.getOsElapsedTime();
+      this.lastModificationTime = model.getLastModificationTime();
    }
 
    public double getAdjustedEdenSize() {

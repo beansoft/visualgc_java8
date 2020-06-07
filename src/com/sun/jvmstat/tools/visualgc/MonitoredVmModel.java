@@ -1,5 +1,6 @@
 package com.sun.jvmstat.tools.visualgc;
 
+import com.sun.jvmstat.util.Converter;
 import sun.jvmstat.monitor.LongMonitor;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredVm;
@@ -26,6 +27,9 @@ class MonitoredVmModel implements Model {
    private LongMonitor tenuredUsed;
    private LongMonitor tenuredGCTime;
    private LongMonitor tenuredGCEvents;
+
+   private LongMonitor stopGCTime;
+
    private LongMonitor permSize;
    private LongMonitor permCapacity;
    private LongMonitor permUsed;
@@ -38,6 +42,7 @@ class MonitoredVmModel implements Model {
    private StringMonitor currentGCCause;
    private StringMonitor collector0name;
    private StringMonitor collector1name;
+   private StringMonitor collector2name;
    private boolean finalizerInitialized = false;
    private LongMonitor finalizerTime;
    private LongMonitor finalizerQLength;
@@ -96,6 +101,20 @@ class MonitoredVmModel implements Model {
       this.lastGCCause = (StringMonitor)this.vm.findByName("sun.gc.lastCause");
       this.currentGCCause = (StringMonitor)this.vm.findByName("sun.gc.cause");
       this.collector0name = (StringMonitor)this.vm.findByName("sun.gc.collector.0.name");
+      this.collector1name = (StringMonitor)this.vm.findByName("sun.gc.collector.1.name");
+
+      try {
+         System.out.println("collector0name=" + collector0name.stringValue());
+         System.out.println("collector1name=" + collector1name.stringValue());
+
+         System.out.println("gc policy name=" + ((StringMonitor)this.vm.findByName("sun.gc.policy.name")).stringValue());
+         System.out.println("collector2name=" + ((StringMonitor)this.vm.findByName("sun.gc.collector.2.name")).stringValue());
+         // collector0name=PCopy
+         //collector1name=CMS
+         //collector2name=CMS stop-the-world phases
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
    }
 
    private void initialize_common() throws MonitorException {
@@ -118,6 +137,8 @@ class MonitoredVmModel implements Model {
       this.edenGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.0.time");
       this.tenuredGCEvents = (LongMonitor)this.vm.findByName("sun.gc.collector.1.invocations");
       this.tenuredGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.1.time");
+
+
       this.ageTableSize = (LongMonitor)this.vm.findByName("sun.gc.generation.0.agetable.size");
       if (this.ageTableSize != null) {
          this.maxTenuringThreshold = (LongMonitor)this.vm.findByName("sun.gc.policy.maxTenuringThreshold");
@@ -169,6 +190,12 @@ class MonitoredVmModel implements Model {
       this.endorsedDirs = (StringMonitor)this.vm.findByName("java.property.java.endorsed.dirs");
       this.extDirs = (StringMonitor)this.vm.findByName("java.property.java.ext.dirs");
       this.lastModificationTime = (LongMonitor)this.vm.findByName("sun.perfdata.timestamp");
+
+      this.stopGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.2.time");
+
+      if(stopGCTime != null) {
+         System.out.println("stopGCTime=" + Converter.longToTimeString(stopGCTime.longValue(), this.osFrequency.longValue()));
+      }
    }
 
    void initialize() throws MonitorException {

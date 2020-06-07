@@ -26,8 +26,6 @@ public class GCSpacePanel extends JPanel {
    private String borderString;
    private FIFOList dataset;
    private boolean reservedMode;
-   // $FF: synthetic field
-   static final boolean $assertionsDisabled;
 
    public GCSpacePanel(String title, long maxValue, long capacity, Color color) {
       this(title, maxValue, capacity, color, false);
@@ -96,35 +94,28 @@ public class GCSpacePanel extends JPanel {
    }
 
    public void updateGraph(long var1, long var3, long var5) {
-      if (!$assertionsDisabled && !SwingUtilities.isEventDispatchThread()) {
-         throw new AssertionError();
+      assert SwingUtilities.isEventDispatchThread();
+      this.dataset.add(new Double((double)var5));
+      if (this.isShowReservedSpace()) {
+         this.dataset.setMaxValue((double)var1);
+         this.line.updateGrayLevel(1.0D - (double)var3 / (double)var1);
       } else {
-         this.dataset.add(new Double((double)var5));
-         if (this.isShowReservedSpace()) {
-            this.dataset.setMaxValue((double)var1);
-            this.line.updateGrayLevel(1.0D - (double)var3 / (double)var1);
-         } else {
-            this.dataset.setMaxValue((double)var3);
-            this.line.updateGrayLevel(0.0D);
-         }
-
+         this.dataset.setMaxValue((double)var3);
+         this.line.updateGrayLevel(0.0D);
       }
+
    }
 
    public void updateGraph(long var1, long var3, long var5, long var7) {
-      if (!$assertionsDisabled && !SwingUtilities.isEventDispatchThread()) {
-         throw new AssertionError();
+      assert SwingUtilities.isEventDispatchThread();
+      this.dataset.add(new Double((double)var5));
+      if (this.isShowReservedSpace()) {
+         long var9 = var1 + var7;
+         this.dataset.setMaxValue((double)var9);
+         this.line.updateGrayLevel(1.0D - (double)var3 / (double)var9);
       } else {
-         this.dataset.add(new Double((double)var5));
-         if (this.isShowReservedSpace()) {
-            long var9 = var1 + var7;
-            this.dataset.setMaxValue((double)var9);
-            this.line.updateGrayLevel(1.0D - (double)var3 / (double)var9);
-         } else {
-            this.dataset.setMaxValue((double)var3);
-            this.line.updateGrayLevel(0.0D);
-         }
-
+         this.dataset.setMaxValue((double)var3);
+         this.line.updateGrayLevel(0.0D);
       }
    }
 
@@ -154,7 +145,4 @@ public class GCSpacePanel extends JPanel {
       var11.setTitle(var14);
    }
 
-   static {
-      $assertionsDisabled = !GCSpacePanel.class.desiredAssertionStatus();
-   }
 }

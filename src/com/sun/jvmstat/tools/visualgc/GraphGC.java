@@ -84,8 +84,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
 
 
       Line line = new Line(this.gcActiveDataSet, gcColor);
-      Border etchedBorder = BorderFactory.createEtchedBorder(gcColor, Color.GRAY);
-      TitledBorder titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, gcColor);
+      Border border = BorderFactory.createEtchedBorder(gcColor, Color.GRAY);
+      TitledBorder titledBorder = BorderFactory.createTitledBorder(border, "", 0, 0, font, gcColor);
       this.edenGcPanel.setBorder(titledBorder);
       this.edenGcPanel.add(line);
 
@@ -95,8 +95,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.edenGcTimeDataSet = new FIFOList(1000);
       Line edenGcTimeLine = new Line(this.edenGcTimeDataSet, gcColor);
       edenGcTimeLine.setTimeMode(true);
-      etchedBorder = BorderFactory.createEtchedBorder(gcColor, Color.GRAY);
-      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "Eden GC Time", 0, 0, font, gcColor);
+      border = BorderFactory.createEtchedBorder(gcColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(border, "Eden GC Time", 0, 0, font, gcColor);
       this.edenGcTimePanel.setBorder(titledBorder);
       this.edenGcTimePanel.add(edenGcTimeLine);
 
@@ -106,8 +106,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.tenuredGCTimeDataSet = new FIFOList(1000);
       Line tenuredGcTimeLine = new Line(this.tenuredGCTimeDataSet, gcColor);
       tenuredGcTimeLine.setTimeMode(true);
-      etchedBorder = BorderFactory.createEtchedBorder(gcColor, Color.GRAY);
-      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "Old GC Time", 0, 0, font, gcColor);
+      border = BorderFactory.createEtchedBorder(gcColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(border, "Old GC Time", 0, 0, font, gcColor);
       this.tenuredGCTimePanel.setBorder(titledBorder);
       this.tenuredGCTimePanel.add(tenuredGcTimeLine);
 
@@ -118,8 +118,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       Color classColor = Color.getColor("graphgc.class.color", Color.CYAN);
       this.classLoaderActiveDataSet = new FIFOList(1000, 0.0D, 1.0D);
       line = new Line(this.classLoaderActiveDataSet, classColor);
-      etchedBorder = BorderFactory.createEtchedBorder(classColor, Color.GRAY);
-      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, classColor);
+      border = BorderFactory.createEtchedBorder(classColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(border, "", 0, 0, font, classColor);
       this.classPanel.setBorder(titledBorder);
       this.classPanel.add(line);
       this.compilePanel = new JPanel();
@@ -128,8 +128,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       Color compileColor = Color.getColor("graphgc.compile.color", Color.WHITE);
       this.compilerActiveDataSet = new FIFOList(1000, 0.0D, 1.0D);
       line = new Line(this.compilerActiveDataSet, compileColor);
-      etchedBorder = BorderFactory.createEtchedBorder(compileColor, Color.GRAY);
-      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, compileColor);
+      border = BorderFactory.createEtchedBorder(compileColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(border, "", 0, 0, font, compileColor);
       this.compilePanel.setBorder(titledBorder);
       this.compilePanel.add(line);
       this.finalizerPanel = new JPanel();
@@ -138,8 +138,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       Color finalizerColor = Color.getColor("graphgc.finalizer.color", Color.WHITE);
       this.finalizerActiveDataSet = new FIFOList(1000, 0.0D, 1.0D);
       line = new Line(this.finalizerActiveDataSet, finalizerColor);
-      etchedBorder = BorderFactory.createEtchedBorder(finalizerColor, Color.GRAY);
-      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, finalizerColor);
+      border = BorderFactory.createEtchedBorder(finalizerColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(border, "", 0, 0, font, finalizerColor);
       this.finalizerPanel.setBorder(titledBorder);
       this.finalizerPanel.add(line);
       this.finalizerQPanel = new JPanel();
@@ -147,8 +147,8 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.finalizerQPanel.setLayout(new GridLayout(1, 1));
       this.finalizerQLengthDataSet = new FIFOList(1000);
       line = new Line(this.finalizerQLengthDataSet, finalizerColor);
-      etchedBorder = BorderFactory.createEtchedBorder(finalizerColor, Color.GRAY);
-      titledBorder = BorderFactory.createTitledBorder(etchedBorder, "", 0, 0, font, finalizerColor);
+      border = BorderFactory.createEtchedBorder(finalizerColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(border, "", 0, 0, font, finalizerColor);
       this.finalizerQPanel.setBorder(titledBorder);
       this.finalizerQPanel.add(line);
       this.timePanel = new JPanel();
@@ -310,11 +310,11 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       titledBorder.setTitle(title);
 
       titledBorder = (TitledBorder)this.edenGcTimePanel.getBorder();
-      title = "Eden GC Time: Last: " + Converter.longToTimeString(lastEdenGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(edenGcTimeDataSet.getMaxValue(), GCSample.osFrequency);
+      title = "Eden GC Time: " + Converter.longToTimeString(lastEdenGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(edenGcTimeDataSet.getMaxValue(), GCSample.osFrequency);
       titledBorder.setTitle(title);
 
       titledBorder = (TitledBorder)this.tenuredGCTimePanel.getBorder();
-      title = "Tenured GC Time: Last:" + Converter.longToTimeString(lastOldGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(this.tenuredGCTimeDataSet.getMaxValue(), GCSample.osFrequency);
+      title = "Tenured GC Time: " + Converter.longToTimeString(lastOldGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(this.tenuredGCTimeDataSet.getMaxValue(), GCSample.osFrequency);
       titledBorder.setTitle(title);
 
       this.permPanel.updateTextComponents(gcSample.permCapacity, gcSample.permUsed);
@@ -325,31 +325,31 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    }
 
    public void resetPanel(GCSample gcSample) {
-      Container contentPane = this.getContentPane();
-      contentPane.removeAll();
+      Container container = this.getContentPane();
+      container.removeAll();
       this.heapPanel.removeAll();
       this.timePanel.removeAll();
-      GridBagLayout var3 = new GridBagLayout();
-      this.heapPanel.setLayout(var3);
+      GridBagLayout gridBagLayout1 = new GridBagLayout();
+      this.heapPanel.setLayout(gridBagLayout1);
       GridBagConstraints gridBagConstraints = new GridBagConstraints();
       gridBagConstraints.fill = 1;
       gridBagConstraints.gridwidth = 0;
       gridBagConstraints.weightx = 1.0D;
-      double var5 = 0.3D;
-      double var7 = 0.1D;
-      double var9 = 0.1D;
-      double var11 = 0.3D;
-      double var13 = 0.2D;
-      gridBagConstraints.weighty = var13;
-      var3.setConstraints(this.permPanel, gridBagConstraints);
-      gridBagConstraints.weighty = var11;
-      var3.setConstraints(this.oldPanel, gridBagConstraints);
-      gridBagConstraints.weighty = var5;
-      var3.setConstraints(this.edenPanel, gridBagConstraints);
-      gridBagConstraints.weighty = var7;
-      var3.setConstraints(this.s0Panel, gridBagConstraints);
-      gridBagConstraints.weighty = var9;
-      var3.setConstraints(this.s1Panel, gridBagConstraints);
+      double d1 = 0.3D;
+      double d2 = 0.1D;
+      double d3 = 0.1D;
+      double d4 = 0.3D;
+      double d5 = 0.2D;
+      gridBagConstraints.weighty = d5;
+      gridBagLayout1.setConstraints(this.permPanel, gridBagConstraints);
+      gridBagConstraints.weighty = d4;
+      gridBagLayout1.setConstraints(this.oldPanel, gridBagConstraints);
+      gridBagConstraints.weighty = d1;
+      gridBagLayout1.setConstraints(this.edenPanel, gridBagConstraints);
+      gridBagConstraints.weighty = d2;
+      gridBagLayout1.setConstraints(this.s0Panel, gridBagConstraints);
+      gridBagConstraints.weighty = d3;
+      gridBagLayout1.setConstraints(this.s1Panel, gridBagConstraints);
       this.heapPanel.add(this.edenPanel);
       this.heapPanel.add(this.s0Panel);
       this.heapPanel.add(this.s1Panel);
@@ -368,15 +368,15 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
          var23 = 0.2D;
          this.timePanel.setLayout(new GridLayout(5, 1));
          gridBagConstraints.weighty = var15;
-         var3.setConstraints(this.finalizerQPanel, gridBagConstraints);
+         gridBagLayout1.setConstraints(this.finalizerQPanel, gridBagConstraints);
          gridBagConstraints.weighty = var17;
-         var3.setConstraints(this.finalizerPanel, gridBagConstraints);
+         gridBagLayout1.setConstraints(this.finalizerPanel, gridBagConstraints);
          gridBagConstraints.weighty = var19;
-         var3.setConstraints(this.compilePanel, gridBagConstraints);
+         gridBagLayout1.setConstraints(this.compilePanel, gridBagConstraints);
          gridBagConstraints.weighty = var21;
-         var3.setConstraints(this.classPanel, gridBagConstraints);
+         gridBagLayout1.setConstraints(this.classPanel, gridBagConstraints);
          gridBagConstraints.weighty = var23;
-         var3.setConstraints(this.edenGcPanel, gridBagConstraints);
+         gridBagLayout1.setConstraints(this.edenGcPanel, gridBagConstraints);
          this.timePanel.add(this.finalizerQPanel);
          this.timePanel.add(this.finalizerPanel);
       } else {
@@ -394,10 +394,10 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.timePanel.add(this.edenGcTimePanel);
       this.timePanel.add(this.tenuredGCTimePanel);
 
-      contentPane = this.getContentPane();
+      container = this.getContentPane();
       GridBagLayout gridBagLayout = new GridBagLayout();
       GridBagConstraints mainPaneConstraints = new GridBagConstraints();
-      contentPane.setLayout(gridBagLayout);
+      container.setLayout(gridBagLayout);
       mainPaneConstraints.fill = 1;
       mainPaneConstraints.gridwidth = 0;
       mainPaneConstraints.weighty = 0.35D;
@@ -407,7 +407,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       mainPaneConstraints.weighty = 0.65D;
       mainPaneConstraints.weightx = 1.0D;
       gridBagLayout.setConstraints(this.heapPanel, mainPaneConstraints);
-      contentPane.add(this.timePanel);
-      contentPane.add(this.heapPanel);
+      container.add(this.timePanel);
+      container.add(this.heapPanel);
    }
 }

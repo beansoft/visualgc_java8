@@ -51,48 +51,49 @@ public class GridDrawer {
   }
 
   protected void draw(Graphics g, int width, int height) {
-    int var4 = (int)((double)(width * height) * this.splitLevel);
-    int var5 = var4 / width;
-    if (var5 > height) {
-      var5 = height;
+    int splitArea = (int)((double)(width * height) * this.splitLevel);
+    int splitHeight = splitArea / width;
+    if (splitHeight > height) {
+      splitHeight = height;
     }
 
-    if (this.splitLevel != 0.0D && var5 == 0) {
-      var5 = 1;
+    if (this.splitLevel != 0.0D && splitHeight == 0) {
+      splitHeight = 1;
     }
 
-    int var6;
-    if (var5 != 0) {
+    int i;
+    if (splitHeight != 0) {
       g.setColor(this.secondaryColor);
 
-      for(var6 = 0; var6 < width; var6 += this.xIncrement) {
-        g.drawLine(var6, 0, var6, var5 - 1);
+      for(i = 0; i < width; i += this.xIncrement) {
+        g.drawLine(i, 0, i, splitHeight - 1);
       }
 
-      g.drawLine(width - 1, 0, width - 1, var5 - 1);
+      g.drawLine(width - 1, 0, width - 1, splitHeight - 1);
 
-      for(var6 = 0; var6 <= var5 - 1; var6 += this.yIncrement) {
-        g.drawLine(0, var6, width - 1, var6);
+      for(i = 0; i <= splitHeight - 1; i += this.yIncrement) {
+        g.drawLine(0, i, width - 1, i);
       }
     }
 
     g.setColor(this.color);
 
-    for(var6 = 0; var6 < width; var6 += this.xIncrement) {
-      g.drawLine(var6, var5, var6, height - 1);
+    for(i = 0; i < width; i += this.xIncrement) {
+      g.drawLine(i, splitHeight, i, height - 1);
     }
 
-    g.drawLine(width - 1, var5, width - 1, height - 1);
-    if (this.splitLevel == 0.0D || var5 % this.yIncrement == 0) {
-      g.drawLine(0, var5, width - 1, var5);
+    g.drawLine(width - 1, splitHeight, width - 1, height - 1);
+    if (this.splitLevel == 0.0D || splitHeight % this.yIncrement == 0) {
+      g.drawLine(0, splitHeight, width - 1, splitHeight);
     }
 
-    var5 = (var5 + this.yIncrement) / this.yIncrement * this.yIncrement;
+    splitHeight = (splitHeight + this.yIncrement) / this.yIncrement * this.yIncrement;
 
-    for(var6 = var5; var6 < height; var6 += this.yIncrement) {
-      g.drawLine(0, var6, width - 1, var6);
+    for(i = splitHeight; i < height; i += this.yIncrement) {
+      g.drawLine(0, i, width - 1, i);
     }
 
     g.drawLine(0, height - 1, width, height - 1);
   }
+
 }

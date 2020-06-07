@@ -13,15 +13,15 @@ import javax.swing.*;
 
 public class Line extends JComponent {
   public static final int DEFAULT_DATASET_SIZE = 1000;
-  private static final int XSCALE = 2;
-  private static final Color SPLIT_GRID_COLOR;
+  private static final int XSCALE = 2;// X zoom scale
+  private static final Color SPLIT_GRID_COLOR = Color.DARK_GRAY;
   private Color color;
   private GridDrawer gridDrawer;
   private FIFOList dataset;
 
   private boolean timeMode = false;
 
-  java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat(
+  private static java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat(
           "HH:mm:ss.SSS");
 
   private MouseListener mouseListener = new MouseListener();
@@ -41,8 +41,8 @@ public class Line extends JComponent {
     this.gridDrawer.setSecondaryColor(SPLIT_GRID_COLOR);
     this.setPreferredSize(new Dimension(600, 100));
     this.addComponentListener(new ComponentAdapter() {
-      public void componentResized(ComponentEvent var1) {
-        super.componentResized(var1);
+      public void componentResized(ComponentEvent event) {
+        super.componentResized(event);
         Line.this.validate();
       }
     });
@@ -88,47 +88,47 @@ public class Line extends JComponent {
       int width = this.getWidth();
       int height = this.getHeight();
       double maxValue = this.dataset.getMaxValue();
-      int size = this.dataset.size();
-      int pointsToDisplay = Math.min(size, width / XSCALE);
-      double yRatio = (double)height / maxValue;
-      int[] xPoints = new int[pointsToDisplay + 2];
-      int[] yPoints = new int[pointsToDisplay + 2];
-      int startX = width - pointsToDisplay * XSCALE;
-      int dataStartX = size - pointsToDisplay;
+      int dpoints = this.dataset.size();
+      int points = Math.min(dpoints, width / XSCALE);
+      double yscale = (double)height / maxValue;
+      int[] xPoints = new int[points + 2];
+      int[] yPoints = new int[points + 2];
+      int plot_base = width - points * XSCALE;
+      int dataset_base = dpoints - points;
 //      System.out.println("size=" + size + " pointsToDisplay=" + pointsToDisplay +" startX=" + startX + ", dataStartX=" + dataStartX);
 
 
-      xPoints[0] = startX;// Polygon first point
+      xPoints[0] = plot_base;// Polygon first point
       yPoints[0] = height;
 
-      for(int i = 0; i < pointsToDisplay; ++i) {
-        double value = this.dataset.get(dataStartX + i).doubleValue();
-        int y = height - (int)(value * yRatio);
-        if (value > 0.0D && y < 0) {
-          y = 0;
+      for(int i = 0; i < points; ++i) {
+        double y = this.dataset.get(dataset_base + i).doubleValue();
+        int yi = height - (int)(y * yscale);
+        if (y > 0.0D && yi < 0) {
+          yi = 0;
         }
 
-        if (value > 0.0D && y >= height) {
-          y = height;
+        if (y > 0.0D && yi >= height) {
+          yi = height;
         }
 
-        xPoints[i + 1] = startX + i * XSCALE;
-        yPoints[i + 1] = y;
+        xPoints[i + 1] = plot_base + i * XSCALE;
+        yPoints[i + 1] = yi;
       }
 
-      xPoints[pointsToDisplay + 1] = width;// Polygon close chart
-      yPoints[pointsToDisplay + 1] = height;
+      xPoints[points + 1] = width;// Polygon close chart
+      yPoints[points + 1] = height;
       g.setColor(this.color);
-      g.fillPolygon(xPoints, yPoints, pointsToDisplay + 2);// Fill a polygon chart as a area chart
+      g.fillPolygon(xPoints, yPoints, points + 2);// Fill a polygon chart as a area chart
 
       if(inChart ) { //&& mouseX >= startX - XSCALE
-        int idx = dataStartX;
+        int idx = dataset_base;
         int posIdx = 0;
         int valueX = 0;
 
         if (mouseX >= xPoints[xPoints.length - 2]) {
 //          System.out.println("right empty");
-          idx = dataStartX + pointsToDisplay - 1;
+          idx = dataset_base + points - 1;
           posIdx = xPoints.length - 2;
           valueX = xPoints[posIdx];
         } else if(mouseX <= xPoints[1]) {
@@ -138,8 +138,8 @@ public class Line extends JComponent {
           valueX = xPoints[posIdx];
           dataX = valueX - 100;
         } else {
-          for(int i = 1; i < pointsToDisplay; ++i) {
-            int curIdx = dataStartX + i;
+          for(int i = 1; i < points; ++i) {
+            int curIdx = dataset_base + i;
             int xPointsPos = i + 1;
             int xPointsPosNext = i + 2;
 
@@ -214,9 +214,6 @@ public class Line extends JComponent {
     this.drawGraph(g);
   }
 
-  static {
-    SPLIT_GRID_COLOR = Color.DARK_GRAY;
-  }
 
   private void updateHighlightedItems() {
     SwingUtilities.invokeLater(new Runnable() {
