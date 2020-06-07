@@ -1,0 +1,2204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
+	<TITLE>1.4.2 HotSpot Instrumentation</TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice 6.0  (Solaris Sparc)">
+	<META NAME="CREATED" CONTENT="20020711;16280600">
+	<META NAME="CHANGED" CONTENT="20020723;18272700">
+</HEAD>
+<BODY LANG="en-US">
+<P ALIGN=CENTER STYLE="margin-top: 0.42cm; page-break-before: always; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>1.4.2
+HotSpot Instrumentation</B></FONT></FONT></P>
+<P ALIGN=LEFT><FONT FACE="Helvetica, sans-serif">This page provides a
+description of each of the instrumentation objects exported by the
+1.4.2 HotSpot Java Virtual Machine. Table 4 provides a description of
+each instrumentation object , including its Name, Data Type, Units of
+Measure, Variability Attribute, and Description. The Data Types are
+described in Table 1 and the Units of Measure in Table 2. Table 3
+contains descriptions of the Variability Attributes, which indicate
+the behavior of the instrumentation objects. All instrumentation
+objects for the 1.4.2 HotSpot JVM correspond to the 1.0 version of
+the PerfData structure. However, the location of the instrumentation
+backing store file and the names of numerous garbage collector counters
+has changed from 1.4.1, resulting in incompatibilities between the
+tools for these two versions.</FONT></P>
+<P ALIGN=LEFT><FONT FACE="Helvetica, sans-serif">The instrumentation
+objects listed here represent an uncommitted, experimental interface
+into the HotSpot JVM. These instrumentation objects may be changed or
+deleted at any time. End users should avoid writing scripts that
+depend on the names or other characteristics of these objects.</FONT></P>
+<P ALIGN=LEFT><FONT FACE="Helvetica, sans-serif">
+A JVM started with the <CODE><I>-XX:-UsePerfData</I></CODE> or
+<CODE><I>-XX:+PerfDisableSharedMem</I></CODE> options will not export
+its instrumentation. Some instrumentation objects listed below may only
+be available with certain command line options, as indicated in the
+<em>Notes</em> column in Table 4.
+</FONT></P>
+<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><B>Table 1: Data
+Types</B></FONT></P>
+<CENTER>
+	<TABLE WIDTH=502 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+		<COL WIDTH=78>
+		<COL WIDTH=113>
+		<COL WIDTH=285>
+		<THEAD>
+			<TR VALIGN=TOP>
+				<TH WIDTH=78>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Data Type</FONT></FONT></P>
+				</TH>
+				<TH WIDTH=113>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Abbreviation</FONT></FONT></P>
+				</TH>
+				<TH WIDTH=285>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Description</FONT></FONT></P>
+				</TH>
+			</TR>
+		</THEAD>
+		<TBODY>
+			<TR VALIGN=TOP>
+				<TD WIDTH=78>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Long</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=113>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=285>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>A signed, 64
+					bit long value.</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=78>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>String</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=113>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=285>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>A null
+					terminated UTF-8 sequence of bytes.</FONT></FONT></P>
+				</TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+</CENTER>
+<P ALIGN=CENTER><BR><BR>
+</P>
+<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><B>Table 2 : Units
+of Measure</B></FONT></P>
+<CENTER>
+	<TABLE WIDTH=633 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+		<COL WIDTH=69>
+		<COL WIDTH=81>
+		<COL WIDTH=457>
+		<THEAD>
+			<TR VALIGN=TOP>
+				<TH WIDTH=69>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name</FONT></FONT></P>
+				</TH>
+				<TH WIDTH=81>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Abbreviation</FONT></FONT></P>
+				</TH>
+				<TH WIDTH=457>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Description</FONT></FONT></P>
+				</TH>
+			</TR>
+		</THEAD>
+		<TBODY>
+			<TR VALIGN=TOP>
+				<TD WIDTH=69>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Bytes</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=81>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=457>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Bytes</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=69>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Events</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=81>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=457>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Arbitrary
+					event count. For example, the number garbage collection events
+					or class load events.</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=69>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Hz</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=81>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>H</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=457>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>A rate</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=69>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>String</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=81>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=457>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>A null
+					terminated UTF-8 sequence of bytes.</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=69>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Ticks</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=81>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=457>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>A measure of
+					time that scaled to an arbitrary rate. Tick values should be
+					scaled to an ordinary measure of time. The
+					hotspot.rt.hrt.frequency counter can and should be used to
+					convert tick values into ordinary measures of time.</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=69>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Unitless</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=81>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=457>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>The data
+					value has no particular unit of measure. For example it may be a
+					ratio or an ordinal value.</FONT></FONT></P>
+				</TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+</CENTER>
+<P ALIGN=CENTER><BR><BR>
+</P>
+<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><B>Table 3:
+Variability Attributes</B></FONT></P>
+<CENTER>
+	<TABLE WIDTH=724 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+		<COL WIDTH=156>
+		<COL WIDTH=112>
+		<COL WIDTH=430>
+		<THEAD>
+			<TR VALIGN=TOP>
+				<TH WIDTH=156>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Variability
+					Attribute</FONT></FONT></P>
+				</TH>
+				<TH WIDTH=112>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Abbreviation</FONT></FONT></P>
+				</TH>
+				<TH WIDTH=430>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Description</FONT></FONT></P>
+				</TH>
+			</TR>
+		</THEAD>
+		<TBODY>
+			<TR VALIGN=TOP>
+				<TD WIDTH=156>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Constant</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=112>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=430>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>The data
+					value of the instrumentation object never changes.</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=156>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Monotonic</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=112>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=430>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>The data
+					value of the instrumentation object changes monotonically.</FONT></FONT></P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=156>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Variable</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=112>
+					<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+				</TD>
+				<TD WIDTH=430>
+					<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>The data
+					value of the instrumentation object changes arbitrarily</FONT></FONT></P>
+				</TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+</CENTER>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><B>Table 4:
+Instrumentation Objects</B></FONT></P>
+<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=68*>
+	<COL WIDTH=13*>
+	<COL WIDTH=14*>
+	<COL WIDTH=10*>
+	<COL WIDTH=14*>
+	<COL WIDTH=138*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2><B>Name</B></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2><B>Type</B></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2><B>Units</B></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2><B>Var</B></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2><B>Notes</B></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2><B>Description</B></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.AdapterThread.compiles</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>1</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				compile tasks performed by the Adapter Thread</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.AdapterThread.method</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>1</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name of the
+				last method compiled by the Adapter Thread</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.AdapterThread.time</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>1</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Wall time
+				used the Adapter Thread</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.AdapterThread.type</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>1</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Type of the
+				last method compiled by the Adapter Thread</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.CompilerThread<I>N</I>.compiles</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>2</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				compile tasks performed by Compiler Thread <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.CompilerThread<I>N</I>.method</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>2</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name of the
+				last method compiled by Compiler Thread <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.CompilerThread<I>N</I>.time</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>2</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Wall time
+				used Compiler Thread <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.CompilerThread<I>N</I>.type</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>2</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Type of the
+				last method compiled by Compiler Thread <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.failed.method</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>3</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name of the
+				last method that failed to compile</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.failed.type</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Type of the
+				last method that failed to compile</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.invalidated.method</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name of the
+				last method compilation that was invalidated</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.invalidated.type</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Type of the
+				last method compilation that was invalidated</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.last.method</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name of the
+				last method compiled</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.last.size</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Size of the
+				byte code for the last method compiled</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.last.type</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Type of the
+				last method compiled</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.native.compiles</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				native compiles</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.native.time</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Time spent in
+				native compiles</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.nmethod.codesize</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Bytes use by
+				compiled methods</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.nmethod.size</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Bytes use by
+				compiled methods</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.osr.bytes</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				bytes of On Stack Replacement compiled code</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.osr.compiles</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of On
+				Stack Replacement compiles</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.osr.time</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Time spent in
+				On Stack Replacement compiles</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.standard.bytes</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				bytes of Standard compiled code</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.standard.compiles</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				Standard compiles</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.standard.time</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Time spent in
+				Standard compiles</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.threads</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of 
+				Compiler Threads</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.total.bailout</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>3</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				Failed compiles</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.total.compiles</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				Total compiles</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.total.invalid</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				invalid compiles</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.ci.total.time</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Total time
+				spent in compilation</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.agetable.bytes.<I>n</I></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>4,5</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				bytes of Java Objects in the active Survivor Space with age <I>n</I>.
+				The value for age 0 is always 0.</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.agetable.dss</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>5</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Desired
+				Survivor Size</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.agetable.mtt</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>5</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Maximum
+				Tenuring Threshold</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.agetable.size</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>5</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				entries in the Age Table</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.agetable.tt</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>5</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Current
+				Tenuring Threshold</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.cause</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>6</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Reason for
+				the current Garbage Collection</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.collector.<I>N</I>.invocations</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>7</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				Garbage Collector invocations for Collector <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.collector.<I>N</I>.last_entry</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>7</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Time stamp
+				of the last entry into Collector <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.collector.<I>N</I>.last_exit</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>7</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Time stamp
+				of the last exit from Collector <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.collector.<I>N</I>.name</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>7</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name of
+				Collector <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.collector.<I>N</I>.time</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>7</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Accumulated Wall Time 
+				in Collector <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.generation.<I>N</I>.capacity.current</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>8</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Current
+				Capacity of Generation <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.generation.<I>N</I>.capacity.max</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>8</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Maximum
+				Capacity of Generation <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.generation.<I>N</I>.capacity.min</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>8</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Minimum
+				Capacity of Generation <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.generation.<I>N</I>.name</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>8</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name of
+				Generation <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.generation.<I>N</I>.space.<I>M</I>.capacity</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>9</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Current
+				Capacity of Space <I>M</I> of Generation <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.generation.<I>N</I>.space.<I>M</I>.name</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>9</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name of
+				Space <I>M</I> of Generation <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.generation.<I>N</I>.space.<I>M</I>.size</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>9</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Maximum size
+				of Space <I>M</I> of Generation <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.generation.<I>N</I>.space.<I>M</I>.used</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>9</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Amount used in 
+				Space <I>M</I> of Generation <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.generation.<I>N</I>.spaces</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>8</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				spaces in Generation <I>N</I></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.last_cause</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>6</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Reason for
+				the previous Garbage Collection</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.policy.collectors</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of Collectors
+				for the Garbage Collector Policy</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.policy.generations</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>U</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of Generations
+				for the Garbage Collector Policy</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.gc.policy.name</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Name of 
+				the Garbage Collector Policy</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.internal.version</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>The internal
+				version string for HotSpot</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.perfdata.overflow</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>V</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>The number of
+				bytes of overflow for the instrumentation memory region</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.perfdata.size</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Size of the 
+				instrumentation memory region</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.perfdata.timestamp</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Time stamp of the 
+				last structural modification to instrumentation memory region</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.rt.cl.bytes.loaded</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of Java
+				heap bytes loaded by class loader</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.rt.cl.bytes.unloaded</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>B</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of Java
+				heap bytes unloaded by class loader</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.rt.cl.classes.loaded</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				classes loaded by class loader</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.rt.cl.classes.unloaded</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>E</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Number of
+				classes unloaded by class loader</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.rt.cl.time</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Time spent
+				loading and unloading classes</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.rt.hrt.frequency</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Hz</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Frequency(resolution)
+				of the High Resolution Timer</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.rt.hrt.ticks</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>L</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>T</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>M</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Current value
+				of the High Resolution Timer</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.vm.args</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>-XX args
+				passed to HotSpot via Invocation API</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>hotspot.vm.flags</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>-XX args
+				passed to HotSpot via the .hotspotrc file or the file indicated
+				by -XX:Flags</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.class.path</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.endorsed.dirs</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.ext.dirs</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.home</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.library.path</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.vm.info</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.vm.name</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.vm.specification.name</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.vm.specification.vendor</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.vm.specification.version</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.vm.vendor</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>java.vm.version</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>sun.boot.class.path</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>sun.boot.library.path</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>Java property</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=26%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>sun.java.command</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=5%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>S</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=4%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>C</FONT></FONT></P>
+			</TD>
+			<TD WIDTH=6%>
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>10</FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=54%>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>String
+				containing the Java class name or jar file name and the arguments
+				passed to the main method</FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<H1><FONT FACE="Helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt">Notes</FONT></FONT></H1>
+<DL>
+	<DD>
+	<TABLE WIDTH=743 BORDER=0 CELLPADDING=4 CELLSPACING=0>
+		<COL WIDTH=100>
+		<COL WIDTH=627>
+		<TR>
+			<TD WIDTH=100 VALIGN=TOP SDVAL="1" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">1</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3>The Adapter Compiler
+				thread instrumentation is only available with the -server option.
+                                </FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=100 VALIGN=TOP SDVAL="2" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">2</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3>Number of compiler
+				threads is controlled by the -XX:CompilerCount command line option.
+				The number of compiler threads is indicated in by the 
+                                <I>hotspot.ci.threads</I> instrument.</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=100 SDVAL="3" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">3</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3>Method compilation
+				may fail for various reasons. Not all failed method compilations
+				are cause for concern.</FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=100 SDVAL="4" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">4</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif">Age Table size indicated
+				 in the <I>hotspot.gc.agetable.size</I> instrument.</FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=100 SDVAL="5" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">5</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif">Age Table instrumentation
+				not available with <I>-XX:+UseParallelGC</I></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=100 SDVAL="6" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">6</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif">GC cause instrumentation
+				only updated in debug builds of the JVM. These may become
+                                generally available in a future release.</FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=100 SDVAL="7" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">7</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif">Number of collectors
+				indicated in the <I>hotspot.gc.policy.collectors</I> instrument.
+                                </FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=100 SDVAL="8" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">8</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif">Number of generations
+				indicated in the <I>hotspot.gc.policy.generations</I> instrument.
+                                </FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=100 SDVAL="9" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">9</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif">Number of spaces for a
+				particular generation, <I>N</I>, is indicated in the
+                                <I>hotspot.gc.generation.<I>N</I>.spaces</I> instrument.
+                                </FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=100 SDVAL="10" SDNUM="1033;">
+				<P ALIGN=CENTER><FONT FACE="Helvetica, sans-serif">10</FONT></P>
+			</TD>
+			<TD WIDTH=627>
+				<P><FONT FACE="Helvetica, sans-serif">The <I>sun.java.command</I>
+                                instrument depends on cooperation with the java application
+                                launcher. This value may be undefined or set to null when the
+                                application is launched from an embedded application.
+                                </FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=100>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=627>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+	</TABLE>
+</DL>
+<P><BR><BR>
+</P>
+<PRE STYLE="margin-bottom: 0.5cm"><FONT FACE="Helvetica, sans-serif">                                </FONT></PRE>
+</BODY>
+</HTML>
