@@ -131,5 +131,5 @@ interface Model {
    String getCollector2name();
    String getGcPolicyName();
 
-   long getFullGCTime();
+   long getCollector2GCTime();
 }

@@ -52,10 +52,10 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
    public VisualAgeHistogram a;
    GCSample previousSample;
 
-   public VisualHeap(GraphGC var1, VisualAgeHistogram var2, GCSample var3) {
-      this.previousSample = var3;
-      this.g = var1;
-      this.a = var2;
+   public VisualHeap(GraphGC graphGC, VisualAgeHistogram ageHistogram, GCSample gcSample) {
+      this.previousSample = gcSample;
+      this.g = graphGC;
+      this.a = ageHistogram;
       this.setTitle("VisualGC 3.0");
       this.addWindowListener(new WindowAdapter() {
          public void windowClosing(WindowEvent var1) {
@@ -138,8 +138,8 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       this.spacesPanel = new JPanel();
       this.spacesPanel.setBackground(Color.BLACK);
       this.spacesPanel.setBorder(var12);
-      this.initializeInfoPanel(var3);
-      this.resetPanel(var3);
+      this.initializeInfoPanel(gcSample);
+      this.resetPanel(gcSample);
    }
 
    private void initializeInfoPanel(GCSample var1) {
@@ -259,80 +259,77 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
 
    }
 
-   private void resetSpace(GCSample var1) {
-      this.resetPanel(var1);
-      this.g.resetPanel(var1);
+   private void resetSpace(GCSample sample) {
+      this.resetPanel(sample);
+      this.g.resetPanel(sample);
       if (this.a != null) {
-         this.a.resetPanel(var1);
+         this.a.resetPanel(sample);
       }
 
    }
 
-   public void actionPerformed(ActionEvent var1) {
+   public void actionPerformed(ActionEvent e) {
    }
 
-   public void update(GCSample var1) {
-      if (var1.heapSizeChanged(this.previousSample)) {
-         this.resetSpace(var1);
+   public void update(GCSample sample) {
+      if (sample.heapSizeChanged(this.previousSample)) {
+         this.resetSpace(sample);
       }
 
-      this.updateLevel(var1);
-      this.updateTextFields(var1);
+      this.updateLevel(sample);
+      this.updateTextFields(sample);
       this.refreshPanels();
-      this.previousSample = var1;
+      this.previousSample = sample;
    }
 
    public void refreshPanels() {
       this.repaint();
    }
 
-   public void updateLevel(GCSample var1) {
-      this.permLevel.updateLevel(var1.getPermLiveRatio());
-      this.permLevel.updateGrayLevel(1.0D - var1.getPermCommittedRatio());
-      this.oldLevel.updateLevel(var1.getTenuredLiveRatio());
-      this.oldLevel.updateGrayLevel(1.0D - var1.getTenuredCommittedRatio());
-      double var2 = var1.getAdjustedEdenSize();
-      double var4 = (double)var1.edenUsed;
-      double var6 = (double)var1.edenCapacity;
-      this.edenLevel.updateGrayLevel(1.0D - var6 / var2);
-      this.edenLevel.updateLevel(var4 / var2);
-      double var8 = (double)var1.survivor0Used;
-      double var10 = (double)var1.survivor0Capacity;
-      this.s0Level.updateLevel(var8 / var10);
-      double var12 = (double)var1.survivor1Used;
-      double var14 = (double)var1.survivor1Capacity;
-      this.s1Level.updateLevel(var12 / var14);
+   public void updateLevel(GCSample sample) {
+      this.permLevel.updateLevel(sample.getPermLiveRatio());
+      this.permLevel.updateGrayLevel(1.0D - sample.getPermCommittedRatio());
+      this.oldLevel.updateLevel(sample.getTenuredLiveRatio());
+      this.oldLevel.updateGrayLevel(1.0D - sample.getTenuredCommittedRatio());
+      double adjustedEdenSize = sample.getAdjustedEdenSize();
+      double edenUsed = (double)sample.edenUsed;
+      double edenCapacity = (double)sample.edenCapacity;
+      this.edenLevel.updateGrayLevel(1.0D - edenCapacity / adjustedEdenSize);
+      this.edenLevel.updateLevel(edenUsed / adjustedEdenSize);
+      double survivor0Used = (double)sample.survivor0Used;
+      double survivor0Capacity = (double)sample.survivor0Capacity;
+      this.s0Level.updateLevel(survivor0Used / survivor0Capacity);
+      double survivor1Used = (double)sample.survivor1Used;
+      double survivor1Capacity = (double)sample.survivor1Capacity;
+      this.s1Level.updateLevel(survivor1Used / survivor1Capacity);
    }
 
-   public void updateTextFields(GCSample var1) {
-      Color var2 = Color.WHITE;
-      String var3 = Res.getString("alive");
-      if (var1 != this.previousSample) {
-         if (var1.osElapsedTime == this.previousSample.osElapsedTime) {
+   public void updateTextFields(GCSample sample) {
+      Color color = Color.WHITE;
+      String str = Res.getString("alive");
+      if (sample != this.previousSample) {
+         if (sample.osElapsedTime == this.previousSample.osElapsedTime) {
             if (this.livenessIndicator.getForeground() != Color.red) {
-               var2 = Color.red;
+               color = Color.red;
             }
 
-            var3 = Res.getString("dead");
+            str = Res.getString("dead");
          } else if (this.livenessIndicator.getForeground() != Color.green) {
-            var2 = Color.green;
+            color = Color.green;
          }
       }
 
-      this.livenessIndicator.setForeground(var2);
-      this.livenessIndicator.setText(var3);
-      this.etField.setText(Converter.longToTimeString(var1.osElapsedTime, GCSample.osFrequency));
+      this.livenessIndicator.setForeground(color);
+      this.livenessIndicator.setText(str);
+      this.etField.setText(Converter.longToTimeString(sample.osElapsedTime, GCSample.osFrequency));
    }
 
-   public void update(Graphics var1) {
-      this.paint(var1);
+   public void update(Graphics g) {
+      this.paint(g);
    }
 
    public void draw() {
       this.repaint();
    }
 
-   public void paint(Graphics var1) {
-      super.paint(var1);
-   }
 }

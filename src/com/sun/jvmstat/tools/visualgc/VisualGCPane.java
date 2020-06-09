@@ -21,6 +21,8 @@ import sun.jvmstat.monitor.event.VmStatusChangeEvent;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -67,6 +69,68 @@ public class VisualGCPane implements ActionListener {
   private String vmIdString;
   private VmIdentifier vmId;
 
+  static class PsListModel extends DefaultListModel<String> implements ActionListener{
+    private Timer timer = new Timer(2000, this);
+
+    public PsListModel() {
+      timer.start();
+    }
+
+//    @Override
+//    public int getSize() {
+//      return data.size();
+//    }
+//
+//    @Override
+//    public Object getElementAt(int index) {
+//      return data.get(index);
+//    }
+//
+//    /**
+//     * Empties the list.
+//     */
+//    public void removeAllElements() {
+//      if ( data.size() > 0 ) {
+//        int firstIndex = 0;
+//        int lastIndex = data.size() - 1;
+//        data.clear();
+//        fireIntervalRemoved(this, firstIndex, lastIndex);
+//      }
+//    }
+//
+//    /**
+//     * Empties the list.
+//     */
+//    public void refreshAllElements(List<String> ps) {
+//      if ( data.size() > 0 ) {
+//        int firstIndex = 0;
+//        int lastIndex = data.size() - 1;
+//        data.clear();
+//
+//        fireIntervalRemoved(this, firstIndex, lastIndex);
+//        data.addAll(ps);
+//        fireIntervalAdded(this, 0, data.size() - 1);
+//      }
+//    }
+
+    public void start() {
+      timer.start();
+    }
+
+    public void stop() {
+      timer.stop();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      List<String> ps =  JpsHelper.getJvmPSList();
+      super.removeAllElements();
+      for(String pid : ps) {
+        super.addElement(pid);
+      }
+    }
+  }
+
   class TerminationHandler
           implements HostListener {
 
@@ -97,6 +161,14 @@ public class VisualGCPane implements ActionListener {
   }
 
   public void startMonitor(String vmIdString) {
+    if(timer != null && timer.isRunning()) {
+      timer.stop();
+    }
+
+    if(vmIdString == null || vmIdString.length() == 0) {
+      return;
+    }
+
     this.vmIdString = vmIdString;
     try {
       this.vmId = new VmIdentifier(this.vmIdString);
@@ -106,7 +178,9 @@ public class VisualGCPane implements ActionListener {
 
     this.modelAvailable = initializeModel();
     if (this.modelAvailable) {
-      this.timer = new Timer( 1000, this);
+      if (timer == null) {
+        this.timer = new Timer( 1000, this);
+      }
     }
 
 //    MonitoredVmModel monitoredvmmodel = null;
@@ -205,6 +279,7 @@ public class VisualGCPane implements ActionListener {
           }
 
           try {
+            System.out.println("refresh() model=" + model);
             final GCSample gcsample = new GCSample(model);
             SwingUtilities.invokeLater(new Runnable() {
               public void run() {
@@ -241,6 +316,22 @@ public class VisualGCPane implements ActionListener {
          "Graphs", true), DataViewComponent.TOP_RIGHT);
     dvc.addDetailsView(this.graphGCViewSupport.getDetailsView(), DataViewComponent.TOP_RIGHT);
     dvc.addDetailsView( new DataViewComponent.DetailsView( "GC Policy", null, 10, new JLabel(GCSample.gcPolicyName), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+    PsListModel psListModel = new PsListModel();
+    JList<String> psList = new JList<>(psListModel);
+    psList.addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        String val = psList.getSelectedValue();
+        if(val != null) {
+          String processInput = val.substring(0, val.indexOf(' '));
+          startMonitor(processInput);
+          timer.start();
+        }
+      }
+    });
+
+    dvc.addDetailsView( new DataViewComponent.DetailsView( "PS List", null, 10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
         "Histogram", true), DataViewComponent.BOTTOM_LEFT);
     dvc.addDetailsView(this.histogramViewSupport.getDetailsView(), DataViewComponent.BOTTOM_LEFT);
@@ -281,6 +372,7 @@ public class VisualGCPane implements ActionListener {
       JLabel unitsLabel = new JLabel("msec.");
       Integer[] refreshRates = { Integer.valueOf(-1), Integer.valueOf(100), Integer.valueOf(200), Integer.valueOf(500), Integer.valueOf(1000), Integer.valueOf(2000), Integer.valueOf(5000), Integer.valueOf(10000) };
       final JComboBox<Integer> combo = new JComboBox<Integer>(refreshRates);
+
       refreshRateLabel.setLabelFor(combo);
       combo.setEditable(false);
       combo.addActionListener(new ActionListener() {
@@ -471,14 +563,31 @@ public class VisualGCPane implements ActionListener {
           if (!ORIGINAL_UI)
             customizeHistogram(this.visualHistogram);
           customizeComponents(this.visualHistogram.getContentPane(), null);
-          add(this.visualHistogram.getContentPane(), "Center");
+          add(this.visualHistogram.getContentPane(), BorderLayout.CENTER);
         } else {
-          add(new NotSupportedDisplayer(NotSupportedDisplayer.JVM), "Center");
+          add(new NotSupportedDisplayer(NotSupportedDisplayer.JVM), BorderLayout.CENTER);
         }
         repaint();
       } else if (this.visualHistogram != null) {
-        this.visualHistogram.update(gcsample);
-        repaint();
+        BorderLayout layout = (BorderLayout) this.getLayout();
+        if (gcsample.ageTableSizes == null) {
+          if (layout.getLayoutComponent(BorderLayout.CENTER) == this.visualHistogram.getContentPane()) {
+            remove(this.visualHistogram.getContentPane());
+            add(new NotSupportedDisplayer(NotSupportedDisplayer.JVM), BorderLayout.CENTER);
+            this.revalidate();
+          }
+        } else {
+          if (layout.getLayoutComponent(BorderLayout.CENTER) !=  this.visualHistogram.getContentPane()) {
+            System.out.println("refresh() " + layout.getLayoutComponent(BorderLayout.CENTER));
+
+            remove(layout.getLayoutComponent(BorderLayout.CENTER));
+            add(this.visualHistogram.getContentPane(), BorderLayout.CENTER);
+            this.revalidate();
+          }
+          this.visualHistogram.update(gcsample);
+          repaint();
+        }
+
       }
     }
 
@@ -511,8 +620,8 @@ public class VisualGCPane implements ActionListener {
         if (!ORIGINAL_UI)
           setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.visualHeap = new VisualHeap(gvs.graphGC, hvs.visualHistogram, gcsample) {
-          public void updateLevel(GCSample currentSample) {
-            super.updateLevel(currentSample);
+          public void updateLevel(GCSample sample) {
+            super.updateLevel(sample);
             for (GridDrawer gridDrawer : SpacesViewSupport.this.gridDrawers)
               gridDrawer.setSecondaryColor(EVEN_LIGHTER_GRAY);
           }
@@ -666,12 +775,13 @@ public class VisualGCPane implements ActionListener {
     customizeColors();
     String pName = "";
     if (args == null || args.length == 0) {
+
       JList list = new JList(JpsHelper.getJvmPSList().toArray());
-      String s = JOptionPane.showInputDialog(null, list,
+      String processInput = JOptionPane.showInputDialog(null, list,
           "Please choose a process", JOptionPane.QUESTION_MESSAGE);
-      if (s != null && s.length() != 0) {
-        args = new String[]{s};
-        String info = JpsHelper.getVmInfo(s);
+      if (processInput != null && processInput.length() != 0) {
+        args = new String[]{processInput};
+        String info = JpsHelper.getVmInfo(processInput);
         pName = " - " + info;
       } else {
         String val = (list.getSelectedValue() != null) ? list.getSelectedValue().toString() : null;
@@ -681,14 +791,16 @@ public class VisualGCPane implements ActionListener {
           String info = JpsHelper.getVmInfo(pid + "");
           pName = " - " + info;
         } else {
-          s = val.substring(0, val.indexOf(' '));
+          processInput = val.substring(0, val.indexOf(' '));
           pName = " - " + val;
-          args = new String[]{s};
+          args = new String[]{processInput};
         }
       }
 
+
 //      System.out.println(s);
     }
+
 
     try {
       arguments = new Arguments(args);

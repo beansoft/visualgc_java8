@@ -124,70 +124,70 @@ class VisualAgeHistogram extends JFrame implements ActionListener, ComponentList
       this.resetPanel(gcSample);
    }
 
-   public void resetPanel(GCSample var1) {
-      Container var2 = this.getContentPane();
-      var2.removeAll();
-      GridBagLayout var3 = new GridBagLayout();
-      var2.setLayout(var3);
-      GridBagConstraints var4 = new GridBagConstraints();
-      var4.fill = 1;
-      var4.gridwidth = 0;
-      var4.gridheight = -1;
-      var4.weighty = 0.1D;
-      var4.weightx = 1.0D;
-      var3.setConstraints(this.textPanel, var4);
-      var4.weighty = 0.9D;
-      var3.setConstraints(this.histogramPanel, var4);
-      var2.add(this.textPanel);
-      var2.add(this.histogramPanel);
+   public void resetPanel(GCSample sample) {
+      Container container = getContentPane();
+      container.removeAll();
+      GridBagLayout gridBagLayout = new GridBagLayout();
+      container.setLayout(gridBagLayout);
+      GridBagConstraints gridBagConstraints = new GridBagConstraints();
+      gridBagConstraints.fill = 1;
+      gridBagConstraints.gridwidth = 0;
+      gridBagConstraints.gridheight = -1;
+      gridBagConstraints.weighty = 0.1D;
+      gridBagConstraints.weightx = 1.0D;
+      gridBagLayout.setConstraints(this.textPanel, gridBagConstraints);
+      gridBagConstraints.weighty = 0.9D;
+      gridBagLayout.setConstraints(this.histogramPanel, gridBagConstraints);
+      container.add(this.textPanel);
+      container.add(this.histogramPanel);
    }
 
-   private void resetSpace(GCSample var1) {
-      this.resetPanel(var1);
+   private void resetSpace(GCSample sample) {
+      this.resetPanel(sample);
    }
 
    public void refreshPanels() {
       this.repaint();
    }
 
-   public void updateLevel(GCSample var1) {
-      int var2 = var1.ageTableSizes.length;
+   public void updateLevel(GCSample sample) {
+      int length = sample.ageTableSizes.length;
 
-      for(int var3 = 0; var3 < var2; ++var3) {
-         double var4 = (double)var1.ageTableSizes[var3] / (double)var1.survivor0Size;
-         this.bucketLevel[var3].updateLevel(var4);
+      for(int i = 0; i < length; ++i) {
+         double var4 = (double)sample.ageTableSizes[i] / (double)sample.survivor0Size;
+         this.bucketLevel[i].updateLevel(var4);
       }
 
-      this.ttField.setText(String.valueOf(var1.tenuringThreshold));
+      this.ttField.setText(String.valueOf(sample.tenuringThreshold));
       this.mttField.setText(String.valueOf(GCSample.maxTenuringThreshold));
-      this.dssField.setText(String.valueOf(var1.desiredSurvivorSize));
-      this.cssField.setText(String.valueOf(var1.survivor0Capacity));
+      this.dssField.setText(String.valueOf(sample.desiredSurvivorSize));
+      this.cssField.setText(String.valueOf(sample.survivor0Capacity));
    }
 
-   public void update(GCSample var1) {
-      if (var1.heapSizeChanged(this.previousSample)) {
-         this.resetSpace(var1);
+   public void update(GCSample sample) {
+      if (sample.heapSizeChanged(this.previousSample)) {
+         this.resetSpace(sample);
       }
 
-      this.updateLevel(var1);
+      this.updateLevel(sample);
       this.refreshPanels();
-      this.previousSample = var1;
+      this.previousSample = sample;
    }
 
-   public void componentHidden(ComponentEvent var1) {
+   public void componentHidden(ComponentEvent e) {
    }
 
-   public void componentMoved(ComponentEvent var1) {
+   public void componentMoved(ComponentEvent e) {
    }
 
-   public void componentShown(ComponentEvent var1) {
+   public void componentShown(ComponentEvent e) {
    }
 
-   public void componentResized(ComponentEvent var1) {
+   public void componentResized(ComponentEvent e) {
       this.resetSpace(this.previousSample);
       this.validate();
    }
 
-   public void actionPerformed(ActionEvent var1) {
+   public void actionPerformed(ActionEvent e) {
    }
 }

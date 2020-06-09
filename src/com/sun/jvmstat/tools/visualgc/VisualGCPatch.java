@@ -421,8 +421,8 @@ public class VisualGCPatch {
     final VisualAgeHistogram visualagehistogram1 = visualHistogram;
     final List<GridDrawer> gridDrawers = new ArrayList<GridDrawer>();
     final VisualHeap visualHeap = new VisualHeap(graphgc, visualagehistogram1, gcsample) {
-      public void updateLevel(GCSample currentSample) {
-        super.updateLevel(currentSample);
+      public void updateLevel(GCSample sample) {
+        super.updateLevel(sample);
         for (GridDrawer gridDrawer : gridDrawers)
           gridDrawer.setSecondaryColor(EVEN_LIGHTER_GRAY);
       }

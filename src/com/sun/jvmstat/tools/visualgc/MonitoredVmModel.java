@@ -339,13 +339,13 @@ class MonitoredVmModel implements Model {
       if (this.ageTableSize == null) {
          return null;
       } else {
-         long[] var1 = new long[this.ageTableSizes.length];
+         long[] sizes = new long[this.ageTableSizes.length];
 
-         for(int var2 = 0; var2 < this.ageTableSizes.length; ++var2) {
-            var1[var2] = this.ageTableSizes[var2].longValue();
+         for(int i = 0; i < this.ageTableSizes.length; ++i) {
+            sizes[i] = this.ageTableSizes[i].longValue();
          }
 
-         return var1;
+         return sizes;
       }
    }
 
@@ -517,23 +517,20 @@ class MonitoredVmModel implements Model {
       return safeMonitorValue(collector1name);
    }
 
-
-
    public String getCollector2name() {
       return safeMonitorValue(collector2name);
    }
-
 
    public String getGcPolicyName() {
       return safeMonitorValue(gcPolicyName);
    }
 
-   public long getFullGCTime() {
+   public long getCollector2GCTime() {
       return safeMonitorValue(stopGCTime);
    }
 
-   private Long safeMonitorValue(LongMonitor monitor) {
-      return monitor == null ? null : monitor.longValue();
+   private long safeMonitorValue(LongMonitor monitor) {
+      return monitor == null ? 0 : monitor.longValue();
    }
 
    private String safeMonitorValue(StringMonitor monitor) {

@@ -25,14 +25,24 @@
 package org.graalvm.visualvm.core.ui.components;
 
 import org.graalvm.visualvm.core.datasupport.Positionable;
-//import org.openide.awt.CloseButtonFactory;
-//import org.openide.util.NbBundle;
+import org.openide.awt.Windows8VectorCloseButton;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+
+//import org.openide.awt.CloseButtonFactory;
+//import org.openide.util.NbBundle;
 
 /**
  *
@@ -434,8 +444,8 @@ class DisplayArea extends JComponent {
             setOpaque(true);
             setBackground(DisplayAreaSupport.BACKGROUND_COLOR_NORMAL);
 
-            ImageIcon closeIcon = new ImageIcon(DisplayArea.class.getResource("/closePanel.png")); // NOI18N
-            closeButton = new DisplayAreaSupport.ImageIconButton(closeIcon);
+//            ImageIcon closeIcon = new ImageIcon(DisplayArea.class.getResource("/closePanel.png")); // NOI18N
+            closeButton = createCloseButton(); //new DisplayAreaSupport.ImageIconButton(Windows8VectorCloseButton.DEFAULT);
 //            closeButton = CloseButtonFactory.createBigCloseButton();
             closeButton.setFocusable(true); // GH-52 - enable closing the view using keyboard
             closeButton.setToolTipText("Hide"); // NOI18N
@@ -449,6 +459,26 @@ class DisplayArea extends JComponent {
             add(closeButton, BorderLayout.EAST);
         }
 
+    }
+
+    /**
+     * Creates a small 'close' JButton with close icon, rollover icon and pressed icon according to Look and Feel
+     *
+     * @return JButton with close icons.
+     */
+    public static JButton createCloseButton() {
+        JButton closeButton = new JButton();
+        int size = 16;
+        closeButton.setPreferredSize(new Dimension(size, size));
+        closeButton.setContentAreaFilled(false);
+        closeButton.setFocusable(false);
+        closeButton.setBorder(BorderFactory.createEmptyBorder());
+        closeButton.setBorderPainted(false);
+        closeButton.setRolloverEnabled(true);
+        closeButton.setIcon(Windows8VectorCloseButton.DEFAULT);
+        closeButton.setRolloverIcon(Windows8VectorCloseButton.HOVERED);
+        closeButton.setPressedIcon(Windows8VectorCloseButton.PRESSED);
+        return closeButton;
     }
 
     private static class ViewArea extends JPanel {

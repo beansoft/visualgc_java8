@@ -1,8 +1,5 @@
 package com.sun.jvmstat.tools.visualgc;
 
-import sun.jvmstat.monitor.LongMonitor;
-import sun.jvmstat.monitor.StringMonitor;
-
 public class GCSample {
    long newGenMaxSize;
    long newGenMinSize;
@@ -144,14 +141,16 @@ public class GCSample {
       this.finalizerQMaxLength = model.getFinalizerQMaxLength();
       this.osElapsedTime = model.getOsElapsedTime();
       this.lastModificationTime = model.getLastModificationTime();
+
+      this.stopGCTime = model.getCollector2GCTime();
    }
 
    public double getAdjustedEdenSize() {
       if (this.edenCapacity + this.survivor0Capacity + this.survivor1Capacity == this.newGenMaxSize) {
          return (double)this.edenCapacity;
       } else {
-         long var1 = this.newGenMaxSize - this.newGenCurSize;
-         return (double)(this.edenCapacity + var1);
+         long l = this.newGenMaxSize - this.newGenCurSize;
+         return (double)(this.edenCapacity + l);
       }
    }
 
@@ -203,11 +202,11 @@ public class GCSample {
       return (double)this.permCapacity / (double)this.permSize;
    }
 
-   public long getTotalGCTime(GCSample var1) {
-      return Math.abs(this.edenGCTime - var1.edenGCTime) + Math.abs(this.tenuredGCTime - var1.tenuredGCTime);
+   public long getTotalGCTime(GCSample sample) {
+      return Math.abs(this.edenGCTime - sample.edenGCTime) + Math.abs(this.tenuredGCTime - sample.tenuredGCTime);
    }
 
-   public boolean heapSizeChanged(GCSample var1) {
-      return this.edenCapacity != var1.edenCapacity || this.survivor0Capacity != var1.survivor0Capacity || this.survivor1Capacity != var1.survivor1Capacity || this.tenuredCapacity != var1.tenuredCapacity || this.permCapacity != var1.permCapacity;
+   public boolean heapSizeChanged(GCSample sample) {
+      return this.edenCapacity != sample.edenCapacity || this.survivor0Capacity != sample.survivor0Capacity || this.survivor1Capacity != sample.survivor1Capacity || this.tenuredCapacity != sample.tenuredCapacity || this.permCapacity != sample.permCapacity;
    }
 }
