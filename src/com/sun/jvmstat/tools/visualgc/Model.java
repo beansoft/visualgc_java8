@@ -126,4 +126,10 @@ interface Model {
    String getVmSpecVendor();
 
    long getLastModificationTime();
+   String getCollector0name();
+   String getCollector1name();
+   String getCollector2name();
+   String getGcPolicyName();
+
+   long getFullGCTime();
 }

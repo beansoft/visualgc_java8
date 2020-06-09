@@ -67,6 +67,27 @@ public class VisualGCPane implements ActionListener {
   private String vmIdString;
   private VmIdentifier vmId;
 
+  class TerminationHandler
+          implements HostListener {
+
+    final int lvmid;
+    final MonitoredHost host;
+
+    TerminationHandler(int i, MonitoredHost monitoredhost) {
+      lvmid = i;
+      host = monitoredhost;
+    }
+
+    public void vmStatusChanged(VmStatusChangeEvent vmstatuschangeevent) {
+      if (vmstatuschangeevent.getTerminated().contains(lvmid) || !vmstatuschangeevent.getActive().contains(lvmid))
+        terminated = true;
+    }
+
+    public void disconnected(HostEvent hostevent) {
+      if (host == hostevent.getMonitoredHost())
+        terminated = true;
+    }
+  }
 
   static {
     customizeColors();
@@ -98,27 +119,7 @@ public class VisualGCPane implements ActionListener {
 //      monitoredvmmodel = new MonitoredVmModel(monitoredvm);
 //      ModelFixer.fixMetaspace(monitoredvmmodel, monitoredvm);
 //
-//      class TerminationHandler
-//          implements HostListener {
 //
-//        final int lvmid;
-//        final MonitoredHost host;
-//
-//        TerminationHandler(int i, MonitoredHost monitoredhost) {
-//          lvmid = i;
-//          host = monitoredhost;
-//        }
-//
-//        public void vmStatusChanged(VmStatusChangeEvent vmstatuschangeevent) {
-//          if (vmstatuschangeevent.getTerminated().contains(lvmid) || !vmstatuschangeevent.getActive().contains(lvmid))
-//            VisualGCPane.terminated = true;
-//        }
-//
-//        public void disconnected(HostEvent hostevent) {
-//          if (host == hostevent.getMonitoredHost())
-//            VisualGCPane.terminated = true;
-//        }
-//      }
 //
 //      if (vmidentifier.getLocalVmId() != 0)
 //        monitoredhost.addHostListener(new TerminationHandler(vmidentifier.getLocalVmId(), monitoredhost));
@@ -170,6 +171,7 @@ public class VisualGCPane implements ActionListener {
     try {
       MonitoredHost monitoredHost = MonitoredHost.getMonitoredHost(this.vmId);
       int refreshInterval = 1000;
+      monitoredHost.addHostListener(new TerminationHandler(this.vmId.getLocalVmId(), monitoredHost));
       return monitoredHost.getMonitoredVm(this.vmId, refreshInterval);
     } catch (Exception ex) {
       LOGGER.log(java.util.logging.Level.INFO, "getMonitoredVm failed", ex);
@@ -198,6 +200,10 @@ public class VisualGCPane implements ActionListener {
     } else {
       executor.execute(new Runnable() {
         public void run() {
+          if(terminated) {
+            timer.stop();
+          }
+
           try {
             final GCSample gcsample = new GCSample(model);
             SwingUtilities.invokeLater(new Runnable() {
@@ -230,11 +236,11 @@ public class VisualGCPane implements ActionListener {
 
     DataViewComponent.MasterViewConfiguration monitoringMasterConfiguration = new DataViewComponent.MasterViewConfiguration(false);
     DataViewComponent dvc = new DataViewComponent(monitoringMasterView, monitoringMasterConfiguration);
-    dvc.configureDetailsView(new DataViewComponent.DetailsViewConfiguration(0.35D, 0.15D, -1.0D, -1.0D, 0.66D, 0.85D));
+    dvc.configureDetailsView(new DataViewComponent.DetailsViewConfiguration(0.35D, 0.15D, 0.7D, -1.0D, 0.66D, 0.85D));
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
          "Graphs", true), DataViewComponent.TOP_RIGHT);
     dvc.addDetailsView(this.graphGCViewSupport.getDetailsView(), DataViewComponent.TOP_RIGHT);
-    dvc.addDetailsView( new DataViewComponent.DetailsView( "Graphs", null, 10, new JLabel("Test"), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+    dvc.addDetailsView( new DataViewComponent.DetailsView( "GC Policy", null, 10, new JLabel(GCSample.gcPolicyName), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
         "Histogram", true), DataViewComponent.BOTTOM_LEFT);
     dvc.addDetailsView(this.histogramViewSupport.getDetailsView(), DataViewComponent.BOTTOM_LEFT);
@@ -467,7 +473,7 @@ public class VisualGCPane implements ActionListener {
           customizeComponents(this.visualHistogram.getContentPane(), null);
           add(this.visualHistogram.getContentPane(), "Center");
         } else {
-          add((Component)new NotSupportedDisplayer(NotSupportedDisplayer.JVM), "Center");
+          add(new NotSupportedDisplayer(NotSupportedDisplayer.JVM), "Center");
         }
         repaint();
       } else if (this.visualHistogram != null) {

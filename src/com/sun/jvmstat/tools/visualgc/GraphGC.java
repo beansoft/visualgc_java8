@@ -310,11 +310,11 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       titledBorder.setTitle(title);
 
       titledBorder = (TitledBorder)this.edenGcTimePanel.getBorder();
-      title = "Eden GC Time: " + Converter.longToTimeString(lastEdenGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(edenGcTimeDataSet.getMaxValue(), GCSample.osFrequency);
+      title = GCSample.collector0name + " Eden GC Time: " + Converter.longToTimeString(lastEdenGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(edenGcTimeDataSet.getMaxValue(), GCSample.osFrequency);
       titledBorder.setTitle(title);
 
       titledBorder = (TitledBorder)this.tenuredGCTimePanel.getBorder();
-      title = "Tenured GC Time: " + Converter.longToTimeString(lastOldGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(this.tenuredGCTimeDataSet.getMaxValue(), GCSample.osFrequency);
+      title = GCSample.collector1name + " Tenured GC Time: " + Converter.longToTimeString(lastOldGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(this.tenuredGCTimeDataSet.getMaxValue(), GCSample.osFrequency);
       titledBorder.setTitle(title);
 
       this.permPanel.updateTextComponents(gcSample.permCapacity, gcSample.permUsed);

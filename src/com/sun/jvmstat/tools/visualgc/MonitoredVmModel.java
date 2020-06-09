@@ -28,8 +28,6 @@ class MonitoredVmModel implements Model {
    private LongMonitor tenuredGCTime;
    private LongMonitor tenuredGCEvents;
 
-   private LongMonitor stopGCTime;
-
    private LongMonitor permSize;
    private LongMonitor permCapacity;
    private LongMonitor permUsed;
@@ -42,7 +40,7 @@ class MonitoredVmModel implements Model {
    private StringMonitor currentGCCause;
    private StringMonitor collector0name;
    private StringMonitor collector1name;
-   private StringMonitor collector2name;
+
    private boolean finalizerInitialized = false;
    private LongMonitor finalizerTime;
    private LongMonitor finalizerQLength;
@@ -76,6 +74,11 @@ class MonitoredVmModel implements Model {
    private StringMonitor extDirs;
    private LongMonitor lastModificationTime;
 
+
+   private LongMonitor stopGCTime;
+   private StringMonitor gcPolicyName;
+   private StringMonitor collector2name;
+
    synchronized void initialize_finalizer() {
       if (!this.finalizerInitialized) {
          try {
@@ -102,13 +105,22 @@ class MonitoredVmModel implements Model {
       this.currentGCCause = (StringMonitor)this.vm.findByName("sun.gc.cause");
       this.collector0name = (StringMonitor)this.vm.findByName("sun.gc.collector.0.name");
       this.collector1name = (StringMonitor)this.vm.findByName("sun.gc.collector.1.name");
+      this.collector2name = (StringMonitor)this.vm.findByName("sun.gc.collector.2.name");
+      this.gcPolicyName =  (StringMonitor)this.vm.findByName("sun.gc.policy.name");
 
       try {
          System.out.println("collector0name=" + collector0name.stringValue());
          System.out.println("collector1name=" + collector1name.stringValue());
 
-         System.out.println("gc policy name=" + ((StringMonitor)this.vm.findByName("sun.gc.policy.name")).stringValue());
-         System.out.println("collector2name=" + ((StringMonitor)this.vm.findByName("sun.gc.collector.2.name")).stringValue());
+         if(collector2name != null) {
+            System.out.println("collector2name=" + collector2name.stringValue());
+         }
+
+         if(gcPolicyName != null) {
+            System.out.println("gc policy name=" + gcPolicyName.stringValue());
+         }
+
+
          // collector0name=PCopy
          //collector1name=CMS
          //collector2name=CMS stop-the-world phases
@@ -137,7 +149,12 @@ class MonitoredVmModel implements Model {
       this.edenGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.0.time");
       this.tenuredGCEvents = (LongMonitor)this.vm.findByName("sun.gc.collector.1.invocations");
       this.tenuredGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.1.time");
+      this.stopGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.2.time");
 
+      if(stopGCTime != null) {
+         System.out.println("stopGCTime=" + stopGCTime);
+         System.out.println("stopGCTime=" + stopGCTime.longValue());
+      }
 
       this.ageTableSize = (LongMonitor)this.vm.findByName("sun.gc.generation.0.agetable.size");
       if (this.ageTableSize != null) {
@@ -190,12 +207,6 @@ class MonitoredVmModel implements Model {
       this.endorsedDirs = (StringMonitor)this.vm.findByName("java.property.java.endorsed.dirs");
       this.extDirs = (StringMonitor)this.vm.findByName("java.property.java.ext.dirs");
       this.lastModificationTime = (LongMonitor)this.vm.findByName("sun.perfdata.timestamp");
-
-      this.stopGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.2.time");
-
-      if(stopGCTime != null) {
-         System.out.println("stopGCTime=" + Converter.longToTimeString(stopGCTime.longValue(), this.osFrequency.longValue()));
-      }
    }
 
    void initialize() throws MonitorException {
@@ -306,6 +317,7 @@ class MonitoredVmModel implements Model {
    public long getTenuredGCTime() {
       return this.tenuredGCTime.longValue();
    }
+
 
    public long getTenuringThreshold() {
       return this.tenuringThreshold == null ? 0L : this.tenuringThreshold.longValue();
@@ -494,5 +506,37 @@ class MonitoredVmModel implements Model {
 
    public long getLastModificationTime() {
       return this.lastModificationTime.longValue();
+   }
+
+   public String getCollector0name() {
+      return safeMonitorValue(collector0name);
+   }
+
+
+   public String getCollector1name() {
+      return safeMonitorValue(collector1name);
+   }
+
+
+
+   public String getCollector2name() {
+      return safeMonitorValue(collector2name);
+   }
+
+
+   public String getGcPolicyName() {
+      return safeMonitorValue(gcPolicyName);
+   }
+
+   public long getFullGCTime() {
+      return safeMonitorValue(stopGCTime);
+   }
+
+   private Long safeMonitorValue(LongMonitor monitor) {
+      return monitor == null ? null : monitor.longValue();
+   }
+
+   private String safeMonitorValue(StringMonitor monitor) {
+      return monitor == null ? null : monitor.stringValue();
    }
 }

@@ -1,5 +1,8 @@
 package com.sun.jvmstat.tools.visualgc;
 
+import sun.jvmstat.monitor.LongMonitor;
+import sun.jvmstat.monitor.StringMonitor;
+
 public class GCSample {
    long newGenMaxSize;
    long newGenMinSize;
@@ -61,6 +64,10 @@ public class GCSample {
    static String bootLibraryPath;
    static String endorsedDirs;
    static String extDirs;
+   long stopGCTime;
+   static String gcPolicyName, collector0name, collector1name, collector2name;
+
+
    private static boolean initialized = false;
 
    static synchronized void initStaticCounters(Model model) {
@@ -84,6 +91,10 @@ public class GCSample {
          bootLibraryPath = model.getBootLibraryPath();
          endorsedDirs = model.getEndorsedDirs();
          extDirs = model.getExtDirs();
+         gcPolicyName = model.getGcPolicyName();
+         collector0name = model.getCollector0name();
+         collector1name = model.getCollector1name();
+         collector2name = model.getCollector2name();
       }
 
    }
