@@ -366,10 +366,10 @@ public class VisualGCPane implements ActionListener {
       refreshRateContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
       JLabel refreshRateLabel = new JLabel();
       refreshRateLabel.setFont(refreshRateLabel.getFont().deriveFont(1));
-      refreshRateLabel.setText("Refresh rate");
+      refreshRateLabel.setText(Res.getString("refresh.rate"));
 //      Mnemonics.setLocalizedText(refreshRateLabel, NbBundle.getMessage(VisualGCView.class, "LBL_RefreshRate"));
       refreshRateContainer.add(refreshRateLabel);
-      JLabel unitsLabel = new JLabel("msec.");
+      JLabel unitsLabel = new JLabel(Res.getString("msec"));
       Integer[] refreshRates = { Integer.valueOf(-1), Integer.valueOf(100), Integer.valueOf(200), Integer.valueOf(500), Integer.valueOf(1000), Integer.valueOf(2000), Integer.valueOf(5000), Integer.valueOf(10000) };
       final JComboBox<Integer> combo = new JComboBox<Integer>(refreshRates);
 
@@ -390,8 +390,8 @@ public class VisualGCPane implements ActionListener {
       refreshRateContainer.add(combo);
       refreshRateContainer.add(unitsLabel);
 
-      refreshRateContainer.add(new JButton("Switch Process"));
-      add(refreshRateContainer, "West");
+//      refreshRateContainer.add(new JButton("Switch Process"));
+      add(refreshRateContainer, BorderLayout.WEST);
     }
   }
 
