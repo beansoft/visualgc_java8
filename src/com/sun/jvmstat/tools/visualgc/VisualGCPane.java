@@ -279,10 +279,11 @@ public class VisualGCPane implements ActionListener {
           }
 
           try {
-            System.out.println("refresh() model=" + model);
-            final GCSample gcsample = new GCSample(model);
+//            System.out.println("refresh() model=" + model);
+            GCSample gcsample = new GCSample(model);
             SwingUtilities.invokeLater(new Runnable() {
               public void run() {
+                masterViewSupport.refresh(gcsample);
                 graphGCViewSupport.refresh(gcsample);
                 histogramViewSupport.refresh(gcsample);
                 spacesViewSupport.refresh(gcsample, graphGCViewSupport, histogramViewSupport);
@@ -351,11 +352,19 @@ public class VisualGCPane implements ActionListener {
     private final Preferences prefs;
 
     private Timer timer;
+    private JLabel gcPolicyLabel = new JLabel();
 
     public MasterViewSupport(Timer timer) {
       this.prefs = Preferences.userRoot().node(VisualGCPane.class.getName());
       this.timer = timer;
       initComponents();
+    }
+
+    void refresh(GCSample gcsample) {
+//      if(gcPolicyLabel == null ) {
+//
+//      }
+      gcPolicyLabel.setText("GC Policy Name=" + GCSample.gcPolicyName);
     }
 
     private void initComponents() {
@@ -391,8 +400,10 @@ public class VisualGCPane implements ActionListener {
       refreshRateContainer.add(unitsLabel);
 
 //      refreshRateContainer.add(new JButton("Switch Process"));
+      refreshRateContainer.add(gcPolicyLabel);
       add(refreshRateContainer, BorderLayout.WEST);
     }
+
   }
 
   private static class ComboRenderer implements ListCellRenderer {
@@ -773,11 +784,18 @@ public class VisualGCPane implements ActionListener {
 //		args = new String[]{"412"};
 //		args = new String[]{ GetProcessID.getPid() + ""};
     customizeColors();
+
+    JFrame frame = new JFrame();
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    frame.setTitle("VisualGC 3.0");
+    frame.setSize(800, 600);
+    frame.setVisible(true);
+
     String pName = "";
     if (args == null || args.length == 0) {
 
       JList list = new JList(JpsHelper.getJvmPSList().toArray());
-      String processInput = JOptionPane.showInputDialog(null, list,
+      String processInput = JOptionPane.showInputDialog(frame, list,
           "Please choose a process", JOptionPane.QUESTION_MESSAGE);
       if (processInput != null && processInput.length() != 0) {
         args = new String[]{processInput};
@@ -823,13 +841,11 @@ public class VisualGCPane implements ActionListener {
 
     VisualGCPane gcPane = new VisualGCPane();
 
-    JFrame frame = new JFrame();
-    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.setTitle("VisualGC 3.0" + pName);
     gcPane.startMonitor(arguments.vmIdString());
     frame.getContentPane().add(gcPane.createComponent(), "Center");
     frame.setSize(1024, 768);
-    frame.setVisible(true);
+
 
   }
 

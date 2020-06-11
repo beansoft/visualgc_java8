@@ -237,26 +237,25 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       this.spacesPanel.add(this.permPanel);
       this.spacesPanel.add(this.oldPanel);
       this.spacesPanel.add(this.newPanel);
-      var2.add(this.infoPanel, "North");
-      var2.add(this.spacesPanel, "Center");
+      var2.add(this.infoPanel, BorderLayout.NORTH);
+      var2.add(this.spacesPanel, BorderLayout.CENTER);
    }
 
-   public void componentHidden(ComponentEvent var1) {
+   public void componentHidden(ComponentEvent e) {
    }
 
-   public void componentMoved(ComponentEvent var1) {
+   public void componentMoved(ComponentEvent e) {
    }
 
-   public void componentShown(ComponentEvent var1) {
+   public void componentShown(ComponentEvent e) {
    }
 
-   public void componentResized(ComponentEvent var1) {
+   public void componentResized(ComponentEvent e) {
       this.resetSpace(this.previousSample);
       this.g.validate();
       if (this.a != null) {
          this.a.validate();
       }
-
    }
 
    private void resetSpace(GCSample sample) {

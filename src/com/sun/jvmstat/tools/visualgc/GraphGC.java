@@ -28,7 +28,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    public JPanel heapPanel;
    public JPanel timePanel;
    public JPanel edenGcPanel;
-   public JPanel edenGcTimePanel, tenuredGCTimePanel;// eden gc time pane
+   public JPanel edenGcTimePanel, tenuredGCTimePanel, stopGCTimePane;// eden, old, stop gc time pane
    public JPanel classPanel;
    public JPanel compilePanel;
    public JPanel finalizerPanel;
@@ -45,6 +45,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    public FIFOList classLoaderActiveDataSet;
    public FIFOList edenGcTimeDataSet;// eden gc time dataset
    public FIFOList tenuredGCTimeDataSet;// tenure gc time dataset
+   public FIFOList stopGCTimeDataSet;// tenure gc time dataset
    private GCSample previousSample;
    private boolean inGC = false;
    private boolean inEdGC = false;
@@ -111,6 +112,21 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.tenuredGCTimePanel.setBorder(titledBorder);
       this.tenuredGCTimePanel.add(tenuredGcTimeLine);
 
+      if(GCSample.collector1name == null) {
+         tenuredGCTimePanel.setVisible(false);
+      }
+
+      stopGCTimePane= new JPanel();
+      this.stopGCTimePane.setBackground(Color.BLACK);
+      this.stopGCTimePane.setLayout(new GridLayout(1, 1));
+      this.stopGCTimeDataSet = new FIFOList(1000);
+      Line stopGcTimeLine = new Line(this.stopGCTimeDataSet, gcColor);
+      stopGcTimeLine.setTimeMode(true);
+      border = BorderFactory.createEtchedBorder(gcColor, Color.GRAY);
+      titledBorder = BorderFactory.createTitledBorder(border, "Stop GC Time", 0, 0, font, gcColor);
+      this.stopGCTimePane.setBorder(titledBorder);
+      this.stopGCTimePane.add(stopGcTimeLine);
+
 
       this.classPanel = new JPanel();
       this.classPanel.setBackground(Color.BLACK);
@@ -165,7 +181,18 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.timePanel.add(this.compilePanel);
       this.timePanel.add(this.classPanel);
       this.timePanel.add(this.edenGcPanel);
-      this.timePanel.add(this.edenGcTimePanel);
+
+      if(GCSample.collector0name != null) {
+         this.timePanel.add(this.edenGcTimePanel);
+      }
+
+      if(GCSample.collector1name != null) {
+         this.timePanel.add(this.tenuredGCTimePanel);
+      }
+      if(GCSample.collector2name != null) {
+         this.timePanel.add(this.stopGCTimePane);
+      }
+
 
       Color edenColor = Color.getColor("eden.color", new Color(255, 150, 0));
       this.edenPanel = new GCSpacePanel(Res.getString("eden.space"), gcSample.edenSize, gcSample.edenCapacity, edenColor);
@@ -278,6 +305,9 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.gcActiveDataSet.add( gcCount);
       this.edenGcTimeDataSet.add(edenGCTimeDelta);
       this.tenuredGCTimeDataSet.add(oldGCTimeDelta);
+      if(GCSample.collector2name != null) {
+         this.stopGCTimeDataSet.add(gcSample.stopGCTime);
+      }
 
       this.finalizerQLengthDataSet.add((double) gcSample.finalizerQLength);
       int var4 = gcSample.finalizerTime - this.previousSample.finalizerTime == 0L ? 0 : 1;
@@ -316,6 +346,12 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       titledBorder = (TitledBorder)this.tenuredGCTimePanel.getBorder();
       title = GCSample.collector1name + " Tenured GC Time: " + Converter.longToTimeString(lastOldGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(this.tenuredGCTimeDataSet.getMaxValue(), GCSample.osFrequency);
       titledBorder.setTitle(title);
+
+      if(GCSample.collector2name != null) {
+         titledBorder = (TitledBorder)this.stopGCTimePane.getBorder();
+         title = GCSample.collector2name + " Total Time: " + Converter.longToTimeString(gcSample.stopGCTime, GCSample.osFrequency) ;
+         titledBorder.setTitle(title);
+      }
 
       this.permPanel.updateTextComponents(gcSample.permCapacity, gcSample.permUsed);
       this.oldPanel.updateTextComponents(gcSample.tenuredCapacity, gcSample.tenuredUsed, gcSample.tenuredGCEvents, gcSample.tenuredGCTime, GCSample.osFrequency);
@@ -391,8 +427,16 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.timePanel.add(this.compilePanel);
       this.timePanel.add(this.classPanel);
       this.timePanel.add(this.edenGcPanel);
-      this.timePanel.add(this.edenGcTimePanel);
-      this.timePanel.add(this.tenuredGCTimePanel);
+      if(GCSample.collector0name != null) {
+         this.timePanel.add(this.edenGcTimePanel);
+      }
+
+      if(GCSample.collector1name != null) {
+         this.timePanel.add(this.tenuredGCTimePanel);
+      }
+      if(GCSample.collector2name != null) {
+         this.timePanel.add(this.stopGCTimePane);
+      }
 
       container = this.getContentPane();
       GridBagLayout gridBagLayout = new GridBagLayout();
