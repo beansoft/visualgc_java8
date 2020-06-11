@@ -11,6 +11,7 @@ import github.beansoftapp.visualgc.GetProcessID;
 import github.beansoftapp.visualgc.JpsHelper;
 import org.graalvm.visualvm.core.ui.components.DataViewComponent;
 import org.graalvm.visualvm.core.ui.components.NotSupportedDisplayer;
+import org.netbeans.modules.bugtracking.tasks.LinkLabel;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
 import sun.jvmstat.monitor.MonitoredVm;
@@ -26,7 +27,10 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -314,9 +318,9 @@ public class VisualGCPane implements ActionListener {
     DataViewComponent dvc = new DataViewComponent(monitoringMasterView, monitoringMasterConfiguration);
     dvc.configureDetailsView(new DataViewComponent.DetailsViewConfiguration(0.35D, 0.15D, 0.7D, -1.0D, 0.66D, 0.85D));
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
-         "Graphs", true), DataViewComponent.TOP_RIGHT);
+        Res.getString("graphs"), true), DataViewComponent.TOP_RIGHT);
     dvc.addDetailsView(this.graphGCViewSupport.getDetailsView(), DataViewComponent.TOP_RIGHT);
-    dvc.addDetailsView( new DataViewComponent.DetailsView( "GC Policy", null, 10, new JLabel(GCSample.gcPolicyName), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+//    dvc.addDetailsView( new DataViewComponent.DetailsView( "GC Policy", null, 10, new JLabel(GCSample.gcPolicyName), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
     PsListModel psListModel = new PsListModel();
     JList<String> psList = new JList<>(psListModel);
     psList.addListSelectionListener(new ListSelectionListener() {
@@ -331,15 +335,27 @@ public class VisualGCPane implements ActionListener {
       }
     });
 
-    dvc.addDetailsView( new DataViewComponent.DetailsView( "PS List", null, 10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+//    dvc.addDetailsView( new DataViewComponent.DetailsView( "PS List", null, 10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+    dvc.addDetailsView( new DataViewComponent.DetailsView( "Info", null, 10, new LinkLabel("This tool created by  https://github.com/beansoftapp/", null) {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        try {
+          Desktop.getDesktop().browse(new URI("https://github.com/beansoftapp/"));
+        } catch (IOException ioException) {
+          ioException.printStackTrace();
+        } catch (URISyntaxException uriSyntaxException) {
+          uriSyntaxException.printStackTrace();
+        }
+      }
+    }, null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
 
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
-        "Histogram", true), DataViewComponent.BOTTOM_LEFT);
+        Res.getString("histogram"), true), DataViewComponent.BOTTOM_LEFT);
     dvc.addDetailsView(this.histogramViewSupport.getDetailsView(), DataViewComponent.BOTTOM_LEFT);
     if (!this.histogramSupported)
       dvc.hideDetailsArea(DataViewComponent.BOTTOM_LEFT);
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
-        "Spaces", true), DataViewComponent.TOP_LEFT);
+        Res.getString("spaces"), true), DataViewComponent.TOP_LEFT);
     dvc.addDetailsView(this.spacesViewSupport.getDetailsView(), DataViewComponent.TOP_LEFT);
     this.timer.start();
     refresh();
@@ -364,7 +380,7 @@ public class VisualGCPane implements ActionListener {
 //      if(gcPolicyLabel == null ) {
 //
 //      }
-      gcPolicyLabel.setText("GC Policy Name=" + GCSample.gcPolicyName);
+      gcPolicyLabel.setText("GC Policy is " + GCSample.gcPolicyName);
     }
 
     private void initComponents() {
@@ -417,7 +433,7 @@ public class VisualGCPane implements ActionListener {
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       return this.renderer.getListCellRendererComponent(list, (((Integer)value).intValue() == -1) ?
-              "Auto" :
+          Res.getString("auto") :
               NumberFormat.getInstance().format(value), index, isSelected, cellHasFocus);
     }
 
@@ -622,7 +638,7 @@ public class VisualGCPane implements ActionListener {
     private SpacesViewSupport() {}
 
     public DataViewComponent.DetailsView getDetailsView() {
-      return new DataViewComponent.DetailsView( "Spaces", null, 10, this, null);
+      return new DataViewComponent.DetailsView(Res.getString("spaces"), null, 10, this, null);
     }
 
     void refresh(GCSample gcsample, GraphGCViewSupport gvs, HistogramViewSupport hvs) {
@@ -785,9 +801,10 @@ public class VisualGCPane implements ActionListener {
 //		args = new String[]{ GetProcessID.getPid() + ""};
     customizeColors();
 
-    JFrame frame = new JFrame();
+    final JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.setTitle("VisualGC 3.0");
+    frame.getContentPane().add(new JLabel("Loading JVM process list on your machine...."));
     frame.setSize(800, 600);
     frame.setVisible(true);
 
