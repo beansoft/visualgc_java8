@@ -42,6 +42,10 @@ public class GCSample {
    long lastModificationTime;
    String lastGCCause;
    String currentGCCause;
+
+   long stopGCTime;
+   long stopGCEvents;
+
    static long maxTenuringThreshold;
    public static long osFrequency;
    static String javaCommand;
@@ -61,7 +65,6 @@ public class GCSample {
    static String bootLibraryPath;
    static String endorsedDirs;
    static String extDirs;
-   long stopGCTime;
    static String gcPolicyName, collector0name, collector1name, collector2name;
 
 
@@ -143,6 +146,7 @@ public class GCSample {
       this.lastModificationTime = model.getLastModificationTime();
 
       this.stopGCTime = model.getCollector2GCTime();
+      this.stopGCEvents = model.getCollector2Events();
    }
 
    public double getAdjustedEdenSize() {

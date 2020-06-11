@@ -35,9 +35,9 @@ public class GCSpacePanel extends JPanel {
       this.reservedMode = reservedMode;
       this.borderString = title + " (" + Converter.longToKMGString(maxValue) + ", ";
       if (reservedMode) {
-         this.dataset = new FIFOList(1000, 0.0D, (double)maxValue);
+         this.dataset = new FIFOList(DATASET_SIZE, 0.0D, (double)maxValue);
       } else {
-         this.dataset = new FIFOList(1000, 0.0D, (double)capacity);
+         this.dataset = new FIFOList(DATASET_SIZE, 0.0D, (double)capacity);
       }
 
       this.line = new Line(this.dataset, color);
@@ -45,36 +45,36 @@ public class GCSpacePanel extends JPanel {
          this.line.updateGrayLevel(1.0D - (double)capacity / (double)maxValue);
       }
 
-      String var8 = this.borderString + Converter.longToKMGString(capacity) + "): " + " Used = ";
-      Font var9 = new Font("Dialog", 1, 12);
-      Border var10 = BorderFactory.createEtchedBorder(color, Color.GRAY);
-      TitledBorder var11 = BorderFactory.createTitledBorder(var10, var8, 0, 0, var9, color);
-      this.setBorder(var11);
+      String borderTitle = this.borderString + Converter.longToKMGString(capacity) + "): " + " Used = ";
+      Font font = new Font("Dialog", 1, 12);
+      Border etchedBorder = BorderFactory.createEtchedBorder(color, Color.GRAY);
+      TitledBorder titledBorder = BorderFactory.createTitledBorder(etchedBorder, borderTitle, 0, 0, font, color);
+      this.setBorder(titledBorder);
       this.setForeground(color);
       this.setBackground(Color.BLACK);
       this.setPreferredSize(new Dimension(600, 100));
       this.setLayout(new BorderLayout());
       this.add(this.line, "Center");
       this.addMouseListener(new MouseAdapter() {
-         public void mousePressed(MouseEvent var1) {
-            this.maybeShowPopup(var1);
+         public void mousePressed(MouseEvent e) {
+            this.maybeShowPopup(e);
          }
 
-         public void mouseReleased(MouseEvent var1) {
-            this.maybeShowPopup(var1);
+         public void mouseReleased(MouseEvent e) {
+            this.maybeShowPopup(e);
          }
 
-         private void maybeShowPopup(MouseEvent var1) {
-            if (var1.isPopupTrigger()) {
-               JPopupMenu var2 = new JPopupMenu();
-               JCheckBoxMenuItem var3 = new JCheckBoxMenuItem("Show Reserved Space", GCSpacePanel.this.isShowReservedSpace());
-               var3.addItemListener(new ItemListener() {
-                  public void itemStateChanged(ItemEvent var1) {
-                     GCSpacePanel.this.setShowReservedSpace(var1.getStateChange() == 1);
+         private void maybeShowPopup(MouseEvent mouseEvent) {
+            if (mouseEvent.isPopupTrigger()) {
+               JPopupMenu jPopupMenu = new JPopupMenu();
+               JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem("Show Reserved Space", GCSpacePanel.this.isShowReservedSpace());
+               menuItem.addItemListener(new ItemListener() {
+                  public void itemStateChanged(ItemEvent e) {
+                     GCSpacePanel.this.setShowReservedSpace(e.getStateChange() == ItemEvent.SELECTED);
                   }
                });
-               var2.add(var3);
-               var2.show(GCSpacePanel.this, var1.getX(), var1.getY());
+               jPopupMenu.add(menuItem);
+               jPopupMenu.show(GCSpacePanel.this, mouseEvent.getX(), mouseEvent.getY());
             }
 
          }
@@ -119,7 +119,7 @@ public class GCSpacePanel extends JPanel {
       }
    }
 
-   public void updateTextComponents(long var1, long var3) {
+   public void updateTextComponents(long capacity, long used) {
       TitledBorder titledBorder = (TitledBorder)this.getBorder();
       Color foreground = this.getForeground();
       if (titledBorder.getTitleColor() != foreground) {
@@ -128,8 +128,8 @@ public class GCSpacePanel extends JPanel {
          titledBorder.setBorder(var7);
       }
 
-      String var8 = this.borderString + Converter.longToKMGString(var1) + "): " + Converter.longToKMGString(var3);
-      titledBorder.setTitle(var8);
+      String title = this.borderString + Converter.longToKMGString(capacity) + "): " + Converter.longToKMGString(used);
+      titledBorder.setTitle(title);
    }
 
    public void updateTextComponents(long var1, long var3, long var5, long var7, long var9) {

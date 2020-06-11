@@ -799,9 +799,22 @@ public class VisualGCPane implements ActionListener {
   public static void main(String args[]) {
 //		args = new String[]{"412"};
 //		args = new String[]{ GetProcessID.getPid() + ""};
+
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception e) {
+      try {
+        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+      e.printStackTrace();
+    }
+
     customizeColors();
 
     final JFrame frame = new JFrame();
+    frame.setIconImage(new ImageIcon(VisualGCPane.class.getResource("/visualgc.png")).getImage());
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.setTitle("VisualGC 3.0");
     frame.getContentPane().add(new JLabel("Loading JVM process list on your machine...."));

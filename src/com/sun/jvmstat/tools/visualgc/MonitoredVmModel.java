@@ -75,6 +75,7 @@ class MonitoredVmModel implements Model {
    private LongMonitor lastModificationTime;
 
 
+   private LongMonitor stopGCEvents;
    private LongMonitor stopGCTime;
    private StringMonitor gcPolicyName;
    private StringMonitor collector2name;
@@ -149,11 +150,13 @@ class MonitoredVmModel implements Model {
       this.edenGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.0.time");
       this.tenuredGCEvents = (LongMonitor)this.vm.findByName("sun.gc.collector.1.invocations");
       this.tenuredGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.1.time");
+      this.stopGCEvents =  (LongMonitor)this.vm.findByName("sun.gc.collector.2.invocations");
       this.stopGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.2.time");
 
       if(stopGCTime != null) {
-         System.out.println("stopGCTime=" + stopGCTime);
          System.out.println("stopGCTime=" + stopGCTime.longValue());
+         System.out.println("stopGCEvents=" + stopGCEvents.longValue());
+
       }
 
       this.ageTableSize = (LongMonitor)this.vm.findByName("sun.gc.generation.0.agetable.size");
@@ -527,6 +530,10 @@ class MonitoredVmModel implements Model {
 
    public long getCollector2GCTime() {
       return safeMonitorValue(stopGCTime);
+   }
+
+   public long getCollector2Events() {
+      return safeMonitorValue(stopGCEvents);
    }
 
    private long safeMonitorValue(LongMonitor monitor) {

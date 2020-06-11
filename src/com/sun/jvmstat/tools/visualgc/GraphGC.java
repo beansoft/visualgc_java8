@@ -50,6 +50,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    private boolean inGC = false;
    private boolean inEdGC = false;
    private boolean inTnGC = false;
+
    private long edenGCStart;
    private long tenuredGCStart;
    private long maxFinalizerQLength;
@@ -59,8 +60,11 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
    private long compStart;
    private boolean run;
 
+   private boolean inStopGC = false;
    private long lastEdenGCTimeDelta = 0;
    private long lastOldGCTimeDelta = 0;
+   private long laststopGCTimeDelta = 0;
+   private long stopGCStart;
 
    public GraphGC(GCSample gcSample) {
       this.previousSample = gcSample;
@@ -263,12 +267,13 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       this.s0Panel.updateGraph(gcSample.survivor0Size, gcSample.survivor0Capacity, gcSample.survivor0Used);
       this.s1Panel.updateGraph(gcSample.survivor1Size, gcSample.survivor1Capacity, gcSample.survivor1Used);
       long gcCount = 0L;
-      long edenGCTimeDelta = 0L;
-      long oldGCTimeDelta = 0L;
+      long edenGCTimeDelta = 0, oldGCTimeDelta = 0, stopGCTimeDelta = 0;
 
       if (!this.inGC) {
          this.inEdGC = gcSample.edenGCEvents != this.previousSample.edenGCEvents;
          this.inTnGC = gcSample.tenuredGCEvents != this.previousSample.tenuredGCEvents;
+         this.inStopGC = gcSample.stopGCEvents != this.previousSample.stopGCEvents;
+
          if (this.inEdGC || this.inTnGC) {
             this.inGC = true;
             if (this.inEdGC) {
@@ -277,6 +282,10 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
 
             if (this.inTnGC) {
                this.tenuredGCStart = this.previousSample.tenuredGCTime;
+            }
+
+            if(this.inStopGC) {
+               this.stopGCStart = this.previousSample.stopGCTime;
             }
          }
       }
@@ -299,14 +308,25 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
             this.inTnGC = false;
          }
 
-         this.inGC = this.inEdGC || this.inTnGC;
+         if(this.inStopGC && gcSample.stopGCTime != this.stopGCStart) {
+            stopGCTimeDelta = gcSample.stopGCTime - this.stopGCStart;
+
+            System.out.println("stopGCTimeDelta:" + stopGCTimeDelta);
+            laststopGCTimeDelta = stopGCTimeDelta;
+            this.inTnGC = false;
+         }
+
+         this.inGC = this.inEdGC || this.inTnGC || this.inStopGC;
       }
 
       this.gcActiveDataSet.add( gcCount);
       this.edenGcTimeDataSet.add(edenGCTimeDelta);
-      this.tenuredGCTimeDataSet.add(oldGCTimeDelta);
+      if(GCSample.collector1name != null) {
+         this.tenuredGCTimeDataSet.add(oldGCTimeDelta);
+      }
+
       if(GCSample.collector2name != null) {
-         this.stopGCTimeDataSet.add(gcSample.stopGCTime);
+         this.stopGCTimeDataSet.add(stopGCTimeDelta);
       }
 
       this.finalizerQLengthDataSet.add((double) gcSample.finalizerQLength);
@@ -333,23 +353,26 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
       title = MessageFormat.format(Res.getString("class.loader.time.0.loaded.1.unloaded.2"), gcSample.classesLoaded, gcSample.classesUnloaded, Converter.longToTimeString(gcSample.classLoadTime, GCSample.osFrequency));
       titledBorder.setTitle(title);
       titledBorder = (TitledBorder)this.edenGcPanel.getBorder();
-      title = MessageFormat.format(Res.getString("gc.time.0.collections.1"), gcSample.edenGCEvents + gcSample.tenuredGCEvents, Converter.longToTimeString(gcSample.edenGCTime + gcSample.tenuredGCTime, GCSample.osFrequency));
+      title = MessageFormat.format(Res.getString("gc.time.0.collections.1"), gcSample.edenGCEvents + gcSample.tenuredGCEvents
+              + gcSample.stopGCEvents, Converter.longToTimeString(gcSample.edenGCTime + gcSample.tenuredGCTime + gcSample.stopGCTime, GCSample.osFrequency));
       if (gcSample.lastGCCause != null && gcSample.lastGCCause.length() != 0) {
          title = MessageFormat.format(Res.getString("0.last.cause.1"), title, gcSample.lastGCCause);
       }
       titledBorder.setTitle(title);
 
       titledBorder = (TitledBorder)this.edenGcTimePanel.getBorder();
-      title = GCSample.collector0name + " Eden GC Time( Last: " + Converter.longToTimeString(lastEdenGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(edenGcTimeDataSet.getMaxValue(), GCSample.osFrequency) + ")";
+      title = GCSample.collector0name + " GC Time:" + Converter.longToTimeString(lastEdenGCTimeDelta, GCSample.osFrequency) + ", Max:" + Converter.longToTimeString(edenGcTimeDataSet.getMaxValue(), GCSample.osFrequency);
       titledBorder.setTitle(title);
 
       titledBorder = (TitledBorder)this.tenuredGCTimePanel.getBorder();
-      title = GCSample.collector1name + " Tenured GC Time( Last: " + Converter.longToTimeString(lastOldGCTimeDelta, GCSample.osFrequency) + " Max:" + Converter.longToTimeString(this.tenuredGCTimeDataSet.getMaxValue(), GCSample.osFrequency) + ")";
+      title = GCSample.collector1name + " GC Time:" + Converter.longToTimeString(lastOldGCTimeDelta, GCSample.osFrequency) + ", Max:" + Converter.longToTimeString(this.tenuredGCTimeDataSet.getMaxValue(), GCSample.osFrequency);
       titledBorder.setTitle(title);
 
       if(GCSample.collector2name != null) {
          titledBorder = (TitledBorder)this.stopGCTimePane.getBorder();
-         title = GCSample.collector2name + " Total Time: " + Converter.longToTimeString(gcSample.stopGCTime, GCSample.osFrequency) ;
+//         title = GCSample.collector2name + " Total Time: " + Converter.longToTimeString(gcSample.stopGCTime, GCSample.osFrequency) ;
+         title =  GCSample.collector2name + " GC Time:" + Converter.longToTimeString(laststopGCTimeDelta, GCSample.osFrequency)
+                 + ", " + gcSample.stopGCEvents + " collections, " + Converter.longToTimeString(gcSample.stopGCTime, GCSample.osFrequency);
          titledBorder.setTitle(title);
       }
 
