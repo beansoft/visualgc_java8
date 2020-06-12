@@ -109,25 +109,22 @@ class MonitoredVmModel implements Model {
       this.collector2name = (StringMonitor)this.vm.findByName("sun.gc.collector.2.name");
       this.gcPolicyName =  (StringMonitor)this.vm.findByName("sun.gc.policy.name");
 
-      try {
-         System.out.println("collector0name=" + collector0name.stringValue());
-         System.out.println("collector1name=" + collector1name.stringValue());
-
-         if(collector2name != null) {
-            System.out.println("collector2name=" + collector2name.stringValue());
-         }
-
-         if(gcPolicyName != null) {
-            System.out.println("gc policy name=" + gcPolicyName.stringValue());
-         }
-
-
-         // collector0name=PCopy
-         //collector1name=CMS
-         //collector2name=CMS stop-the-world phases
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
+//      try {
+//         System.out.println("collector0name=" + collector0name.stringValue());
+//         System.out.println("collector1name=" + collector1name.stringValue());
+//
+//         if(collector2name != null) {
+//            System.out.println("collector2name=" + collector2name.stringValue());
+//         }
+//         if(gcPolicyName != null) {
+//            System.out.println("gc policy name=" + gcPolicyName.stringValue());
+//         }
+//         // collector0name=PCopy
+//         //collector1name=CMS
+//         //collector2name=CMS stop-the-world phases
+//      } catch (Exception e) {
+//         e.printStackTrace();
+//      }
    }
 
    private void initialize_common() throws MonitorException {
@@ -153,26 +150,28 @@ class MonitoredVmModel implements Model {
       this.stopGCEvents =  (LongMonitor)this.vm.findByName("sun.gc.collector.2.invocations");
       this.stopGCTime = (LongMonitor)this.vm.findByName("sun.gc.collector.2.time");
 
-      if(stopGCTime != null) {
-         System.out.println("stopGCTime=" + stopGCTime.longValue());
-         System.out.println("stopGCEvents=" + stopGCEvents.longValue());
-
-      }
+      LongMonitor collectors = (LongMonitor)this.vm.findByName("sun.gc.policy.generations"); //"sun.gc.policy.collectors");
+//      System.out.println("collectors=" + collectors.longValue());//sun.gc.policy.generations
+//
+//      if(stopGCTime != null) {
+//         System.out.println("stopGCTime=" + stopGCTime.longValue());
+//         System.out.println("stopGCEvents=" + stopGCEvents.longValue());
+//      }
 
       this.ageTableSize = (LongMonitor)this.vm.findByName("sun.gc.generation.0.agetable.size");
       if (this.ageTableSize != null) {
          this.maxTenuringThreshold = (LongMonitor)this.vm.findByName("sun.gc.policy.maxTenuringThreshold");
          this.tenuringThreshold = (LongMonitor)this.vm.findByName("sun.gc.policy.tenuringThreshold");
          this.desiredSurvivorSize = (LongMonitor)this.vm.findByName("sun.gc.policy.desiredSurvivorSize");
-         int var1 = (int)this.ageTableSize.longValue();
-         this.ageTableSizes = new LongMonitor[var1];
-         String var2 = "sun.gc.generation.0.agetable.bytes.";
+         int ageTableSizeValue = (int)this.ageTableSize.longValue();
+         this.ageTableSizes = new LongMonitor[ageTableSizeValue];
+         String agetableBytesMonitorName = "sun.gc.generation.0.agetable.bytes.";
 
-         for(int var3 = 0; var3 < var1; ++var3) {
-            if (var3 < 10) {
-               this.ageTableSizes[var3] = (LongMonitor)this.vm.findByName(var2 + "0" + var3);
+         for(int i = 0; i < ageTableSizeValue; ++i) {
+            if (i < 10) {
+               this.ageTableSizes[i] = (LongMonitor)this.vm.findByName(agetableBytesMonitorName + "0" + i);
             } else {
-               this.ageTableSizes[var3] = (LongMonitor)this.vm.findByName(var2 + var3);
+               this.ageTableSizes[i] = (LongMonitor)this.vm.findByName(agetableBytesMonitorName + i);
             }
          }
       }
@@ -217,11 +216,10 @@ class MonitoredVmModel implements Model {
       if (!this.vmVersion.stringValue().startsWith("1.4.1")) {
          this.initialize_post_1_4_1();
       }
-
    }
 
-   public MonitoredVmModel(MonitoredVm var1) throws MonitorException {
-      this.vm = var1;
+   public MonitoredVmModel(MonitoredVm monitoredVm) throws MonitorException {
+      this.vm = monitoredVm;
       this.initialize();
    }
 

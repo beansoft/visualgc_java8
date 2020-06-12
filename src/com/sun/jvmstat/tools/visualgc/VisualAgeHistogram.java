@@ -42,83 +42,82 @@ class VisualAgeHistogram extends JFrame implements ActionListener, ComponentList
       this.bucketLevel = new Level[length];
       Font font = new Font("Dialog", 1, 12);
       Color color = Color.getColor("survivor.color", new Color(255, 204, 102));
-      JLabel jLabel = new JLabel("Tenuring Threshold: ");
+      JLabel jLabel = new JLabel(Res.getString("tenuring.threshold"));
       jLabel.setFont(font);
       jLabel.setForeground(color);
       this.ttField = new JLabel(String.valueOf(gcSample.tenuringThreshold));
       this.ttField.setFont(font);
       this.ttField.setForeground(color);
       jLabel.setLabelFor(this.ttField);
-      JLabel var9 = new JLabel("Max Tenuring Threshold: ");
-      var9.setFont(font);
-      var9.setForeground(color);
+      JLabel maxTTLabel = new JLabel(Res.getString("max.tenuring.threshold"));
+      maxTTLabel.setFont(font);
+      maxTTLabel.setForeground(color);
       this.mttField = new JLabel(String.valueOf(GCSample.maxTenuringThreshold));
       this.mttField.setFont(font);
       this.mttField.setForeground(color);
-      var9.setLabelFor(this.mttField);
-      JLabel var10 = new JLabel("Desired Survivor Size: ");
-      var10.setFont(font);
-      var10.setForeground(color);
+      maxTTLabel.setLabelFor(this.mttField);
+      JLabel dssLabel = new JLabel(Res.getString("desired.survivor.size"));
+      dssLabel.setFont(font);
+      dssLabel.setForeground(color);
       this.dssField = new JLabel(String.valueOf(gcSample.desiredSurvivorSize));
       this.dssField.setFont(font);
       this.dssField.setForeground(color);
-      var10.setLabelFor(this.dssField);
-      JLabel var11 = new JLabel("Current Survivor Size: ");
-      var11.setFont(font);
-      var11.setForeground(color);
+      dssLabel.setLabelFor(this.dssField);
+      JLabel cssLabel = new JLabel(Res.getString("current.survivor.size"));
+      cssLabel.setFont(font);
+      cssLabel.setForeground(color);
       this.cssField = new JLabel(String.valueOf(gcSample.desiredSurvivorSize));
       this.cssField.setFont(font);
       this.cssField.setForeground(color);
-      var11.setLabelFor(this.cssField);
+      cssLabel.setLabelFor(this.cssField);
       this.textPanel = new JPanel();
       this.textPanel.setBackground(Color.BLACK);
       this.textPanel.setLayout(new GridLayout(1, 6));
-      Border var4 = BorderFactory.createEtchedBorder(color, Color.GRAY);
-      String var3 = "Parameters";
-      TitledBorder var5 = BorderFactory.createTitledBorder(var4, var3, 0, 0, font, color);
-      this.textPanel.setBorder(var5);
+      Border etchedBorder = BorderFactory.createEtchedBorder(color, Color.GRAY);
+      String parameters = Res.getString("parameters");
+      TitledBorder titledBorder = BorderFactory.createTitledBorder(etchedBorder, parameters, 0, 0, font, color);
+      this.textPanel.setBorder(titledBorder);
       this.textPanel.add(jLabel);
       this.textPanel.add(this.ttField);
-      this.textPanel.add(var9);
+      this.textPanel.add(maxTTLabel);
       this.textPanel.add(this.mttField);
-      this.textPanel.add(var10);
+      this.textPanel.add(dssLabel);
       this.textPanel.add(this.dssField);
-      this.textPanel.add(var11);
+      this.textPanel.add(cssLabel);
       this.textPanel.add(this.cssField);
       this.histogramPanel = new JPanel();
       this.histogramPanel.setBackground(Color.BLACK);
-      GridBagLayout var12 = new GridBagLayout();
-      this.histogramPanel.setLayout(var12);
-      var3 = "Histogram";
-      var5 = BorderFactory.createTitledBorder(var4, var3, 0, 0, font, color);
-      this.histogramPanel.setBorder(var5);
-      var4 = BorderFactory.createEtchedBorder(color, Color.GRAY);
-      Dimension var13 = new Dimension(20, 50);
-      GridBagConstraints var14 = new GridBagConstraints();
-      var14.fill = 1;
-      var14.gridheight = 0;
-      var14.weighty = 1.0D;
-      var14.weightx = 1.0D / (double)length;
+      GridBagLayout gridBagLayout = new GridBagLayout();
+      this.histogramPanel.setLayout(gridBagLayout);
+      parameters = Res.getString("histogram");
+      titledBorder = BorderFactory.createTitledBorder(etchedBorder, parameters, 0, 0, font, color);
+      this.histogramPanel.setBorder(titledBorder);
+      etchedBorder = BorderFactory.createEtchedBorder(color, Color.GRAY);
+      Dimension preferredSize = new Dimension(20, 50);
+      GridBagConstraints gridBagConstraints = new GridBagConstraints();
+      gridBagConstraints.fill = 1;
+      gridBagConstraints.gridheight = 0;
+      gridBagConstraints.weighty = 1.0D;
+      gridBagConstraints.weightx = 1.0D / (double)length;
 
-      for(int var15 = 0; var15 < length; ++var15) {
-         new JPanel();
-         JPanel var16 = new JPanel();
-         var16.setBackground(Color.BLACK);
-         var16.setLayout(new GridLayout(1, 1));
-         var3 = "" + var15;
-         var5 = BorderFactory.createTitledBorder(var4, var3, 0, 0, font, color);
-         var16.setBorder(var5);
-         this.bucketLevel[var15] = new Level(color);
-         this.bucketLevel[var15].setMaximumSize(var13);
-         this.bucketLevel[var15].setMaximumSize(var13);
-         this.bucketLevel[var15].setPreferredSize(var13);
-         var16.add(this.bucketLevel[var15]);
-         if (var15 == length - 1) {
-            var14.gridwidth = 0;
+      for(int i = 0; i < length; ++i) {
+         JPanel chart = new JPanel();
+         chart.setBackground(Color.BLACK);
+         chart.setLayout(new GridLayout(1, 1));
+         parameters = "" + i;
+         titledBorder = BorderFactory.createTitledBorder(etchedBorder, parameters, 0, 0, font, color);
+         chart.setBorder(titledBorder);
+         this.bucketLevel[i] = new Level(color);
+         this.bucketLevel[i].setMaximumSize(preferredSize);
+         this.bucketLevel[i].setMaximumSize(preferredSize);
+         this.bucketLevel[i].setPreferredSize(preferredSize);
+         chart.add(this.bucketLevel[i]);
+         if (i == length - 1) {
+            gridBagConstraints.gridwidth = 0;
          }
 
-         var12.setConstraints(var16, var14);
-         this.histogramPanel.add(var16);
+         gridBagLayout.setConstraints(chart, gridBagConstraints);
+         this.histogramPanel.add(chart);
       }
 
       this.resetPanel(gcSample);
@@ -174,20 +173,16 @@ class VisualAgeHistogram extends JFrame implements ActionListener, ComponentList
       this.previousSample = sample;
    }
 
-   public void componentHidden(ComponentEvent e) {
-   }
+   public void componentHidden(ComponentEvent e) { }
 
-   public void componentMoved(ComponentEvent e) {
-   }
+   public void componentMoved(ComponentEvent e) { }
 
    public void componentShown(ComponentEvent e) {
    }
 
    public void componentResized(ComponentEvent e) {
       this.resetSpace(this.previousSample);
-      this.validate();
-   }
+      this.validate(); }
 
-   public void actionPerformed(ActionEvent e) {
-   }
+   public void actionPerformed(ActionEvent e) {}
 }

@@ -1,14 +1,10 @@
 <component name="ArtifactManager">
-  <artifact name="visualgc_java8:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/visualgc_java8_jar</output-path>
-    <properties id="ant-postprocessing">
-      <options enabled="true" />
-    </properties>
+  <artifact build-on-make="true" name="visualgc_java8:jar">
+    <output-path>$PROJECT_DIR$/build</output-path>
     <root id="root">
       <element id="archive" name="visualgc_java8.jar">
-        <element id="module-output" name="visualgc_java8" />
+        <element id="module-output" name="visualgc" />
       </element>
-      <element id="library" level="project" name="jvmstat" />
     </root>
   </artifact>
 </component>

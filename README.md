@@ -1,3 +1,5 @@
+Visual Garbage Collection Monitoring Tool - a graphical tool for monitoring the HotSpot Garbage Collector, Compiler, and class loader. It can monitor both local and remote JVMs.
+
 原版 VisualGC 3.0 Java 8增强补丁版, 不修改原始库, 修复空指针异常, Java 5 到
 Java 14 下测试通过.
 
