@@ -1,6 +1,7 @@
 package com.sun.jvmstat.tools.visualgc;
 
 import com.sun.jvmstat.util.Converter;
+import com.yworks.util.annotation.Obfuscation;
 import sun.jvmstat.monitor.LongMonitor;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredVm;
@@ -28,9 +29,13 @@ class MonitoredVmModel implements Model {
    private LongMonitor tenuredGCTime;
    private LongMonitor tenuredGCEvents;
 
+   @Obfuscation
    private LongMonitor permSize;
+   @Obfuscation
    private LongMonitor permCapacity;
+   @Obfuscation
    private LongMonitor permUsed;
+
    private LongMonitor tenuringThreshold;
    private LongMonitor maxTenuringThreshold;
    private LongMonitor desiredSurvivorSize;

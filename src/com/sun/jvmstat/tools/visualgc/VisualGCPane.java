@@ -39,6 +39,7 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -182,6 +183,7 @@ public class VisualGCPane implements ActionListener {
   public static void main(String args[]) {
 //		args = new String[]{"412"};
 //		args = new String[]{ GetProcessID.getPid() + ""};
+    Locale.setDefault(Locale.ENGLISH);
 
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

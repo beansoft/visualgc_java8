@@ -4,6 +4,8 @@ import com.sun.jvmstat.graph.FIFOList;
 import com.sun.jvmstat.graph.Line;
 import com.sun.jvmstat.tools.visualgc.resource.Res;
 import com.sun.jvmstat.util.Converter;
+import com.yworks.util.annotation.Obfuscation;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,6 +25,7 @@ import javax.swing.border.TitledBorder;
 public class GCSpacePanel extends JPanel {
    private static final int DATASET_SIZE = 1000;
    private Line line;
+   @Obfuscation
    private String borderString;
    private FIFOList dataset;
    private boolean reservedMode;

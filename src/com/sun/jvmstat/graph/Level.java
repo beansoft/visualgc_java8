@@ -1,5 +1,7 @@
 package com.sun.jvmstat.graph;
 
+import com.yworks.util.annotation.Obfuscation;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JComponent;
@@ -7,6 +9,7 @@ import javax.swing.JComponent;
 public class Level extends JComponent {
   private Color color;
   private double level;
+  @Obfuscation
   private GridDrawer gridDrawer;
 
   public Level(Color color) {

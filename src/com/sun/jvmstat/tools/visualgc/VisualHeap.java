@@ -3,6 +3,8 @@ package com.sun.jvmstat.tools.visualgc;
 import com.sun.jvmstat.graph.Level;
 import com.sun.jvmstat.tools.visualgc.resource.Res;
 import com.sun.jvmstat.util.Converter;
+import com.yworks.util.annotation.Obfuscation;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -43,7 +45,9 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
    private JPanel edenPanel;
    private JPanel s0Panel;
    private JPanel s1Panel;
+   @Obfuscation
    private JPanel permPanel;
+   @Obfuscation
    private JLabel livenessIndicator;
    private JLabel etField;
    private double infoAreaPercent = 0.4D;
@@ -175,7 +179,7 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       textArea.append("java.vm.specification.name=" + GCSample.vmSpecName + "\n\n");
       textArea.append("java.vm.specification.vendor=" + GCSample.vmSpecVendor + "\n\n");
       textArea.append("java.vm.specification.version=" + GCSample.vmSpecVersion + "\n\n");
-      textArea.setRows(4);
+      textArea.setRows(8);
       textArea.setLineWrap(true);
       JScrollPane var5 = new JScrollPane(textArea);
       this.updateTextFields(var1);

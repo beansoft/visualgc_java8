@@ -4,6 +4,7 @@ import com.sun.jvmstat.graph.FIFOList;
 import com.sun.jvmstat.graph.Line;
 import com.sun.jvmstat.tools.visualgc.resource.Res;
 import com.sun.jvmstat.util.Converter;
+import com.yworks.util.annotation.Obfuscation;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -42,6 +43,7 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
   public FIFOList edenGcTimeDataSet;// eden gc time dataset
   public FIFOList tenuredGCTimeDataSet;// tenure gc time dataset
   public FIFOList stopGCTimeDataSet;// tenure gc time dataset
+  @Obfuscation
   private GCSpacePanel permPanel;
   private GCSpacePanel oldPanel;
   private GCSpacePanel edenPanel;
