@@ -183,7 +183,7 @@ public class VisualGCPane implements ActionListener {
   public static void main(String args[]) {
 //		args = new String[]{"412"};
 //		args = new String[]{ GetProcessID.getPid() + ""};
-    Locale.setDefault(Locale.ENGLISH);
+//    Locale.setDefault(Locale.ENGLISH);
 
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
