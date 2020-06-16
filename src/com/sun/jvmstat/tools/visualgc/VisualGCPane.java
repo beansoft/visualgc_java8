@@ -30,6 +30,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -78,7 +79,7 @@ public class VisualGCPane implements ActionListener {
   public VisualGCPane() {
   }
 
-  private static void customizeColors() {
+  public static void customizeColors() {
     if (ORIGINAL_UI)
       return;
     System.setProperty("graphgc.gc.color", colorString(152, 178, 0));
@@ -137,7 +138,7 @@ public class VisualGCPane implements ActionListener {
         titleFont = UIManager.getFont("TitledBorder.font");
       if (titleFont == null)
         titleFont = UIManager.getFont("Label.font");
-      newBorder.setTitleFont(titleFont.deriveFont(1));
+      newBorder.setTitleFont(titleFont.deriveFont(Font.BOLD));
       jComponent.setBorder(newBorder);
     } else if (jComponent instanceof Line) {
       Line line = (Line) jComponent;
@@ -162,7 +163,7 @@ public class VisualGCPane implements ActionListener {
       JLabel label = (JLabel) jComponent;
       label.setFont(UIManager.getFont("Label.font"));
       if (label.getText().endsWith(": "))
-        label.setFont(label.getFont().deriveFont(1));
+        label.setFont(label.getFont().deriveFont(Font.BOLD));
       label.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
       if (label.getForeground() == Color.white) {
@@ -172,7 +173,7 @@ public class VisualGCPane implements ActionListener {
       JTextArea label = (JTextArea) jComponent;
       label.setFont(UIManager.getFont("Label.font"));
       if (label.getText().endsWith(": "))
-        label.setFont(label.getFont().deriveFont(1));
+        label.setFont(label.getFont().deriveFont(Font.BOLD));
       label.setForeground(Color.BLACK);
     }
     jComponent.setOpaque(false);
@@ -205,68 +206,64 @@ public class VisualGCPane implements ActionListener {
     JFrame frame = new JFrame();
     frame.setIconImage(new ImageIcon(VisualGCPane.class.getResource("/visualgc.png")).getImage());
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    frame.setTitle(Res.getString("visualgc.3.0.loading.jvm.process.list"));
+//    frame.setTitle(Res.getString("visualgc.3.0.loading.jvm.process.list"));
+    frame.setTitle("VisualGC 3.0");
 //    frame.getContentPane().add(new JLabel("Loading JVM process list on your machine...."));
-    frame.setSize(800, 600);
-    frame.setVisible(true);
-
-    String pName = "";
-    if (args == null || args.length == 0) {
-
-      JList list = new JList(JpsHelper.getJvmPSList().toArray());
-      String processInput = JOptionPane.showInputDialog(frame, list,
-          Res.getString("please.choose.a.process"), JOptionPane.QUESTION_MESSAGE);
-      if (processInput != null && processInput.length() != 0) {
-        args = new String[]{processInput};
-        String info = JpsHelper.getVmInfo(processInput);
-        pName = " - " + info;
-      } else {
-        String val = (list.getSelectedValue() != null) ? list.getSelectedValue().toString() : null;
-        if (val == null) {
-          int pid = GetProcessID.getPid();
-          args = new String[]{String.valueOf(GetProcessID.getPid())};
-          String info = JpsHelper.getVmInfo(pid + "");
-          pName = " - " + info;
-        } else {
-          processInput = val.substring(0, val.indexOf(' '));
-          pName = " - " + val;
-          args = new String[]{processInput};
-        }
-      }
 
 
-//      System.out.println(s);
-    }
-
-
-    try {
-      arguments = new Arguments(args);
-    } catch (IllegalArgumentException var29) {
-      System.err.println(var29.getMessage());
-      Arguments.printUsage(System.err);
-      System.exit(1);
-    }
-
-    if (arguments.isHelp()) {
-      Arguments.printUsage(System.out);
-      System.exit(1);
-    }
-
-    if (arguments.isVersion()) {
-      Arguments.printVersion(System.out);
-      System.exit(1);
-    }
-
+//    String pName = "";
+//    if (args == null || args.length == 0) {
+//
+//      JList list = new JList(JpsHelper.getJvmPSList().toArray());
+//      String processInput = JOptionPane.showInputDialog(frame, list,
+//          Res.getString("please.choose.a.process"), JOptionPane.QUESTION_MESSAGE);
+//      if (processInput != null && processInput.length() != 0) {
+//        args = new String[]{processInput};
+//        String info = JpsHelper.getVmInfo(processInput);
+//        pName = " - " + info;
+//      } else {
+//        String val = (list.getSelectedValue() != null) ? list.getSelectedValue().toString() : null;
+//        if (val == null) {
+//          int pid = GetProcessID.getPid();
+//          args = new String[]{String.valueOf(GetProcessID.getPid())};
+//          String info = JpsHelper.getVmInfo(pid + "");
+//          pName = " - " + info;
+//        } else {
+//          processInput = val.substring(0, val.indexOf(' '));
+//          pName = " - " + val;
+//          args = new String[]{processInput};
+//        }
+//      }
+////      System.out.println(s);
+//    }
+//
+//
+//    try {
+//      arguments = new Arguments(args);
+//    } catch (IllegalArgumentException var29) {
+//      System.err.println(var29.getMessage());
+//      Arguments.printUsage(System.err);
+//      System.exit(1);
+//    }
+//
+//    if (arguments.isHelp()) {
+//      Arguments.printUsage(System.out);
+//      System.exit(1);
+//    }
+//
+//    if (arguments.isVersion()) {
+//      Arguments.printVersion(System.out);
+//      System.exit(1);
+//    }
 
     VisualGCPane gcPane = new VisualGCPane();
 
 
-    frame.setTitle("VisualGC 3.0" + pName);
-    gcPane.startMonitor(arguments.vmIdString());
-    frame.getContentPane().add(gcPane.createComponent(), BorderLayout.CENTER);
+//    frame.setTitle("VisualGC 3.0" + pName);
+//    gcPane.startMonitor(arguments.vmIdString());
+    frame.getContentPane().add(gcPane.createComponent(frame.getContentPane()), BorderLayout.CENTER);
     frame.setSize(1024, 768);
     frame.setVisible(true);
-
   }
 
   public void startMonitor(String vmIdString) {
@@ -413,9 +410,34 @@ public class VisualGCPane implements ActionListener {
     }
   }
 
-  protected DataViewComponent createComponent() {
+  private String pName = "";
+
+  protected DataViewComponent createComponent(Container contentPane) {
+    PsListModel psListModel = new PsListModel();
+    JList<String> psList = new JList<>(psListModel);
+    psList.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() >= 2) {
+          String val = psList.getSelectedValue();
+          if (val != null) {
+            if(timer != null) timer.stop();
+            pName = val;
+
+            String processInput = val.substring(0, val.indexOf(' '));
+            startMonitor(processInput);
+//              psListModel.stop();
+            contentPane.removeAll();
+            contentPane.add(createComponent(contentPane));
+//            timer.start();
+          }
+        }
+      }
+    });
+
     if (!this.modelAvailable) {
-      DataViewComponent.MasterView masterView = new DataViewComponent.MasterView("Visual GC", null, (JComponent) new NotSupportedDisplayer(NotSupportedDisplayer.JVM));
+      DataViewComponent.MasterView masterView = new DataViewComponent.MasterView("Visual GC - Double click to start", null, new JScrollPane(psList));
+//          new NotSupportedDisplayer(NotSupportedDisplayer.JVM));
       DataViewComponent.MasterViewConfiguration masterViewConfiguration = new DataViewComponent.MasterViewConfiguration(true);
       return new DataViewComponent(masterView, masterViewConfiguration);
     }
@@ -424,7 +446,7 @@ public class VisualGCPane implements ActionListener {
     this.histogramViewSupport = new HistogramViewSupport();
     this.spacesViewSupport = new SpacesViewSupport();
 
-    DataViewComponent.MasterView monitoringMasterView = new DataViewComponent.MasterView("Visual GC", Res.getString("a.visual.garbage.collection.monitoring.tool"), this.masterViewSupport);
+    DataViewComponent.MasterView monitoringMasterView = new DataViewComponent.MasterView("Visual GC - " + pName, Res.getString("a.visual.garbage.collection.monitoring.tool"), this.masterViewSupport);
 
     DataViewComponent.MasterViewConfiguration monitoringMasterConfiguration = new DataViewComponent.MasterViewConfiguration(false);
     DataViewComponent dvc = new DataViewComponent(monitoringMasterView, monitoringMasterConfiguration);
@@ -433,21 +455,8 @@ public class VisualGCPane implements ActionListener {
         Res.getString("graphs"), true), DataViewComponent.TOP_RIGHT);
     dvc.addDetailsView(this.graphGCViewSupport.getDetailsView(), DataViewComponent.TOP_RIGHT);
 //    dvc.addDetailsView( new DataViewComponent.DetailsView( "GC Policy", null, 10, new JLabel(GCSample.gcPolicyName), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
-    PsListModel psListModel = new PsListModel();
-    JList<String> psList = new JList<>(psListModel);
-    psList.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-        String val = psList.getSelectedValue();
-        if (val != null) {
-          String processInput = val.substring(0, val.indexOf(' '));
-          startMonitor(processInput);
-          timer.start();
-        }
-      }
-    });
 
-//    dvc.addDetailsView( new DataViewComponent.DetailsView( "PS List", null, 10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+    dvc.addDetailsView( new DataViewComponent.DetailsView( "PS List", null, 10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
     dvc.addDetailsView(new DataViewComponent.DetailsView(Res.getString("info"), null, 10, new LinkLabel(Res.getString("this.tool.created.by"), null) {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -475,7 +484,7 @@ public class VisualGCPane implements ActionListener {
   }
 
   static class PsListModel extends DefaultListModel<String> implements ActionListener {
-    private Timer timer = new Timer(2000, this);
+    private final Timer timer = new Timer(2000, this);
 
     public PsListModel() {
       timer.start();
@@ -579,7 +588,7 @@ public class VisualGCPane implements ActionListener {
           int delay = (Integer) combo.getSelectedItem();
           VisualGCPane.MasterViewSupport.this.prefs.putInt("VisualGC.refresh", delay);
           if (delay == -1)
-            delay = 1 * 1000;
+            delay = 1000;
           VisualGCPane.MasterViewSupport.this.timer.setDelay(delay);
           VisualGCPane.MasterViewSupport.this.timer.restart();
         }
