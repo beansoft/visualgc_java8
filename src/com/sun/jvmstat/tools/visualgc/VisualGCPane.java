@@ -56,8 +56,10 @@ public class VisualGCPane implements ActionListener {
   private static final Color LIGHTER_GRAY = new Color(220, 220, 220);
   private static final Color EVEN_LIGHTER_GRAY = new Color(242, 242, 242);
   private static volatile boolean active = true;
-  private static volatile boolean terminated = false;
+  private volatile boolean terminated = false;
   private static Arguments arguments;
+
+  private ActionListener stopMonitorAction  = e -> stopMonitor();
 
   static {
     customizeColors();
@@ -75,6 +77,8 @@ public class VisualGCPane implements ActionListener {
   private Executor executor = Executors.newSingleThreadExecutor();
   private String vmIdString;
   private VmIdentifier vmId;
+
+  private Container contentPane;
 
   public VisualGCPane() {
   }
@@ -366,6 +370,20 @@ public class VisualGCPane implements ActionListener {
     }
   }
 
+  public void stopMonitor() {
+    if(timer != null) timer.stop();
+    this.vmIdString = null;
+    this.model = null;
+    this.modelAvailable = false;
+    terminated = true;
+    SwingUtilities.invokeLater(() -> {
+      contentPane.removeAll();
+      contentPane.add(createComponent(contentPane));
+      contentPane.revalidate();
+    });
+
+  }
+
   protected void removed() {
     if (!this.modelAvailable)
       return;
@@ -411,10 +429,13 @@ public class VisualGCPane implements ActionListener {
   }
 
   private String pName = "";
+  private PsListModel psListModel = new PsListModel();
 
   protected DataViewComponent createComponent(Container contentPane) {
-    PsListModel psListModel = new PsListModel();
+    this.contentPane = contentPane;
+
     JList<String> psList = new JList<>(psListModel);
+    psList.setBorder(BorderFactory.createTitledBorder(Res.getString("double.click.a.jvm.process.to.start")));
     psList.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -436,7 +457,7 @@ public class VisualGCPane implements ActionListener {
     });
 
     if (!this.modelAvailable) {
-      DataViewComponent.MasterView masterView = new DataViewComponent.MasterView("Visual GC - Double click to start", null, new JScrollPane(psList));
+      DataViewComponent.MasterView masterView = new DataViewComponent.MasterView("Visual GC", null, new JScrollPane(psList));
 //          new NotSupportedDisplayer(NotSupportedDisplayer.JVM));
       DataViewComponent.MasterViewConfiguration masterViewConfiguration = new DataViewComponent.MasterViewConfiguration(true);
       return new DataViewComponent(masterView, masterViewConfiguration);
@@ -456,12 +477,13 @@ public class VisualGCPane implements ActionListener {
     dvc.addDetailsView(this.graphGCViewSupport.getDetailsView(), DataViewComponent.TOP_RIGHT);
 //    dvc.addDetailsView( new DataViewComponent.DetailsView( "GC Policy", null, 10, new JLabel(GCSample.gcPolicyName), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
 
-    dvc.addDetailsView( new DataViewComponent.DetailsView( "PS List", null, 10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+
+    dvc.addDetailsView( new DataViewComponent.DetailsView(Res.getString("jvm.browser"), null, 10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
     dvc.addDetailsView(new DataViewComponent.DetailsView(Res.getString("info"), null, 10, new LinkLabel(Res.getString("this.tool.created.by"), null) {
       @Override
       public void mouseClicked(MouseEvent e) {
         try {
-          Desktop.getDesktop().browse(new URI("https://github.com/beansoftapp/"));
+          Desktop.getDesktop().browse(new URI("https://github.com/beansoftapp/visualgc_jdk8"));
         } catch (IOException ioException) {
           ioException.printStackTrace();
         } catch (URISyntaxException uriSyntaxException) {
@@ -803,7 +825,9 @@ public class VisualGCPane implements ActionListener {
     }
 
     public DataViewComponent.DetailsView getDetailsView() {
-      return new DataViewComponent.DetailsView(Res.getString("graphs"), null, 10, this, null);
+      JButton stopButton = new JButton("Stop");
+      stopButton.addActionListener(stopMonitorAction);
+      return new DataViewComponent.DetailsView(Res.getString("graphs"), null, 10, this, stopButton);
     }
 
     void refresh(GCSample gcsample) {

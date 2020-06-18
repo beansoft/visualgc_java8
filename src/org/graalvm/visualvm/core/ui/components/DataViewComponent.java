@@ -524,7 +524,7 @@ public final class DataViewComponent extends JPanel {
          * @param view UI component to be shown.
          * @param options components to be shown in view's caption.
          */
-        public DetailsView(String name, String description, int preferredPosition, JComponent view, JComponent[] options) {
+        public DetailsView(String name, String description, int preferredPosition, JComponent view, JComponent... options) {
             tab = new DisplayArea.Tab(name, description, preferredPosition, view, options);
         }
         
