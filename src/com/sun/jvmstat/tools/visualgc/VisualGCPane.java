@@ -55,9 +55,7 @@ public class VisualGCPane implements ActionListener {
   private static final Color NORMAL_GRAY = new Color(165, 165, 165);
   private static final Color LIGHTER_GRAY = new Color(220, 220, 220);
   private static final Color EVEN_LIGHTER_GRAY = new Color(242, 242, 242);
-  private static volatile boolean active = true;
   private volatile boolean terminated = false;
-  private static Arguments arguments;
 
   private ActionListener stopMonitorAction  = e -> stopMonitor();
 
@@ -79,6 +77,8 @@ public class VisualGCPane implements ActionListener {
   private VmIdentifier vmId;
 
   private Container contentPane;
+  private String pName = "";
+  private PsListModel psListModel = new PsListModel();
 
   public VisualGCPane() {
   }
@@ -381,7 +381,22 @@ public class VisualGCPane implements ActionListener {
       contentPane.add(createComponent(contentPane));
       contentPane.revalidate();
     });
+  }
 
+  /** Complete destory the monitor */
+  public void dispse() {
+    if(timer != null) timer.stop();
+    this.vmIdString = null;
+    this.model = null;
+    this.modelAvailable = false;
+    terminated = true;
+    psListModel.stop();
+    contentPane.removeAll();
+    contentPane.add(createComponent(contentPane));
+    psListModel = null;
+    contentPane = null;
+    model = null;
+    vmId = null;
   }
 
   protected void removed() {
@@ -427,9 +442,6 @@ public class VisualGCPane implements ActionListener {
       });
     }
   }
-
-  private String pName = "";
-  private PsListModel psListModel = new PsListModel();
 
   protected DataViewComponent createComponent(Container contentPane) {
     this.contentPane = contentPane;
