@@ -343,6 +343,7 @@ public class VisualGCPane implements ActionListener {
         GCSample gcsample = new GCSample(testModel);
         this.histogramSupported = gcsample.ageTableSizes != null;
         this.model = testModel;
+        terminated = false;
         return true;
       }
     } catch (MonitorException ex) {
