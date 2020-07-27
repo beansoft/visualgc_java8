@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: com.sun.jvmstat.tools.visualgc.VisualGCPatch
-Class-Path: jvmstat_graph.jar jvmstat_util.jar visualgc.jar
-

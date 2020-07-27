@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/visualgc.iml" filepath="$PROJECT_DIR$/visualgc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/visualgc_fix/visualgc_fix.iml" filepath="$PROJECT_DIR$/visualgc_fix/visualgc_fix.iml" />
+      <module fileurl="file://$PROJECT_DIR$/visualgc_idea/visualgc_idea.iml" filepath="$PROJECT_DIR$/visualgc_idea/visualgc_idea.iml" />
+      <module fileurl="file://$PROJECT_DIR$/visualgc_java8/visualgc_java8.iml" filepath="$PROJECT_DIR$/visualgc_java8/visualgc_java8.iml" />
     </modules>
   </component>
 </project>

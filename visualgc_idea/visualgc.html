@@ -1,0 +1,691 @@
+<html><head>
+
+<title>visualgc - 可视化JVM垃圾回收监控工具</title>
+
+</head>
+<body bgcolor=white>
+
+
+<h1>visualgc - 可视化JVM垃圾回收监控工具</h1>
+
+<ul>
+  <li><a href="#synopsis">摘要</a>
+  <li><a href="#description">介绍</a>
+  <li><a href="#options">选项</a>
+  <li><a href="notes.html#vmidentifier">虚拟机标识符</a>
+  <li><a href="#output-format">输出格式</a>
+  <li><a href="#examples">示例</a>
+  <li><a href="#bugs">Bug</a>
+  <li><a href="#seealso">参考</a>
+</ul>
+
+<a name="synopsis">
+<h2>摘要</h2></a>
+<blockquote>
+<pre>
+<b>visualgc</b> <i>-help</i>
+</pre>
+<blockquote>
+输出一条消息并退出.
+</blockquote>
+</blockquote>
+
+<blockquote>
+<pre>
+<b>visualgc</b> <i>-version</i>
+</pre>
+<blockquote>
+输入版本信息后退出.
+</blockquote>
+</blockquote>
+
+<blockquote>
+<pre>
+<b>visualgc</b> <i>vmid</i> [<i>interval</i>]
+</pre>
+<blockquote>
+<dl>
+    <dt><b>vmid</b>
+        <dd>参考下面的选项段落中的 <a href="#vmidoption"><i>vmid</i></a>
+      <dt><b>interval</b>
+        <dd>参考下面的选项段落中的<a href="#intervaloption"><i>interval</i></a>
+    </dl>
+</blockquote>
+</blockquote>
+
+<a name="description">
+<h2>介绍</h2></a>
+<blockquote><b>visualgc</b> 工具附着到插桩过的HotSpot JVM, 收集并图形化的展示垃圾收集, 类加载以及
+HotSpot 编译器的性能数据.
+  <p>
+The target JVM is identified by its virtual machine identifier, or
+<b>vmid</b>. The formatting and semantics of the <b>vmid</b> are
+described in the <a href="#vmidoption"><i>vmid</i></a> option section below.
+</blockquote>
+
+<a name="options">
+<h2>OPTIONS</h2></a>
+<blockquote>
+The <b>visualgc</b> takes the following options:
+<dl>
+<a name="vmidoption"></a>
+    <dt><b>vmid</b>
+        <dd>A string that indicates the target JVM. The
+            syntax of the <b>vmid</b> string largely corresponds to the
+            syntax of a URI.  The general syntax is
+            <blockquote>
+            <dl>
+            <dt> [<i>protocol</i>:][//]<b><i>lvmid</i></b>[@<i>hostname</i>[:<i>port</i>]/<i>servername</i>]
+            </dl>
+            </blockquote>
+            which allows virtual machine identifiers to vary from a simple
+            integer representing a local virtual machine identifier to a
+            more complex construction specifying a communications protocol,
+            port number, and other implementation specific values. See the
+            <a href="notes.html#vmidentifier">Virtual Machine Identifier</a>
+            section for more details.
+
+<a name="intervaloption"></a>
+    <p>
+    <dt><b>interval[ms|s]</b>
+        <dd>An integer value indicating the sampling interval. The default
+            units is <i>ms</i> (milliseconds). If omitted, the default
+            <i>interval</i> is 500 milliseconds.
+</dl>
+</blockquote>
+
+<a name="output-format">
+<h2>OUTPUT FORMAT</h2></a>
+<blockquote>
+The visualgc tool will open two or three windows: the <a href="#VisualGC">
+Visual GC</a> window, the <a href="#Graph">Graph</a> window, and optionally
+the <a href="#SurvivorAgeHistogram">Survivor Age Histogram</a> window. The
+Survivor Age Histogram window not only available when the Parallel Scagenge
+collection (-XX:+UseParallelGC or -XX:+AggressiveHeap) is in use.
+
+<a name="VisualGC">
+<h2>Visual GC Window</h2></a>
+<blockquote>
+<p>
+The VisualGC window is upper leftmost window and is comprised of
+two panels. The top panel, labeled <em>Application Information</em>
+contains a liveness indicator and the elapsed time since the start of the
+target Java application. It also contains a scrollable text area that
+lists miscellaneous information about the configuration of the target
+Java application and JVM. This section includes the target application's
+main class name (or jar file if the application was started with the
+<i>-jar</i> option), and the arguments to the class's <code>main</code>
+method. It also includes the arguments passed to the JVM and the values
+of certain Java properties exported as instrumentation objects.
+<p>
+The bottom panel provides a graphical view of the spaces that make up
+the generational garbage collection system. This panel is divided up
+unto three vertical sections, one for each of the of the generations:
+the <em>Perm</em> (or Permanent) generation, the <em>Old</em> (or Tenured)
+generation, and the Young generation.  The Young generation section is
+comprised of three separate spaces that occupy the rightmost vertical
+slice of this panel. The three spaces are the <em>Eden</em> space and
+two Survivor spaces, <em>S0</em> and <em>S1</em>.
+<p>
+The screen areas representing the various spaces are sized proportionately
+to the maximum capacities of the spaces. The screen areas for the three
+generations are of fixed size and do not vary over time. Each space is
+filled with a unique color indicating the current utilization of the space,
+relative to its maximum capacity. The unique color for each space
+is used consistently among this window and the <a href="#Graph">Graph</a> and
+<a href="#SurvivorAgeHistogram">Survivor Age Histogram</a> windows.
+<p>
+The memory management system in the HotSpot JVM is capable of growing and
+shrinking the garbage collected heap. This is accomplished by reserving
+address space for the requested maximum heap size, but committing
+real memory to only the amount currently needed. The relationship between
+committed and reserved memory is represented by the color of the background
+grid in each space. Uncommitted memory is represented by the dark gray
+colored portion of the grid whereas committed memory is represented by
+the green colored portion of the grid. In many cases, the utilization of
+the space may be nearly identical to the committed amount of memory,
+making it difficult to determine the exact transition point of the green
+portion of the grid to the gray portion of the grid.
+<p>
+The relationship between the sizes of the Eden and Survivor spaces in the
+young generation portion of the Visual GC frame are usually fixed in size.
+The survivor spaces are of identical size and are fully committed, indicated
+by the grid that is all green. The Eden space may be only partially committed,
+with the uncommitted portion of the space represented by dark gray portion
+of the grid.
+<p>
+When the parallel young generation collector (-XX:+UseParallelGC) is used
+along with the adaptive size policy feature (-XX:+UseAdaptiveSizePolicy),
+the relationship between the sizes of the young generation spaces can vary
+over time. When this collector policy is in effect, the sizes of the of
+the survivor spaces are not necessarily identical and space in the young
+generation can be dynamically redistributed among the three spaces. In this
+configuration, the screen areas representing the Survivor spaces and the
+colored region representing the utilization of the space are sized relative
+to the current size of the space, not the maximum size of the space. When
+dynamic resizing occurs, the screen area associated with the young generation
+spaces will change accordingly.
+</blockquote>
+
+<a name="Graph">
+<h2>Graph Window</h2></a>
+<blockquote>
+The Graph window displays plots the values of various statistics as a
+function of time.  The resolution of the horizontal axis of the graph
+is determined by the <i>interval</i> command line argument, where each
+sample occupies 2 pixels of screen area.  The height of each display
+depends on the metric being plotted.
+<p>
+The following displays are provided
+<dl>
+     <dt><code>Compile Time</code>
+         <dd>This panel plots the amount of time spent compiling Java byte
+         codes into native code.  The height of this display is not scaled
+         to any particular value. A non zero value in this graph indicates that
+         compilation activity occurred during the last interval. A narrow pulse
+         indicates a relatively short duration and a wide pulse indicates
+         a long duration. The title bar indicates the number of compilation
+         tasks and the accumulated compilation time since the start of the
+         application.
+         <p>
+     <dt><code>Class Loader Time</code>
+         <dd>This panel plots the amount of time spent in class loading and
+         unloading activities.  The height of this display is not scaled
+         to a particular value. A non zero value in this graph indicates that
+         class loading activity occurred during the last interval. A narrow
+         pulse indicates a relatively short duration and a wide pulse indicates
+         a long duration. The title bar indicates the number of classes loaded
+         and unloaded and the accumulated class loading time since the start
+         of the application.
+         <p>
+     <dt><code>GC Time</code>
+         <dd>This panel plots the amount of time spent in garbage collection
+         activities.  The height of this display is not scaled to any
+         particular value. A non zero value in this graph indicates that
+         garbage collection activity occurred during the last interval. A
+         narrow pulse indicates a relatively short duration and a wide pulse
+         indicates a long duration.  The title bar indicates the total number
+         of GC events and the accumulated GC time since the start of the
+         application.
+         <p>
+         <dd> If the target JVM maintains the hotspot.gc.cause and
+         hotspot.gc.last_cause counters, the cause of the GC events will
+         also be displayed in the title bar for this graph.
+         <p>
+     <dt><code>Eden Space</code>
+         <dd>This panel plots the utilization of the Eden Space over time. The
+         Eden Space is one of three spaces that make up the Young Generation.
+         The height of this panel is fixed and, by default,  the data is scaled
+         according to the current capacity of the space. Since the current
+         capacity of the space can change dynamically depending on the
+         collector policy, visual artifacts may occur as the space shrinks and
+         grows over time.
+         <p>
+         <dd> The title bar displays the name of the space and its maximum and
+         current capacity in parenthesis followed by the current utilization
+         of the space. In addition, the title also contains the number and
+         accumulated time of Young GC events.
+         <p>
+     <dt><code>Survivor 0 and Survivor 1</code>
+         <dd>The Survivor panels plot the utilization of the two survivor
+          spaces over time. The Survivor Spaces are the remaining two spaces
+          comprising the Young Generation. The height of each of these panels
+          is fixed and, by default, the data is scaled according to the current
+          capacity of the corresponding space. Since the current capacity of
+          the survivor spaces can change dynamically depending on the collector
+          policy, visual artifacts may occur as the space shrinks and grows
+          over time.
+          <p>
+          <dd>
+          The title bar displays the name of the space and its maximum and
+          current capacity in parenthesis followed by the current utilization
+          of the space.
+         <p>
+     <dt><code>Old Gen</code>
+         <dd>The Old Gen panel plots the utilization of the Old Generation over
+         time. The Old Generation is comprised of a single space. The height of
+         the panel is fixed and, by default, the data is scaled according to
+         the current capacity of the space. Since the current capacity of the
+         space can change dynamically depending on the collector policy, visual
+         artifacts may occur as the space shrinks and grows over time.
+         <p>
+         <dd> The title bar displays the name of the space and its maximum and
+         current capacity in parenthesis followed by the current utilization
+         of the space. In addition, the title also contains the number and
+         accumulated time of Full GC events.
+         <p>
+     <dt><code>Perm Gen</code>
+         <dd>The Perm Gen panel plots the utilization of the Permanent
+         Generation over time.  The Permanent Generation is comprised of a
+         single space, but does not have its own collector. Instead, this space
+         is collected as part of the Old Generation. The height of the panel is
+         fixed and, by default, the data is scaled according to the current
+         capacity of the space. Since the current capacity of the space can
+         change dynamically depending on the collector policy, visual artifacts
+         may occur as the space shrinks and grows over time.
+          <p>
+          <dd>
+          The title bar displays the name of the space and its maximum and
+          current capacity in parenthesis followed by the current utilization
+          of the space.
+         <p>
+</dl>
+<p> Each of the GC space graphs can be displayed in one of two modes -
+reserved mode or committed mode, with committed mode being the default. In
+reserved mode, the data is scaled according to the maximum capacity of the
+space while in committed mode, the data is scaled according to the current
+capacity of the space. In reserved mode, the background grid is painted in
+dark gray to represent that portion of the reserved memory that is uncommitted
+memory and in green to represent the portion that is committed. The mode
+can be toggled by right-clicking over the space and checking or un-checking
+the "Show Reserved Space" check box.
+</blockquote>
+
+<a name="SurvivorAgeHistogram">
+<h2>Survivor Age Histogram Window</h2></a>
+<blockquote>
+The <em>Survivor Age Histogram</em> window is the lowermost window.
+It is comprise of two panels, the <em>Parameters</em> panel and the
+<em>Histogram</em> panel.
+<p>
+The <em>Parameters</em> panel displays the size of the survivor spaces
+and the parameters that control the promotion behavior of the young
+generation. After each young generation collection, objects that survive
+the collection but are not promoted remain in the Survivor spaces. An
+object's age is incremented each time it survives a young generation
+collection until the object's age reaches the maximum age as defined by
+the TenuringThreshold variable, which varies between 1 and
+MaxTenuringThreshold-1 depending on the utilization of the survivor space.
+If the survivor space overflows, then the oldest objects are promoted
+to the Old generation until the utilization of the space does not
+exceed DesiredSurvivorSize.  A MaxTenuringThreshold value of 0 will
+result in objects always being promoted to the old generation and a
+value 32 will prevent objects from being promoted unless the survivor
+space fills up.
+<p>
+The <em>Histogram</em> panel displays a snapshot of the age distribution
+of objects in the active survivor space after the last Young generation
+collection. The display is comprised of 32 identically sized regions,
+one for each possible object age. Each region represents 100% of the active
+Survivor Space and is filled with a colored area that indicates the percentage
+of the survivor space occupied by objects of the given age.
+<p>
+When the target JVM is started with the parallel young generation collector
+(-XX:+UseParallelGC), the Survivor Age Histrogram window is not displayed.
+The parallel young generation collector does not maintain a survivor age
+histogram as it applies a different policy for maintaining objects in the
+survivor spaces.
+</blockquote>
+<a name="Window Sizing and Placement and Color Selection">
+<h2>Window Sizing and Placement and Color Selection</h2></a>
+<p>
+The visualgc tool provides some crude window sizing and placement and
+color selection capabilities through the setting over various Java system
+properties. These properties can be passed to the visualgc script through
+the <i>VMARGS</I> environment variable. The following table lists the
+available properties:
+<DL>
+	<DL>
+		<DD>
+		<TABLE WIDTH=730 BORDER=0 CELLPADDING=4 CELLSPACING=3 STYLE="page-break-before: always">
+			<COL WIDTH=139>
+			<COL WIDTH=230>
+			<COL WIDTH=337>
+			<THEAD>
+				<TR VALIGN=TOP>
+					<TH WIDTH=139>
+						<P>Property</P>
+					</TH>
+					<TH WIDTH=230>
+						<P>Default</P>
+					</TH>
+					<TH WIDTH=337>
+						<P>Description</P>
+					</TH>
+				</TR>
+			</THEAD>
+			<TBODY>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>graphgc.gc.color
+						</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>Color.YELLOW</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Color of the GC graph line</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>graphgc.class.color
+						</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>Color.CYAN</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Color of the Class Loader graph line</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>graphgc.compile.color</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>Color.WHITE</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Color of the Compiler graph line</P>
+					</TD>
+				</TR>
+                                <!-- finalizer instrumentation not available yet
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>graphgc.finalizer.color</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>Color.WHITE</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Color of the Finalizer graph line</P>
+					</TD>
+				</TR>
+                                -->
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>eden.color</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>Color(255, 150, 0)</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Color of all Eden space related graphics</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>survivor.color</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>Color(255, 204, 102)</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Color of all Survivor space related graphics</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>old.color</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>Color(204, 102, 0)</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Color of all Old space related graphics</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>perm.color</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>Color(240, 200, 150)</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Color of all Perm space related graphics</P>
+					</TD>
+				</TR>
+				<TR>
+					<TD WIDTH=139 VALIGN=TOP>
+						<P>visualheap.x</P>
+					</TD>
+					<TD WIDTH=230 VALIGN=BOTTOM SDVAL="0" SDNUM="1033;">
+						<P ALIGN=CENTER>0</P>
+					</TD>
+					<TD WIDTH=337 VALIGN=TOP>
+						<P>X location of the VisualGC (left) frame</P>
+					</TD>
+				</TR>
+				<TR>
+					<TD WIDTH=139 VALIGN=TOP>
+						<P>visualheap.y</P>
+					</TD>
+					<TD WIDTH=230 VALIGN=BOTTOM SDVAL="0" SDNUM="1033;">
+						<P ALIGN=CENTER>0</P>
+					</TD>
+					<TD WIDTH=337 VALIGN=TOP>
+						<P>Y location of the VisualGC (left) frame</P>
+					</TD>
+				</TR>
+				<TR>
+					<TD WIDTH=139 VALIGN=TOP>
+						<P>visualheap.width</P>
+					</TD>
+					<TD WIDTH=230 VALIGN=BOTTOM SDVAL="450" SDNUM="1033;">
+						<P ALIGN=CENTER>450</P>
+					</TD>
+					<TD WIDTH=337 VALIGN=TOP>
+						<P>Width in pixels of the VisualGC (left) frame</P>
+					</TD>
+				</TR>
+				<TR>
+					<TD WIDTH=139 VALIGN=TOP>
+						<P>visualheap.height</P>
+					</TD>
+					<TD WIDTH=230 VALIGN=BOTTOM SDVAL="600" SDNUM="1033;">
+						<P ALIGN=CENTER>600</P>
+					</TD>
+					<TD WIDTH=337 VALIGN=TOP>
+						<P>Height in pixels of the VisualGC (left) frame</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>graphgc.x</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>visualheap.x + visualheap.width</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>X location of the Graph (right frame</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>graphgc.y</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>visualheap.y</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Y location of the Graph (right) frame</P>
+					</TD>
+				</TR>
+				<TR>
+					<TD WIDTH=139 VALIGN=TOP>
+						<P>graphgc.width</P>
+					</TD>
+					<TD WIDTH=230 VALIGN=BOTTOM SDVAL="450" SDNUM="1033;">
+						<P ALIGN=CENTER>450</P>
+					</TD>
+					<TD WIDTH=337 VALIGN=TOP>
+						<P>Width in pixels of the Graph (right) frame</P>
+					</TD>
+				</TR>
+				<TR>
+					<TD WIDTH=139 VALIGN=TOP>
+						<P>graphgc.height</P>
+					</TD>
+					<TD WIDTH=230 VALIGN=BOTTOM SDVAL="600" SDNUM="1033;">
+						<P ALIGN=CENTER>600</P>
+					</TD>
+					<TD WIDTH=337 VALIGN=TOP>
+						<P>Height in pixels of the Graph (right) frame</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>agetable.x</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>visualheap.x</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>X location of the Age Histogram (bottom) frame</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>agetable.y</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>visualheap.y + visualheap.height</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Y location of the Age Histogram (bottom) frame</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>agetable.width</P>
+					</TD>
+					<TD WIDTH=230>
+						<P ALIGN=CENTER>visualheap.width + graphgc.width</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Width in pixels of the Age Histogram (bottom) frame</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=139>
+						<P>agetable.height</P>
+					</TD>
+					<TD WIDTH=230 SDVAL="200" SDNUM="1033;">
+						<P ALIGN=CENTER>200</P>
+					</TD>
+					<TD WIDTH=337>
+						<P>Height in pixels of the Age Histogram (bottom) frame</P>
+					</TD>
+				</TR>
+			</TBODY>
+		</TABLE>
+	</DL>
+</DL>
+<p>
+To change the value of a color, an RGB value must be specified in either
+decimal, octal, or hexadecimal. A color name, such as <code>Color.CYAN</code>,
+or a Color constructor call, such as <code>Color(255, 150, 0)</code>, as
+used in the defaults column of the above table, are not accepted as valid
+values for the above properties.
+<blockquote>
+</blockquote>
+
+<a name="examples">
+<h2>EXAMPLES</h2></a>
+
+<blockquote>
+To monitor a local HotSpot JVM, its local virtual machine identifier
+, or <i>lvmid</i> must first be determined. The <b>jps</b> command
+should be used to determine the local virtual machine identifier for
+the target JVM. Although a <i>lvmid</i> is simply a process identifier
+on UNIX platforms and Windows platforms, acquiring a process identifier
+from platform specific tools such as <b>ps</b> or Task Manager may not
+be sufficient. In general, if the <b>jps</b> does not list the target
+application in its output, then the target is not monitorable by the
+user running the tools. Furthermore, operating systems other than UNIX
+and Windows may not have such a direct mapping from an operating system
+abstraction to an <i>lvmid</i>, in which case the operating system
+specific tools may not be able to provide a corresponding identifier.
+<p>
+Once the <i>lvmid</i> has been determined, it can be used directly for
+local monitoring or as a component of a more general
+<a href="notes.html#vmidentifier"> Virtual Machine Identifier</a>,
+or <b>vmid</b>, for the <b>visualgc</b> command.
+
+<a name="local">
+<h3>Visualizing operations of a local JVM</h3></a>
+<blockquote>
+<p>
+This example uses <b>jps</b> to get a list of available target JVMs
+and then uses <b>visualgc</b> to attach to the JVM for the Java2Demo
+application with <i>lvmid</i> 21891. The sampling interval is set
+to 250 milliseconds.
+<blockquote><pre>
+% <b>jps</b>
+21891 Java2Demo.jar
+1362 Jps.jar
+% <b>visualgc 21891 250</b>
+</pre></blockquote>
+</blockquote>
+
+<a name="remote">
+<h3>Visualizing operations of a remote JVM</h3></a>
+<blockquote>
+<p>
+This uses <b>jps</b> to get a liast of availale target JVMs on the
+host named <i>remote.domain</i> and then uses <b>visualgc</b> to attach
+to the JVM for the Java2Demo application with <i>lvmid</i> 102592 on the
+remote system. The sample interval is not specified in this example and
+the default interval of 500 milliseconds is used.
+<blockquote><pre>
+% <b>jps remote.domain</b>
+81763 Jps
+1362 Jstatd
+102592 Java2Demo.jar
+% <b>visualgc 102592@remote.domain</b>
+</pre></blockquote>
+<p> The <i>vmid</i> in this example implies that the remote protocol
+is RMI. This implication requires that an RMI registry bound to the
+default port (1099) and the <i>jstatd</i> server are running on
+<i>remote.domain</i>. In addition, it also assumes that the <i>jstatd</i>
+server is running with appropriate credentials to access the JVM
+itendified by <i>lvmid</i> 102592.
+</blockquote>
+</blockquote>
+
+<a name="bugs">
+<h2>BUGS</h2></a>
+<blockquote>
+<p> The <i>visualgc</i> tool was originally developed as demonstration
+software for JavaOne 2001 where it was used in a presentation to help
+describe how various tunable parameters affect the operations of the
+HotSpot generational garbage collector. This application was modified
+to use the jvmstat APIs to acquire data from a live instrumented JVM.
+<p> The future of this tool is unknown and bugs may or may not be fixed in
+future releases. The tool may be replaced by a more generic, but configurable
+tool that can provide similar information.
+</blockquote>
+
+<a name="seealso">
+<h2>SEE ALSO</h2></a>
+<blockquote>
+<ul>
+    <li><a href=http://java.sun.com/j2se/1.5.0/docs/tooldocs/index.html#basic>java - the Java Application Launcher</a>
+    <li><a href=http://java.sun.com/j2se/1.5.0/docs/tooldocs/share/jps.html#jps>jps - the Java Process Status Application</a>
+    <li><a href=http://java.sun.com/j2se/1.5.0/docs/tooldocs/share/jstat.html#jstat>jstat - the Java Virtual Machine Statistics Monitoring Tool</a>
+    <li><a href=http://java.sun.com/j2se/1.5.0/docs/tooldocs/share/jstatd.html>jstatd - the jstat monitoring daemon</a>
+    <li><a href=http://java.sun.com/j2se/1.5.0/docs/tooldocs/index.html#rmi>rmiregistry - the Java Remote Object Registry</a>
+</ul>
+</blockquote>
+<HR SIZE=3 NOSHADE>
+<TABLE BORDER="0" WIDTH="100%">
+<TR VALIGN=TOP>
+<TD>
+<P><FONT SIZE="-2">
+  <A HREF="../../relnotes/SMICopyright.html">Copyright</A> &#169; 2003
+  <A HREF="http://www.sun.com">Sun Microsystems, Inc.</A>
+  All Rights Reserved.</FONT></P>
+</TD>
+<TD ALIGN=RIGHT>
+  <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+  <BR>
+  <FONT SIZE="+1">
+  <i>Java Software</i>
+  </FONT>
+</TD>
+</TR>
+</TABLE>
+
+</body></html>

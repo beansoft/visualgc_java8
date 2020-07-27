@@ -1,0 +1,55 @@
+<idea-plugin>
+  <id>com.github.beansoftapp.visualgc.plugin</id>
+  <name>VisualGC</name>
+  <version>1.0.2</version>
+  <vendor email="beansoft@126.com" url="https://github.com/beansoftapp/visualgc_java8">BeanSoft</vendor>
+
+  <description><![CDATA[
+  <h2>VisualGC for Hotspot JVM</h2>
+      This plugin displayed a Visual GC tool window in your IDE, only supports HotSpot JVM(JDK 1.5 to OpenJDK 14).<br>
+      Usage: 1. From main interface bottom;<br>
+      2. From menu Tools > New VisualGC Window.<br>
+<br>
+
+<p>Chinese Instructions Below:</p>
+     在IDEA中显示 VisualGC 工具窗口或打开新窗口, 便于一边运行代码一边观察GC情况. 进支持HotSpot JVM(JDK 1.5 到 OpenJDK 14).<br><br>
+用法:<br>
+1) 点击停靠窗口下方的 VisualGC;<br>
+2) 打开新的独立运行窗口使用菜单 Tools > New VisualGC Window.<br>
+      <h2>ISSUES</h2>
+<p>
+<a href='https://github.com/beansoftapp/visualgc_idea/issues'>Submit Suggestions or Bugs</a></p>
+
+<a href='https://www.oracle.com/technetwork/java/visualgc-136680.html'>visualgc documents on Oracle.com</a>
+    ]]></description>
+
+  <change-notes>
+    <![CDATA[
+      <ul>
+        <li><b>1.0.2</b>Add toolbar icons, move tool window to bottom.</li>
+        <li><b>1.0.1</b>Small update on verdor info.</li>
+        <li><b>1.0</b> First release, add tool window and menu.</li>
+      </ul>
+    ]]>
+  </change-notes>
+
+  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="173.0"/>
+
+  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <depends>com.intellij.modules.platform</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow id="VisualGC" secondary="true" icon="/visualgc.png" anchor="bottom"
+                factoryClass="com.github.beansoftapp.visualgc.idea.VisualGCToolWindowFactory"/>
+  </extensions>
+
+  <actions>
+    <action id="VisualGC" class="com.github.beansoftapp.visualgc.idea.VisualGCAction" text="New VisualGC Window"
+            description="Open a new visualGC window">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+  </actions>
+
+</idea-plugin>

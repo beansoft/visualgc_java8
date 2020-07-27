@@ -1,0 +1,7 @@
+java.lang.NullPointerException
+	at github.beansoftapp.visualgc.JpsHelper.getVmStringValue(JpsHelper.java:225)
+	at github.beansoftapp.visualgc.JpsHelper.getCommandLine(JpsHelper.java:197)
+	at github.beansoftapp.visualgc.JpsHelper.getFirstArgument(JpsHelper.java:247)
+	at github.beansoftapp.visualgc.JpsHelper.getMainClass(JpsHelper.java:160)
+	at github.beansoftapp.visualgc.JpsHelper.getJvmPSList(JpsHelper.java:79)
+	at com.sun.jvmstat.tools.visualgc.VisualGCPane$PsListModel.actionPerformed(VisualGCPane.java:575)
