@@ -50,6 +50,9 @@
             description="Open a new visualGC window">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </action>
+    <action id="new_tool_window" class="com.beansoft.NewWindowAction" text="New Window">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
   </actions>
 
 </idea-plugin>
