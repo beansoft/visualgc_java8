@@ -57,6 +57,8 @@ public class NewWindowAction extends AnAction {
         ToolWindow toolWindowFound = toolWindowManager.registerToolWindow(RegisterToolWindowTask.lazyAndClosable(toolWindowId, new ServiceViewToolWindowFactory(), AllIcons.Toolwindows.ToolWindowServices));
         if (active) {
           myActiveToolWindowIds.add(toolWindowId);
+          toolWindowFound.setShowStripeButton(true);
+          toolWindowFound.setTitle("BeanSoft");
           toolWindowFound.getContentManager().addContent(new ContentImpl(new JButton("Bingo"), "test", true));
           toolWindowFound.show();
         }
