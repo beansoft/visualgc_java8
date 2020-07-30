@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.github.beansoftapp.visualgc.plugin</id>
   <name>VisualGC</name>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <vendor email="beansoft@126.com" url="https://github.com/beansoftapp/visualgc_java8">BeanSoft</vendor>
 
   <description><![CDATA[
@@ -26,7 +26,7 @@
   <change-notes>
     <![CDATA[
       <ul>
-        <li><b>1.0.2</b>Add toolbar icons, move tool window to bottom.</li>
+        <li><b>1.0.3</b>Add toolbar icons, move tool window to bottom, fix a package issue.</li>
         <li><b>1.0.1</b>Small update on verdor info.</li>
         <li><b>1.0</b> First release, add tool window and menu.</li>
       </ul>

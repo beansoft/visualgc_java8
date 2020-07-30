@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="visualgc_idea:jar">
+    <output-path>$PROJECT_DIR$/visualgc_idea/out</output-path>
+    <root id="archive" name="visualgc_idea.jar">
+      <element id="module-output" name="visualgc_idea" />
+      <element id="module-output" name="visualgc_java8" />
+    </root>
+  </artifact>
+</component>
