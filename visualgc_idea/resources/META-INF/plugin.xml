@@ -19,14 +19,13 @@
       <h2>ISSUES</h2>
 <p>
 <a href='https://github.com/beansoftapp/visualgc_idea/issues'>Submit Suggestions or Bugs</a></p>
-
 <a href='https://www.oracle.com/technetwork/java/visualgc-136680.html'>visualgc documents on Oracle.com</a>
     ]]></description>
 
   <change-notes>
     <![CDATA[
       <ul>
-        <li><b>1.0.3</b>Add toolbar icons, move tool window to bottom, fix a package issue.</li>
+        <li><b>1.0.3</b>Add toolbar icons, move tool window to bottom, fix a package issue which in 1.0.2.</li>
         <li><b>1.0.1</b>Small update on verdor info.</li>
         <li><b>1.0</b> First release, add tool window and menu.</li>
       </ul>
