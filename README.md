@@ -1,4 +1,4 @@
-# Visual Garbage Collection Monitoring Tool 
+# Visual Garbage Collection Monitoring Tool
 a graphical tool for monitoring the HotSpot Garbage Collector, Compiler, and class loader. It can monitor both local and remote JVMs.
 
 This repo contains three modules:
@@ -10,3 +10,6 @@ This repo contains three modules:
     
 3. visualgc_idea
     A IDEA plugin with visualgc embed.
+
+4. _JDKThreadCPU
+    a JConsole plugin that displays the most active threads of the (Java) application being monitored by JConsole
