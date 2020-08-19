@@ -1,4 +1,4 @@
-#Visual Garbage Collection Monitoring Tool 
+# Visual Garbage Collection Monitoring Tool 
 a graphical tool for monitoring the HotSpot Garbage Collector, Compiler, and class loader. It can monitor both local and remote JVMs.
 
 This repo contains three modules:
