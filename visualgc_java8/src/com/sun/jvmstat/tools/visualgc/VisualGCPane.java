@@ -496,7 +496,7 @@ public class VisualGCPane implements ActionListener {
       @Override
       public void mouseClicked(MouseEvent e) {
         try {
-          Desktop.getDesktop().browse(new URI("https://github.com/beansoftapp/visualgc_jdk8"));
+          Desktop.getDesktop().browse(new URI("https://github.com/beansoft/visualgc_jdk8"));
         } catch (IOException ioException) {
           ioException.printStackTrace();
         } catch (URISyntaxException uriSyntaxException) {
