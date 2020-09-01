@@ -1,4 +1,4 @@
-# Java Perf Tools and IDEA Plugin Helper
+# Java Perf Tools and IDEA Plugin DevKit Helper
 
 
 This repo contains mainly two modules:
