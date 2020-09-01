@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ASMIdeaPluginConfiguration">
+    <asm skipDebug="false" skipFrames="false" skipCode="false" expandFrames="false" />
+    <groovy codeStyle="LEGACY" />
+  </component>
   <component name="ArtifactManager">
-    <artifact type="jar" name="bean_topthreads:jar">
+    <artifact type="jar" build-on-make="true" name="bean_topthreads:jar">
       <output-path>$PROJECT_DIR$/</output-path>
       <root id="archive" name="bean_topthreads.jar">
         <element id="module-output" name="bean_topthreads" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/libs/jansi-1.12.jar" path-in-jar="/" />
       </root>
     </artifact>
   </component>
@@ -125,6 +130,15 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+  </component>
+  <component name="libraryTable">
+    <library name="jansi-1.12">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/jansi-1.12.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
   <component name="masterDetails">
     <states>
