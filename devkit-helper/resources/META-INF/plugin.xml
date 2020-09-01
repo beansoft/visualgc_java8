@@ -1,0 +1,47 @@
+<idea-plugin>
+  <id>com.github.beansoft.devkit.helper</id>
+  <name>Plug-in DevKit Helper</name>
+  <version>1.0</version>
+  <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8/issues">BeanSoft</vendor>
+  <category>Plugin Development</category>
+
+  <description><![CDATA[
+    <h2>IDEA Plugin DevKit Helper</h2>
+    <p>
+    This plugin will provides some feature on IDEA Plugin DevKit. The 1.0 only provides a small function that when
+    you editing plugin.xml, the HTML content in description and change-notes will be treated as HTML so syntax highlighting
+    and tag completion will work.
+    </p>
+    <p>
+      Made with ❤️by BeanSoft for IDEA Plugin developers.<br><br>
+      🆕FYI <b><a href="https://plugins.jetbrains.com/plugin/9564-react-native-console">React Native Console</a></b> |
+      <b><a href="https://plugins.jetbrains.com/plugin/14888-psiviewer-copyable">PsiViewer Copyablee</a></b>
+      which is also developed by me.
+      </p>
+
+    ]]></description>
+
+  <change-notes><![CDATA[
+    <h2>1.0</h2>
+    <ul>
+      <li>initial release, add description and change-notes HTML editing support.</li>
+    </ul>
+    ]]>
+  </change-notes>
+
+  <idea-version since-build="173.0"/>
+
+  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+     on how to target different products -->
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.xml</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <multiHostInjector implementation="com.github.beansoft.devkit.helper.PluginHtmlInjector"/>
+  </extensions>
+
+  <actions>
+  </actions>
+
+</idea-plugin>
