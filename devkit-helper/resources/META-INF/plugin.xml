@@ -8,14 +8,20 @@
   <description><![CDATA[
     <h2>IDEA Plugin DevKit Helper</h2>
     <p>
-    This plugin will provides some feature on IDEA Plugin DevKit. The 1.0 only provides a small function that when
+    Provides some helper feature on IDEA Plugin DevKit. The 1.0 only provides a small function that when
     you editing plugin.xml, the HTML content in description and change-notes will be treated as HTML so syntax highlighting
     and tag completion will work.
+    </p>
+
+    <p>Chinese Description</p>
+    <p>
+        给插件开发所使用的IDEA Plugin DevKit提供一些辅助功能. 1.0版目前只提供了一个小功能, 当修改plugin.xml时,将description 和 change-notes
+        中的 HTML 字符串内容解析为 HTML 语言, 这样就可以使用语法高亮和标签辅助以及分割编辑功能了.
     </p>
     <p>
       Made with ❤️by BeanSoft for IDEA Plugin developers.<br><br>
       🆕FYI <b><a href="https://plugins.jetbrains.com/plugin/9564-react-native-console">React Native Console</a></b> |
-      <b><a href="https://plugins.jetbrains.com/plugin/14888-psiviewer-copyable">PsiViewer Copyablee</a></b>
+      <b><a href="https://plugins.jetbrains.com/plugin/14888-psiviewer-copyable">PsiViewer Copyable</a></b>
       which is also developed by me.
       </p>
 
@@ -29,7 +35,7 @@
     ]]>
   </change-notes>
 
-  <idea-version since-build="173.0"/>
+  <idea-version since-build="183.0"/>
 
   <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
      on how to target different products -->
