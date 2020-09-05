@@ -1,53 +1,63 @@
 <idea-plugin>
-  <id>com.github.beansoft.devkit.helper</id>
-  <name>Plug-in DevKit Helper</name>
-  <version>1.0</version>
-  <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8/issues">BeanSoft</vendor>
-  <category>Plugin Development</category>
+    <id>com.github.beansoft.devkit.helper</id>
+    <name>Plug-in DevKit Helper</name>
+    <version>2.0</version>
+    <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8/issues">BeanSoft</vendor>
+    <category>Plugin Development</category>
 
-  <description><![CDATA[
-    <h2>IDEA Plugin DevKit Helper</h2>
-    <p>
-    Provides some helper feature on IDEA Plugin DevKit. The 1.0 only provides a small function that when
-    you editing plugin.xml, the HTML content in description and change-notes will be treated as HTML so syntax highlighting
-    and tag completion will work.
-    </p>
+    <description><![CDATA[
+        <h2>IDEA Plugin DevKit Helper</h2>
+        <p>
+            Provides some helper feature on IDEA Plugin DevKit. The 1.0 only provides a small function that when
+            you editing plugin.xml, the HTML content in description and change-notes will be treated as HTML so syntax
+            highlighting
+            and tag completion will work.
+        </p>
 
-    <p>Chinese Description</p>
-    <p>
-        给插件开发所使用的IDEA Plugin DevKit提供一些辅助功能. 1.0版目前只提供了一个小功能, 当修改plugin.xml时,将description 和 change-notes
-        中的 HTML 字符串内容解析为 HTML 语言, 这样就可以使用语法高亮和标签辅助以及分割编辑功能了.
-    </p>
-    <p>
-      Made with ❤️by BeanSoft for IDEA Plugin developers.<br><br>
-      🆕FYI <b><a href="https://plugins.jetbrains.com/plugin/9564-react-native-console">React Native Console</a></b> |
-      <b><a href="https://plugins.jetbrains.com/plugin/14888-psiviewer-copyable">PsiViewer Copyable</a></b>
-      which is also developed by me.
-      </p>
+        <p>Chinese Description</p>
+        <p>
+            给插件开发所使用的IDEA Plugin DevKit提供一些辅助功能. 1.0版目前只提供了一个小功能, 当修改plugin.xml时,将description 和 change-notes
+            中的 HTML 字符串内容解析为 HTML 语言, 这样就可以使用语法高亮和标签辅助以及分割编辑功能了.
+        </p>
+        <p>
+            Made with ❤️by BeanSoft for IDEA Plugin developers.<br><br>
+            🆕FYI <b><a href="https://plugins.jetbrains.com/plugin/9564-react-native-console">React Native
+            Console</a></b> |
+            <b><a href="https://plugins.jetbrains.com/plugin/14888-psiviewer-copyable">PsiViewer Copyable</a></b>
+            which is also developed by me.
+        </p>
+        ]]></description>
 
-    ]]></description>
-
-  <change-notes><![CDATA[
-    <h2>1.0</h2>
-    <ul>
-      <li>initial release, add description and change-notes HTML editing support.</li>
-    </ul>
-    ]]>
+    <change-notes><![CDATA[
+        <h2>2.0</h2>
+        <ul>
+            <li>Fix HTML inject issue, now HTML editing works correctly without wrong caret position.</li>
+        </ul>
+        <h2>1.0</h2>
+        <ul>
+            <li>initial release, add description and change-notes HTML editing support.</li>
+        </ul>
+        ]]>
   </change-notes>
 
-  <idea-version since-build="183.0"/>
+    <idea-version since-build="183.0"/>
 
-  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-     on how to target different products -->
-  <depends>com.intellij.modules.lang</depends>
-  <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.modules.xml</depends>
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.xml</depends>
+    <depends optional="true" config-file="withJava.xml">DevKit</depends>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <multiHostInjector implementation="com.github.beansoft.devkit.helper.PluginHtmlInjector"/>
-  </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <multiHostInjector implementation="com.github.beansoft.devkit.helper.PluginHtmlInjector"/>
 
-  <actions>
-  </actions>
+    </extensions>
+
+    <actions>
+        <action id="test" class="com.github.beansoft.devkit.helper.MyAction" text="test" description="test action">
+            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
+        </action>
+    </actions>
 
 </idea-plugin>

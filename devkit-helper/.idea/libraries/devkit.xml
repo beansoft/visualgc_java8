@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="devkit">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/devkit.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../../intellij-community/plugins/devkit/devkit-core/src" />
+    </SOURCES>
+  </library>
+</component>
