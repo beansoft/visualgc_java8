@@ -1,4 +1,5 @@
 <idea-plugin>
+    <depends>DevKit</depends>
     <extensions defaultExtensionNs="com.intellij">
         <!-- xml jump to class -->
         <codeInsight.lineMarkerProvider id="beansoft.StatementLineMarkerProvider" language="XML"
