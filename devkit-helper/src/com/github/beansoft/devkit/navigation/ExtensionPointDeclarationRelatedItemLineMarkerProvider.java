@@ -18,7 +18,7 @@ import org.jetbrains.idea.devkit.util.ExtensionPointLocator;
 import java.util.Collection;
 import java.util.List;
 
-// Java, so far can't be found
+// Java, not used so far
 
 /**
  * Test for public class MyStringEP {

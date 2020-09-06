@@ -8,30 +8,38 @@
     <description><![CDATA[
         <h2>IDEA Plugin DevKit Helper</h2>
         <p>
-            Provides some helper feature on IDEA Plugin DevKit. The 1.0 only provides a small function that when
-            you editing plugin.xml, the HTML content in description and change-notes will be treated as HTML so syntax
-            highlighting
-            and tag completion will work.
+            Provides helper features on IDEA Plugin DevKit. <br>
+            For fully functional, please run under IDEA CE and IDEA Ultimate.<br>
+            When editing plugin.xml, the CDATA in description and change-notes will be treated as HTML so syntax
+            highlighting and tag completion, Edit HTML Fragment editor will work.<br>
+            One-click jump from plugin.xml action/extension ref to plugin class code(supports Java, Kotlin) and vise
+            versa(from the class to the xml ref).
         </p>
 
-        <p>Chinese Description</p>
+        <h3>Chinese Description</h3>
         <p>
-            给插件开发所使用的IDEA Plugin DevKit提供一些辅助功能. 1.0版目前只提供了一个小功能, 当修改plugin.xml时,将description 和 change-notes
-            中的 HTML 字符串内容解析为 HTML 语言, 这样就可以使用语法高亮和标签辅助以及分割编辑功能了.
+            给插件开发所使用的IDEA Plugin DevKit提供一些辅助功能. <br>
+            当修改plugin.xml时,将description 和 change-notes 中的 CDATA 字符串内容解析为 HTML 语言,
+            这样就可以使用语法高亮和标签辅助以及分割修改HTML片段功能了.<br>
+            一键从plugin.xml中的action/extension引用类跳转到插件类代码(支持supports Java, Kotlin)以及反向跳转(从类跳转到xml中的引用).
         </p>
         <p>
-            Made with ❤️by BeanSoft for IDEA Plugin developers.<br><br>
-            🆕FYI <b><a href="https://plugins.jetbrains.com/plugin/9564-react-native-console">React Native
-            Console</a></b> |
+            Made with ❤ by BeanSoft for IDEA Plugin developers.<br><br>
+            👉FYI <b><a href="https://plugins.jetbrains.com/plugin/9564-react-native-console">React Native
+            Console</a></b> | <b><a href="https://plugins.jetbrains.com/plugin/14718-fluterstorm">FluterStorm</a></b> |
             <b><a href="https://plugins.jetbrains.com/plugin/14888-psiviewer-copyable">PsiViewer Copyable</a></b>
             which is also developed by me.
         </p>
+
+        <h3>Screenshot</h3>
+        <img src="https://plugins.jetbrains.com/files/14985/screenshot_23175.png" >
         ]]></description>
 
     <change-notes><![CDATA[
         <h2>2.0</h2>
         <ul>
-            <li>Fix HTML inject issue, now HTML editing works correctly without wrong caret position.</li>
+            <li>Fix plugin.xml HTML inject issue, now HTML editing works correctly without wrong caret position.</li>
+            <li>Jump from plugin.xml action/extension ref to plugin class(supports Java, Kotlin) and vise versa.</li>
         </ul>
         <h2>1.0</h2>
         <ul>
@@ -40,14 +48,14 @@
         ]]>
   </change-notes>
 
-    <idea-version since-build="183.0"/>
+    <idea-version since-build="201"/>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.xml</depends>
-    <depends optional="true" config-file="withJava.xml">DevKit</depends>
+    <depends optional="true" config-file="withJava.xml">com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <multiHostInjector implementation="com.github.beansoft.devkit.helper.PluginHtmlInjector"/>
@@ -55,9 +63,9 @@
     </extensions>
 
     <actions>
-        <action id="test" class="com.github.beansoft.devkit.helper.MyAction" text="test" description="test action">
-            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
-        </action>
+<!--        <action id="test" class="com.github.beansoft.devkit.helper.MyAction" text="test" description="test action">-->
+<!--            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>-->
+<!--        </action>-->
     </actions>
 
 </idea-plugin>

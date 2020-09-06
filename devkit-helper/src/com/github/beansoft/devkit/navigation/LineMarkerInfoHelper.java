@@ -1,10 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.beansoft.devkit.navigation;
 
+import com.github.beansoft.devkit.DevkitHelperBundle;
 import com.github.beansoft.devkit.util.text.HtmlBuilder;
 import com.github.beansoft.devkit.util.text.HtmlChunk;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.Module;
@@ -19,11 +21,10 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomUtil;
-import icons.DevkitHelpIcons;
+import icons.DevkitIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
-import org.jetbrains.idea.devkit.DevKitBundle;
 import org.jetbrains.idea.devkit.dom.Action;
 import org.jetbrains.idea.devkit.dom.Extension;
 import org.jetbrains.idea.devkit.dom.ExtensionPoint;
@@ -73,7 +74,7 @@ final class LineMarkerInfoHelper {
   static RelatedItemLineMarkerInfo<PsiElement> createExtensionLineMarkerInfo(@NotNull List<? extends PointableCandidate> targets,
                                                                              @NotNull PsiElement element) {
     return createPluginLineMarkerInfo(targets, element,
-                                      DevKitBundle.message("gutter.related.navigation.choose.extension"),
+            DevkitHelperBundle.message("gutter.related.navigation.choose.extension"),
                                       EXTENSION_NAMER);
   }
 
@@ -81,7 +82,7 @@ final class LineMarkerInfoHelper {
   static RelatedItemLineMarkerInfo<PsiElement> createExtensionPointLineMarkerInfo(@NotNull List<? extends PointableCandidate> targets,
                                                                                   @NotNull PsiElement element) {
     return createPluginLineMarkerInfo(targets, element,
-                                      DevKitBundle.message("gutter.related.navigation.choose.extension.point"),
+            DevkitHelperBundle.message("gutter.related.navigation.choose.extension.point"),
                                       EXTENSION_POINT_NAMER);
   }
 
@@ -91,7 +92,7 @@ final class LineMarkerInfoHelper {
                                                                                   @Nls(capitalization = Nls.Capitalization.Title) String popup,
                                                                                   NullableFunction<PointableCandidate, String> namer) {
     return NavigationGutterIconBuilder
-      .create(DevkitHelpIcons.XmlFile_12, CONVERTER, RELATED_ITEM_PROVIDER)//AllIcons.Gutter.ReadAccess
+      .create(DevkitIcons.Gutter.Plugin, CONVERTER, RELATED_ITEM_PROVIDER)//DevkitHelpIcons.XmlFile_12
       .setTargets(targets)
       .setPopupTitle(popup)
       .setNamer(namer)
@@ -100,7 +101,7 @@ final class LineMarkerInfoHelper {
   }
 
   @NotNull
-  private static NullableFunction<PointableCandidate, String> createNamer(@PropertyKey(resourceBundle = DevKitBundle.BUNDLE) String tooltipPatternPropertyName,
+  private static NullableFunction<PointableCandidate, String> createNamer(@PropertyKey(resourceBundle = DevkitHelperBundle.BUNDLE) String tooltipPatternPropertyName,
                                                                           NotNullFunction<? super XmlTag, String> nameProvider) {
     return target -> {
       XmlTag tag = target.pointer.getElement();
@@ -121,7 +122,7 @@ final class LineMarkerInfoHelper {
                     .wrapWith(HtmlChunk.font(ColorUtil.toHex(UIUtil.getInactiveTextColor()))));
       }
 
-      return DevKitBundle.message(tooltipPatternPropertyName,
+      return DevkitHelperBundle.message(tooltipPatternPropertyName,
                                   path, String.valueOf(tag.getTextRange().getStartOffset()), nameProvider.fun(tag),
                                   fileDisplayName);
     };

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * TODO performance issue
  * @author beansoft@126.com
  */
 public abstract class SimpleLineMarkerProvider<F extends PsiElement, T>  implements LineMarkerProvider {

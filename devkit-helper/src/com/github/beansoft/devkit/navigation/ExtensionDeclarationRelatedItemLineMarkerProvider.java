@@ -1,15 +1,14 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.beansoft.devkit.navigation;
 
+import com.github.beansoft.devkit.DevkitHelperBundle;
 import com.github.beansoft.devkit.util.ActionLocatorKt;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import icons.DevkitIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.devkit.DevKitBundle;
 import org.jetbrains.idea.devkit.util.ExtensionCandidate;
-import com.github.beansoft.devkit.util.ExtensionLocatorKt;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -19,7 +18,7 @@ public final class ExtensionDeclarationRelatedItemLineMarkerProvider extends Dev
 
   @Override
   public String getName() {
-    return DevKitBundle.message("gutter.related.extension.declaration");
+    return DevkitHelperBundle.message("gutter.related.extension.declaration");
   }
 
   @NotNull

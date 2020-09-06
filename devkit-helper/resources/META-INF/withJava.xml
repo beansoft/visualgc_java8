@@ -1,8 +1,9 @@
 <idea-plugin>
     <extensions defaultExtensionNs="com.intellij">
-        <!-- xml 跳转到 java -->
+        <!-- xml jump to class -->
         <codeInsight.lineMarkerProvider id="beansoft.StatementLineMarkerProvider" language="XML"
-                                        implementationClass="com.github.beansoft.devkit.provider.StatementLineMarkerProvider"/>
+                                        implementationClass="com.github.beansoft.devkit.provider.PluginXmlLineMarkerProvider"/>
+        <!-- class jump to xml -->
         <codeInsight.lineMarkerProvider language="UAST"
                                         implementationClass="com.github.beansoft.devkit.navigation.ExtensionDeclarationRelatedItemLineMarkerProvider"
         order="first"/>

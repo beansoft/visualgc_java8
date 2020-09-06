@@ -20,9 +20,11 @@ import javax.swing.*;
 import java.util.Optional;
 
 /**
- * @author yanglin
+ * Xml跳转到类文件定义.
+ * TODO 性能优化
+ * @author beansoft@126.com
  */
-public class StatementLineMarkerProvider extends SimpleLineMarkerProvider<XmlTag, PsiElement> {
+public class PluginXmlLineMarkerProvider extends SimpleLineMarkerProvider<XmlTag, PsiElement> {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleLineMarkerProvider.class);
 
@@ -40,9 +42,7 @@ public class StatementLineMarkerProvider extends SimpleLineMarkerProvider<XmlTag
     @SuppressWarnings("unchecked")
     @Override
     public Optional<? extends PsiElement> apply(@NotNull XmlTag from) {
-        logger.info("clazz 查找类开始");
         String attributeName = findLegalTargetName(from);
-        logger.info("clazz 查找属性, {}", attributeName);
         if(attributeName == null) {
             return Optional.empty();
         }

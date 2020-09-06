@@ -68,7 +68,7 @@ public class PluginHtmlInjector implements MultiHostInjector {
             if (elements.isEmpty()) return;
 
             for (PsiElement child : elements) {
-                System.out.println(".getNode().getElementType()=" + child.getNode().getElementType());
+//                System.out.println(".getNode().getElementType()=" + child.getNode().getElementType());
                 if (child.getNode().getElementType() == XmlElementType.XML_CDATA) {
                     PsiElement[] cdataChildren = child.getChildren();
                   for (PsiElement element : cdataChildren) {
