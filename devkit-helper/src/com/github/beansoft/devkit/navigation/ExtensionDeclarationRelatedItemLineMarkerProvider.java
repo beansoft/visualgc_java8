@@ -37,7 +37,7 @@ public final class ExtensionDeclarationRelatedItemLineMarkerProvider extends Dev
       return;
     }
 
-    System.out.println("ExtensionDeclarationRelatedItemLineMarkerProvider targets.size() =" + targets.size());
+//    System.out.println("ExtensionDeclarationRelatedItemLineMarkerProvider targets.size() =" + targets.size());
 
     result.add(LineMarkerInfoHelper.createExtensionLineMarkerInfo(targets, identifier));
   }
