@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.beansoft.devkit.helper</id>
     <name>Plug-in DevKit Helper</name>
-    <version>2.0</version>
+    <version>2.1</version>
     <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8/issues">BeanSoft</vendor>
     <category>Plugin Development</category>
 
@@ -25,16 +25,20 @@
         <p>
             Made with ❤ by BeanSoft for IDEA Plugin developers.<br><br>
             👉FYI <b><a href="https://plugins.jetbrains.com/plugin/9564-react-native-console">React Native
-            Console</a></b> | <b><a href="https://plugins.jetbrains.com/plugin/14718-fluterstorm">FluterStorm</a></b> |
-            <b><a href="https://plugins.jetbrains.com/plugin/14888-psiviewer-copyable">PsiViewer Copyable</a></b>
+            Console</a></b> | <b><a href="https://plugins.jetbrains.com/plugin/14718-fluterstorm">FluterStorm</a></b>
             which is also developed by me.
         </p>
 
         <h3>Screenshot</h3>
-        <img src="https://plugins.jetbrains.com/files/14985/screenshot_23175.png" >
+        <img src="https://plugins.jetbrains.com/files/14985/screenshot_23175.png">
         ]]></description>
 
     <change-notes><![CDATA[
+        <h2>2.1</h2>
+        <ul>
+            <li>Integrate the PSIViewerCopyable code here.</li>
+            <li>Jump from plugin.xml &lt;reference ref="View PSI element at caret - devkit"/&gt; to plugin action def.</li>
+        </ul>
         <h2>2.0</h2>
         <ul>
             <li>Fix plugin.xml HTML inject issue, now HTML editing works correctly without wrong caret position.</li>
@@ -58,10 +62,15 @@
     <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <!-- inject plugin description and change-notes cdata as HTML language  -->
         <multiHostInjector implementation="com.github.beansoft.devkit.helper.PluginHtmlInjector"/>
         <!-- xml jump to class -->
         <codeInsight.lineMarkerProvider id="beansoft.StatementLineMarkerProvider" language="XML"
                                         implementationClass="com.github.beansoft.devkit.provider.PluginXmlLineMarkerProvider"/>
+
+        <codeInsight.lineMarkerProvider id="beansoft.PluginXmlRefLineMarkerProvider" language="XML"
+                                        implementationClass="com.github.beansoft.devkit.provider.PluginXmlRefLineMarkerProvider"/>
+
         <!-- class jump to xml -->
         <codeInsight.lineMarkerProvider language="UAST"
                                         implementationClass="com.github.beansoft.devkit.navigation.ExtensionDeclarationRelatedItemLineMarkerProvider"
@@ -69,12 +78,65 @@
 
         <!--        <codeInsight.lineMarkerProvider language="JAVA"-->
         <!--                                        implementationClass="com.github.beansoft.devkit.navigation.ExtensionPointDeclarationRelatedItemLineMarkerProvider" order="first"/>-->
+
+        <!-- PSIViewer -->
+        <applicationConfigurable groupId="tools"
+                                 instance="idea.plugin.psiviewer.copyable.controller.application.Configuration"/>
+        <applicationService
+                serviceImplementation="idea.plugin.psiviewer.copyable.controller.application.PsiViewerApplicationSettings"/>
+        <toolWindow id="PsiViewerCopy" icon="/images/psiToolWindow.png" anchor="right"
+                    factoryClass="idea.plugin.psiviewer.copyable.controller.project.PsiViewerToolWindowFactory"/>
+        <projectService
+                serviceImplementation="idea.plugin.psiviewer.copyable.controller.project.PsiViewerProjectService"/>
+
     </extensions>
 
     <actions>
-<!--        <action id="test" class="com.github.beansoft.devkit.helper.MyAction" text="test" description="test action">-->
-<!--            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>-->
-<!--        </action>-->
+        <action class="idea.plugin.psiviewer.copyable.controller.actions.ViewElementAtCaretAction"
+                description="Display PSI tree for element at caret" icon="/images/psi18x18.png"
+                id="View PSI element at caret - devkit" text="View PSI element at caret">
+            <keyboard-shortcut first-keystroke="control shift C" keymap="$default"/>
+        </action>
+        <action class="idea.plugin.psiviewer.copyable.controller.actions.ViewFileElementAction"
+                description="Display PSI tree for this file" icon="/images/psi18x18.png"
+                id="View event PSI file - devkit" text="View PSI for entire file">
+            <keyboard-shortcut first-keystroke="control shift Q" keymap="$default"/>
+        </action>
+        <action class="idea.plugin.psiviewer.copyable.controller.actions.ViewCurrentElementAction"
+                description="Display PSI tree for event element" icon="/images/psi18x18.png"
+                id="View event PSI element - devkit"
+                text="View event PSI element">
+            <keyboard-shortcut first-keystroke="control shift P" keymap="$default"/>
+        </action>
+
+        <action class="idea.plugin.psiviewer.copyable.controller.actions.PsiDump" icon="/actions/dump.png"
+                id="idea.plugin.psiviewer.copyable.controller.actions.PsiDump" text="PSI dump to clipboard"/>
+
+        <action class="idea.plugin.psiviewer.copyable.controller.actions.PsiTestDump" icon="/actions/dump.png"
+                id="idea.plugin.psiviewer.copyable.controller.actions.PsiTestDump"
+                text="PSI unit test data file to clipboard"/>
+
+        <!--<action id="com.sylvanaar.idea.errorreporting.TriggerExceptionAction"-->
+        <!--class="com.sylvanaar.idea.errorreporting.TriggerExceptionAction" text="Trigger PsiViewer Exception">-->
+        <!--<add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="PsiViewer"/>-->
+        <!--</action>-->
+
+        <group id="PsiViewerCopyableEditor" popup="true" text="PsiViewer">
+            <reference ref="View PSI element at caret - devkit"/>
+            <reference ref="View event PSI element - devkit"/>
+            <reference ref="View event PSI file - devkit"/>
+            <reference ref="idea.plugin.psiviewer.copyable.controller.actions.PsiDump"/>
+            <reference ref="idea.plugin.psiviewer.copyable.controller.actions.PsiTestDump"/>
+            <add-to-group anchor="last" group-id="EditorPopupMenu"/>
+        </group>
+
+        <group id="PsiViewerCopyableNonEditor" popup="true" text="PsiViewer">
+            <reference ref="View event PSI element - devkit"/>
+            <reference ref="View event PSI file - devkit"/>
+            <add-to-group anchor="last" group-id="ProjectViewPopupMenu"/>
+            <add-to-group anchor="last" group-id="StructureViewPopupMenu"/>
+        </group>
+
     </actions>
 
 </idea-plugin>
