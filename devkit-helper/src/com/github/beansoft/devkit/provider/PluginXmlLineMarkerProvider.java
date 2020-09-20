@@ -29,7 +29,7 @@ public class PluginXmlLineMarkerProvider extends SimpleLineMarkerProvider<XmlTag
     private static final Logger logger = LoggerFactory.getLogger(SimpleLineMarkerProvider.class);
 
     private static final ImmutableSet<String> ATTRIBUTE_NAMES = ImmutableSet.of(
-        "class", "implementation"
+        "class", "implementation", "instance"
     );
 
     @Override

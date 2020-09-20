@@ -33,7 +33,8 @@ public abstract class SimpleLineMarkerProvider<F extends PsiElement, T>  impleme
         logger.info("getLineMarkerInfo start, element: {}", element);
         logger.info("xml加入跳转图标开始");
         Optional<? extends T> processResult = apply((F) element);
-        Optional<LineMarkerInfo<? extends PsiElement>> optional = processResult.map(t -> new LineMarkerInfo<>(
+        Optional<LineMarkerInfo<? extends PsiElement>> optional =
+            processResult.map(t -> new LineMarkerInfo<>(
             (F) element,
             element.getTextRange(),
             getIcon(),

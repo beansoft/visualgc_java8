@@ -8,6 +8,7 @@ import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.util.ClassUtil
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.xml.DomManager
@@ -21,6 +22,9 @@ fun locateActionsByPsiClass(psiClass: PsiClass): List<ExtensionCandidate> {
   return findActionsByClassName(psiClass.project, ClassUtil.getJVMClassName(psiClass) ?: return emptyList())
 }
 
+fun locateActionsByXmlRefrence(xmlAttribute: XmlAttribute): List<ExtensionCandidate> {
+    return findActionsByClassName(xmlAttribute.project, xmlAttribute.value ?: return emptyList())
+}
 
 // Read for Action
 internal fun processActionDeclarations(name: String, project: Project, strictMatch: Boolean = true, callback: (Action, XmlTag) -> Boolean) {
