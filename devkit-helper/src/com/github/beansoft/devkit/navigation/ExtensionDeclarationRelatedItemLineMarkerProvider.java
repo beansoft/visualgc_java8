@@ -18,6 +18,7 @@ public final class ExtensionDeclarationRelatedItemLineMarkerProvider extends Dev
 
   @Override
   public String getName() {
+    // This name will displays in Preferences | Editor | General | Gutter Icons
     return DevkitHelperBundle.message("gutter.related.extension.declaration");
   }
 
