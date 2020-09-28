@@ -37,7 +37,7 @@
         <h2>2.1</h2>
         <ul>
             <li>Integrate the PSIViewerCopyable code here.</li>
-            <li>Jump from plugin.xml &lt;reference ref="View PSI element at caret - devkit"/&gt; to plugin action def.</li>
+            <li>Jump from plugin.xml &lt;reference ref="***"/&gt; to the plugin action def.</li>
         </ul>
         <h2>2.0</h2>
         <ul>
