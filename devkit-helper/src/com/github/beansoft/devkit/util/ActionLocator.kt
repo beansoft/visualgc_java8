@@ -4,6 +4,7 @@ package com.github.beansoft.devkit.util
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.UsageSearchContext
@@ -30,19 +31,18 @@ fun locateActionsByXmlRefrence(xmlAttribute: XmlAttribute): List<ExtensionCandid
 internal fun processActionDeclarations(name: String, project: Project, strictMatch: Boolean = true, callback: (Action, XmlTag) -> Boolean) {
   val scope = PluginRelatedLocatorsUtils.getCandidatesScope(project)
   PsiSearchHelper.getInstance(project).processElementsWithWord(
-          { element, offsetInElement ->
-            val elementAtOffset = (element as? XmlTag)?.findElementAt(offsetInElement) ?: return@processElementsWithWord true
-            if (strictMatch) {
-              if (!elementAtOffset.textMatches(name)) {
-                return@processElementsWithWord true
+          fun(element: PsiElement, offsetInElement: Int): Boolean {
+              val elementAtOffset = (element as? XmlTag)?.findElementAt(offsetInElement) ?: return true
+              if (strictMatch) {
+                  if (!elementAtOffset.textMatches(name)) {
+                      return true
+                  }
+              } else if (!StringUtil.contains(elementAtOffset.text, name)) {
+                  return true
               }
-            }
-            else if (!StringUtil.contains(elementAtOffset.text, name)) {
-              return@processElementsWithWord true
-            }
 
-            val extension = DomManager.getDomManager(project).getDomElement(element) as? Action ?: return@processElementsWithWord true
-            callback(extension, element)
+              val extension = DomManager.getDomManager(project).getDomElement(element) as? Action ?: return true
+              return callback(extension, element)
           }, scope, name, UsageSearchContext.IN_FOREIGN_LANGUAGES, /* case-sensitive = */ true)
 }
 

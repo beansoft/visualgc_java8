@@ -2,6 +2,7 @@
 package com.github.beansoft.devkit.navigation;
 
 import com.github.beansoft.devkit.DevkitHelperBundle;
+import com.github.beansoft.devkit.util.ActionLocatorJava;
 import com.github.beansoft.devkit.util.ActionLocatorKt;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.psi.PsiClass;
@@ -33,7 +34,8 @@ public final class ExtensionDeclarationRelatedItemLineMarkerProvider extends Dev
                          @NotNull PsiClass psiClass,
                          @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
 //    List<ExtensionCandidate> targets = ExtensionLocatorKt.locateExtensionsByPsiClass(psiClass);
-    List<ExtensionCandidate> targets = ActionLocatorKt.locateActionsByPsiClass(psiClass);
+//    List<ExtensionCandidate> targets = ActionLocatorKt.locateActionsByPsiClass(psiClass);
+    List<ExtensionCandidate> targets = ActionLocatorJava.locateActionsByPsiClass(psiClass);
     if (targets.isEmpty()) {
       return;
     }

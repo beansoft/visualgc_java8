@@ -67,7 +67,7 @@
         <!-- xml jump to class -->
         <codeInsight.lineMarkerProvider id="beansoft.StatementLineMarkerProvider" language="XML"
                                         implementationClass="com.github.beansoft.devkit.provider.PluginXmlLineMarkerProvider"/>
-
+        <!-- find reference's real def -->
         <codeInsight.lineMarkerProvider id="beansoft.PluginXmlRefLineMarkerProvider" language="XML"
                                         implementationClass="com.github.beansoft.devkit.provider.PluginXmlRefLineMarkerProvider"/>
 

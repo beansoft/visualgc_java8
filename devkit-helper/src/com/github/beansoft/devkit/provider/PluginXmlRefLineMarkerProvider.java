@@ -1,5 +1,6 @@
 package com.github.beansoft.devkit.provider;
 
+import com.github.beansoft.devkit.util.ActionLocatorJava;
 import com.github.beansoft.devkit.util.ActionLocatorKt;
 import com.github.beansoft.devkit.util.JavaUtils;
 import com.github.beansoft.devkit.util.PluginXmlUtil;
@@ -61,7 +62,8 @@ public class PluginXmlRefLineMarkerProvider extends SimpleLineMarkerProvider<Xml
       return Optional.empty();
     }
 
-    List<ExtensionCandidate> targets = ActionLocatorKt.locateActionsByXmlRefrence(from);
+//    List<ExtensionCandidate> targets = ActionLocatorKt.locateActionsByXmlRefrence(from);
+    List<ExtensionCandidate> targets = ActionLocatorJava.locateActionsByXmlRefrence(from);
     if (targets.isEmpty()) {
       return Optional.empty();
     }
