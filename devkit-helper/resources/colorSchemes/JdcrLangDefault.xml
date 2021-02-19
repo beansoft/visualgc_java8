@@ -1,0 +1,17 @@
+<list>
+  <option name="MY_BOLD">
+    <value>
+      <option name="FONT_TYPE" value="3"/>
+    </value>
+  </option>
+  <option name="MY_ITALIC">
+    <value>
+      <option name="FONT_TYPE" value="3"/>
+    </value>
+  </option>
+  <option name="MY_BORDERED">
+    <value>
+      <option name="EFFECT_COLOR" value="CACACA" />
+    </value>
+  </option>
+</list>
