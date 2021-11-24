@@ -42,6 +42,7 @@ public class VisualGC
 		customizeColors();
 	}
 
+	/// 自定义图表区的颜色
 	private static void customizeColors() {
 		if (ORIGINAL_UI)
 			return;
