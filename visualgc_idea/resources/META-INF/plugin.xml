@@ -1,32 +1,35 @@
 <idea-plugin>
   <id>com.github.beansoftapp.visualgc.plugin</id>
   <name>VisualGC</name>
-  <version>1.0.3</version>
-  <vendor email="beansoft@126.com" url="https://github.com/beansoftapp/visualgc_java8">BeanSoft</vendor>
+  <version>2021.3.0</version>
+  <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8">BeanSoft</vendor>
 
   <description><![CDATA[
-  <h2>VisualGC for Hotspot JVM</h2>
-      This plugin displayed a Visual GC tool window in your IDE, only supports HotSpot JVM(JDK 1.5 to OpenJDK 14).<br>
+  <h2>Visual Garbage Collection Monitoring Tool for Hotspot JVM</h2>
+      This plugin displayed a Visual GC tool window in your IDE, only supports HotSpot JVM(JDK 1.5 to OpenJDK/Oracle JDK 17).<br>
       Usage: 1. From main interface bottom;<br>
       2. From menu Tools > New VisualGC Window.<br>
 <br>
 
 <p>Chinese Instructions Below:</p>
-     在IDEA中显示 VisualGC 工具窗口或打开新窗口, 便于一边运行代码一边观察GC情况. 进支持HotSpot JVM(JDK 1.5 到 OpenJDK 14).<br><br>
+  <h2>可视化 Hotspot JVM 垃圾回收监控工具</h2>
+     在IDEA中显示 VisualGC 工具窗口或打开新窗口, 便于一边运行代码一边观察GC情况. 仅支持HotSpot JVM(JDK 1.5 到 OpenJDK 17).<br><br>
 用法:<br>
 1) 点击停靠窗口下方的 VisualGC;<br>
 2) 打开新的独立运行窗口使用菜单 Tools > New VisualGC Window.<br>
       <h2>ISSUES</h2>
 <p>
-<a href='https://github.com/beansoftapp/visualgc_idea/issues'>Submit Suggestions or Bugs</a></p>
-<a href='https://www.oracle.com/technetwork/java/visualgc-136680.html'>visualgc documents on Oracle.com</a>
+<a href='https://github.com/beansoft/visualgc_idea/issues'>Submit Suggestions or Bugs</a></p>
+<a href='https://www.oracle.com/java/technologies/visual-garbage-collection-monitoring-tool.html'>VisualGC documents on Oracle.com</a>
     ]]></description>
 
   <change-notes>
     <![CDATA[
       <ul>
-        <li><b>1.0.3</b>Add toolbar icons, move tool window to bottom, fix a package issue which in 1.0.2.</li>
-        <li><b>1.0.1</b>Small update on verdor info.</li>
+        <li><b>Notice:</b> This plugin will be changed to paid mode since Dec 25 2021, however the old version is always free to use and still open sourced. 此插件将在2021年12月25日修改为付费模式，当前版本及旧版一直可免费使用，并且代码保持开源。</li>
+        <li><b>2021.3</b> Move tool window to top right; fix chart display issue in Dark theme and chart grid color. 移动图表到右侧；适配暗色模式下的图表显示问题，优化网格和文字显示；优化个别词语翻译。</li>
+        <li><b>1.0.3</b> Add toolbar icons, move tool window to bottom, fix a package issue which in 1.0.2.</li>
+        <li><b>1.0.1</b> Small update on verdor info.</li>
         <li><b>1.0</b> First release, add tool window and menu.</li>
       </ul>
     ]]>
@@ -40,7 +43,7 @@
   <depends>com.intellij.modules.platform</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <toolWindow id="VisualGC" secondary="true" icon="/visualgc.png" anchor="bottom"
+    <toolWindow id="VisualGC" secondary="true" icon="/visualgc.png" anchor="right"
                 factoryClass="com.github.beansoftapp.visualgc.idea.VisualGCToolWindowFactory"/>
   </extensions>
 

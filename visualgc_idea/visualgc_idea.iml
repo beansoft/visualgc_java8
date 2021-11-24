@@ -9,6 +9,16 @@
     </content>
     <orderEntry type="jdk" jdkName="IntelliJ IDEA Community Edition IC" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="visualgc_java8" exported="" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="tools">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/tools.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/tools.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

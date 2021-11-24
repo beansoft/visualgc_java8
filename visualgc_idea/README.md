@@ -1,5 +1,5 @@
 # visualgc_idea
-Note: please open root folder to build this project as it depends on module visualgc_java8, and this project should depds on the IDEA plugin SDK.
+Note: This project is only worked under IDEA, and this project should depds on the IDEA plugin SDK.
 
  推荐安装方式: File-> Settings-> Plugins 输入 VisualGC 即可下载.
 
