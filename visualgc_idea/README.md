@@ -1,4 +1,6 @@
 # visualgc_idea
+Note: please open root folder to build this project as it depends on module visualgc_java8, and this project should depds on the IDEA plugin SDK.
+
  推荐安装方式: File-> Settings-> Plugins 输入 VisualGC 即可下载.
 
 IDEA插件仓库主页: https://plugins.jetbrains.com/plugin/14557-visualgc IDEA 2020+版本可打开页面后点击 Intall 按钮直接安装.
@@ -16,8 +18,6 @@ Usage:
 
 1. 停靠窗口下方的 VisualGC;
 2. 打开新的独立运行窗口使用菜单 Tools > New VisualGC Window.
-
-
 
 如果需要不依赖IDEA单独运行, 请移步: [VisualGC 3.0 独立运行增强版, 支持JDK 8](https://www.cnblogs.com/beansoft/p/visualgc_jdk8_standalone.html)
 
