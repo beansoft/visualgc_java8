@@ -1,6 +1,8 @@
 package com.sun.jvmstat.tools.visualgc;
 
 import beansoft.swing.OptionPane;
+import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.HyperlinkLabel;
 import com.sun.jvmstat.graph.FIFOList;
 import com.sun.jvmstat.graph.GridDrawer;
 import com.sun.jvmstat.graph.Level;
@@ -112,7 +114,7 @@ public class VisualGCPane implements ActionListener {
     }
   }
 
-  // 自定义所有图表网格的颜色
+  // 自定义所有图表网格和文本框的颜色
   private static void customizeComponents(Component component, List<GridDrawer> gridDrawers) {
     if (ORIGINAL_UI)
       return;
@@ -169,12 +171,12 @@ public class VisualGCPane implements ActionListener {
       if (label.getForeground() == Color.white) {
         label.setForeground(Color.black);
       }
-    } else if (jComponent instanceof JTextArea) {
+    } else if (jComponent instanceof JTextArea) { // 覆盖 JTextArea 的颜色
       JTextArea label = (JTextArea) jComponent;
       label.setFont(UIManager.getFont("Label.font"));
       if (label.getText().endsWith(": "))
         label.setFont(label.getFont().deriveFont(Font.BOLD));
-      label.setForeground(Color.BLACK);
+//      label.setForeground(Color.BLACK);
     }
     jComponent.setOpaque(false);
     for (Component child : jComponent.getComponents())
@@ -367,6 +369,7 @@ public class VisualGCPane implements ActionListener {
     }
   }
 
+  // 停止监控并转向选择进城列表
   public void stopMonitor() {
     if(timer != null) timer.stop();
     this.vmIdString = null;
@@ -476,7 +479,8 @@ public class VisualGCPane implements ActionListener {
     this.histogramViewSupport = new HistogramViewSupport();
     this.spacesViewSupport = new SpacesViewSupport();
 
-    DataViewComponent.MasterView monitoringMasterView = new DataViewComponent.MasterView("Visual GC - " + pName, Res.getString("a.visual.garbage.collection.monitoring.tool"), this.masterViewSupport);
+    DataViewComponent.MasterView monitoringMasterView = new DataViewComponent.MasterView("Visual GC - " + pName,
+            Res.getString("a.visual.garbage.collection.monitoring.tool"), this.masterViewSupport);
 
     DataViewComponent.MasterViewConfiguration monitoringMasterConfiguration = new DataViewComponent.MasterViewConfiguration(false);
     DataViewComponent dvc = new DataViewComponent(monitoringMasterView, monitoringMasterConfiguration);
@@ -487,19 +491,32 @@ public class VisualGCPane implements ActionListener {
 //    dvc.addDetailsView( new DataViewComponent.DetailsView( "GC Policy", null, 10, new JLabel(GCSample.gcPolicyName), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
 
 
-    dvc.addDetailsView( new DataViewComponent.DetailsView(Res.getString("jvm.browser"), null, 10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
-    dvc.addDetailsView(new DataViewComponent.DetailsView(Res.getString("info"), null, 10, new LinkLabel(Res.getString("this.tool.created.by"), null) {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        try {
-          Desktop.getDesktop().browse(new URI("https://github.com/beansoft/visualgc_jdk8"));
-        } catch (IOException ioException) {
-          ioException.printStackTrace();
-        } catch (URISyntaxException uriSyntaxException) {
-          uriSyntaxException.printStackTrace();
-        }
+    dvc.addDetailsView( new DataViewComponent.DetailsView(Res.getString("jvm.browser"), null,
+            10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+    HyperlinkLabel createdByLink = new HyperlinkLabel(Res.getString("this.tool.created.by"));
+    createdByLink.addHyperlinkListener( (e) -> {
+      try {
+        Desktop.getDesktop().browse(new URI("https://github.com/beansoft/visualgc_jdk8"));
+      } catch (IOException | URISyntaxException ioException) {
+        ioException.printStackTrace();
       }
-    }, null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+    });
+    dvc.addDetailsView(new DataViewComponent.DetailsView(Res.getString("info"), null, 10,
+            createdByLink,
+
+//            new LinkLabel(Res.getString("this.tool.created.by"), null) {
+//      @Override
+//      public void mouseClicked(MouseEvent e) {
+//        try {
+//          Desktop.getDesktop().browse(new URI("https://github.com/beansoft/visualgc_jdk8"));
+//        } catch (IOException ioException) {
+//          ioException.printStackTrace();
+//        } catch (URISyntaxException uriSyntaxException) {
+//          uriSyntaxException.printStackTrace();
+//        }
+//      }
+//    }
+     null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
 
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
         Res.getString("histogram"), true), DataViewComponent.BOTTOM_LEFT);
@@ -576,7 +593,8 @@ public class VisualGCPane implements ActionListener {
     }
   }
 
-  private static class MasterViewSupport extends JPanel {
+  // 主界面顶部视图
+  private class MasterViewSupport extends JPanel {
     private static final String KEY_REFRESH = "VisualGC.refresh";
 
     private final Preferences prefs;
@@ -600,7 +618,7 @@ public class VisualGCPane implements ActionListener {
     private void initComponents() {
       setLayout(new BorderLayout());
       setOpaque(false);
-      JPanel refreshRateContainer = new JPanel(new FlowLayout(3, 5, 5));
+      JPanel refreshRateContainer = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 5));
       refreshRateContainer.setOpaque(false);
       refreshRateContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
       JLabel refreshRateLabel = new JLabel();
@@ -610,7 +628,7 @@ public class VisualGCPane implements ActionListener {
       refreshRateContainer.add(refreshRateLabel);
       JLabel unitsLabel = new JLabel(Res.getString("msec"));
       Integer[] refreshRates = {-1, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 30000, 60000, 120000};
-      final JComboBox<Integer> combo = new JComboBox<Integer>(refreshRates);
+      final JComboBox<Integer> combo = new ComboBox<Integer>(refreshRates);
 
       refreshRateLabel.setLabelFor(combo);
       combo.setEditable(false);
@@ -631,7 +649,11 @@ public class VisualGCPane implements ActionListener {
 
 //      refreshRateContainer.add(new JButton("Switch Process"));
       refreshRateContainer.add(gcPolicyLabel);
+
       add(refreshRateContainer, BorderLayout.WEST);
+      JButton stopButton = new JButton(Res.getString("stop.monitor"));
+      stopButton.addActionListener(stopMonitorAction);
+      add(stopButton, BorderLayout.EAST);
     }
 
   }
@@ -834,9 +856,7 @@ public class VisualGCPane implements ActionListener {
     }
 
     public DataViewComponent.DetailsView getDetailsView() {
-      JButton stopButton = new JButton("Stop");
-      stopButton.addActionListener(stopMonitorAction);
-      return new DataViewComponent.DetailsView(Res.getString("graphs"), null, 10, this, stopButton);
+      return new DataViewComponent.DetailsView(Res.getString("graphs"), null, 10, this);
     }
 
     void refresh(GCSample gcsample) {

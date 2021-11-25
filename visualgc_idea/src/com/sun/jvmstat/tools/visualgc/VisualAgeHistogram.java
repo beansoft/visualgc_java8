@@ -1,5 +1,6 @@
 package com.sun.jvmstat.tools.visualgc;
 
+import com.intellij.ui.JBColor;
 import com.sun.jvmstat.graph.Level;
 import com.sun.jvmstat.tools.visualgc.resource.Res;
 
@@ -30,7 +31,7 @@ class VisualAgeHistogram extends JFrame implements ActionListener, ComponentList
       this.setTitle(Res.getString("survivor.age.histogram"));
       int length = gcSample.ageTableSizes.length;
       this.bucketLevel = new Level[length];
-      Font font = new Font("Dialog", 1, 12);
+      Font font = new Font("Dialog", Font.BOLD, 12);
       Color color = Color.getColor("survivor.color", new Color(255, 204, 102));
       JLabel jLabel = new JLabel(Res.getString("tenuring.threshold"));
       jLabel.setFont(font);

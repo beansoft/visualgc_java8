@@ -245,6 +245,9 @@ public class JpsHelper {
 
   private static String getFirstArgument(MonitoredVm vm) {
     String commandLine = getCommandLine(vm);
+    if(commandLine == null) {
+      return "";
+    }
     String mainClassName = null;
 
     // search for jar file

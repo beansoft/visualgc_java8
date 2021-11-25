@@ -1,8 +1,14 @@
 package com.sun.jvmstat.tools.visualgc;
 
+import com.intellij.ide.ui.laf.darcula.ui.DarculaTextAreaUI;
+import com.intellij.openapi.ui.ex.MultiLineLabel;
+import com.intellij.ui.EditorTextField;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTextArea;
+import com.intellij.ui.components.JBTextField;
+import com.intellij.ui.components.fields.ExpandableTextField;
+import com.intellij.util.ui.JBUI;
 import com.sun.jvmstat.graph.Level;
 import com.sun.jvmstat.tools.visualgc.resource.Res;
 import com.sun.jvmstat.util.Converter;
@@ -11,10 +17,15 @@ import com.yworks.util.annotation.Obfuscation;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.MessageFormat;
+import java.util.List;
 
+/**
+ * 可视化堆空间(柱图区).
+ */
 class VisualHeap extends JFrame implements ActionListener, ComponentListener {
    private static final boolean debug = false;
    public Level permLevel = new Level(new Color(240, 200, 150));
@@ -59,7 +70,8 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       Border etchedBorder = BorderFactory.createEtchedBorder(Color.WHITE, Color.GRAY);
       Font font = new Font("Dialog", Font.BOLD, 12);
       String title = Res.getString("application.information");
-      TitledBorder titledBorder = BorderFactory.createTitledBorder(etchedBorder, title, 0, 0, font, Color.GRAY);
+      TitledBorder titledBorder = BorderFactory.createTitledBorder(etchedBorder, title, 0, 0,
+              font, JBColor.DARK_GRAY);
       this.infoPanel.setBorder(titledBorder);
       this.infoPanel.addComponentListener(this);
       this.livenessPanel = new JPanel();
@@ -144,39 +156,83 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       this.etField.setFont(font);
 //      this.etField.setForeground(Color.WHITE);
       elapsedLabel.setLabelFor(this.etField);
-      JBTextArea textArea = new JBTextArea();
+
+      StringBuilder vmInfoString = new StringBuilder();
+
+      vmInfoString.append(MessageFormat.format(Res.getString("java.command.line.0"), GCSample.javaCommand));
+      vmInfoString.append(MessageFormat.format(Res.getString("java.vm.arguments.0"), GCSample.vmArgs));
+      vmInfoString.append(MessageFormat.format(Res.getString("java.vm.flags.0"), GCSample.vmFlags));
+      vmInfoString.append("java.home=" + GCSample.javaHome + "\n");
+      vmInfoString.append("java.class.path=" + GCSample.classPath + "\n");
+      vmInfoString.append("java.library.path=" + GCSample.libraryPath + "\n");
+      vmInfoString.append("java.endorsed.dirs=" + GCSample.endorsedDirs + "\n");
+      vmInfoString.append("java.ext.dirs=" + GCSample.extDirs + "\n");
+      vmInfoString.append("sun.boot.class.path=" + GCSample.bootClassPath + "\n");
+      vmInfoString.append("sun.boot.library.path=" + GCSample.bootLibraryPath + "\n");
+      vmInfoString.append("java.vm.name=" + GCSample.vmName + "\n");
+      vmInfoString.append("java.vm.info=" + GCSample.vmInfo + "\n");
+      vmInfoString.append("java.vm.vendor=" + GCSample.vmVendor + "\n");
+      vmInfoString.append("java.vm.version=" + GCSample.vmVersion + "\n");
+      vmInfoString.append("java.vm.specification.name=" + GCSample.vmSpecName + "\n");
+      vmInfoString.append("java.vm.specification.vendor=" + GCSample.vmSpecVendor + "\n");
+      vmInfoString.append("java.vm.specification.version=" + GCSample.vmSpecVersion + "\n");
+
+      JBTextArea textArea = new JBTextArea() {
+         /** 此处的设置颜色外部调用时总会变成 black, 强制覆盖一下. 最终发现是被项目中的方法强制设置成了黑色.
+          * @date 2021-11-25
+          * @see VisualGCPane#customizeComponents(Component, List)
+          * <code>jComponent instanceof JTextArea</code>
+          * @param fg
+          */
+         public void setForeground(Color fg) {
+//            Color oldFg = JBColor.gray;
+            super.setForeground(fg);
+         }
+      };
+
+      textArea.setCaretColor(JBColor.red);
       textArea.setFont(font);
-      textArea.setForeground(JBColor.GRAY);
-//      textArea.setBackground(Color.BLACK);
-      textArea.append(MessageFormat.format(Res.getString("java.command.line.0"), GCSample.javaCommand));
-      textArea.append(MessageFormat.format(Res.getString("java.vm.arguments.0"), GCSample.vmArgs));
-      textArea.append(MessageFormat.format(Res.getString("java.vm.flags.0"), GCSample.vmFlags));
-      textArea.append("java.home=" + GCSample.javaHome + "\n\n");
-      textArea.append("java.class.path=" + GCSample.classPath + "\n\n");
-      textArea.append("java.library.path=" + GCSample.libraryPath + "\n\n");
-      textArea.append("java.endorsed.dirs=" + GCSample.endorsedDirs + "\n\n");
-      textArea.append("java.ext.dirs=" + GCSample.extDirs + "\n\n");
-      textArea.append("sun.boot.class.path=" + GCSample.bootClassPath + "\n\n");
-      textArea.append("sun.boot.library.path=" + GCSample.bootLibraryPath + "\n\n");
-      textArea.append("java.vm.name=" + GCSample.vmName + "\n\n");
-      textArea.append("java.vm.info=" + GCSample.vmInfo + "\n\n");
-      textArea.append("java.vm.vendor=" + GCSample.vmVendor + "\n\n");
-      textArea.append("java.vm.version=" + GCSample.vmVersion + "\n\n");
-      textArea.append("java.vm.specification.name=" + GCSample.vmSpecName + "\n\n");
-      textArea.append("java.vm.specification.vendor=" + GCSample.vmSpecVendor + "\n\n");
-      textArea.append("java.vm.specification.version=" + GCSample.vmSpecVersion + "\n\n");
+//      textArea.setForeground(JBColor.GRAY);
       textArea.setRows(8);
       textArea.setLineWrap(true);
-      JScrollPane var5 = new JBScrollPane(textArea);
+
+      textArea.setText( vmInfoString.toString());
+//      appendToPane(textArea, vmInfoString.toString(), Color.RED);
+//      textArea.setMinimumSize(JBUI.size(400, 200));
+//      textArea.setBackground(Color.BLACK);
+
+//      JTextPane textPane = new JTextPane();
+//      appendToPane(textPane, vmInfoString.toString(), Color.RED);
+//      textPane.setMaximumSize(JBUI.size(0, 200));
+//      MultiLineLabel multiLineLabel = new MultiLineLabel();
+//      multiLineLabel.setText(vmInfoString.toString());
+//      multiLineLabel.setMaximumSize(JBUI.size(0, 200));
+
+      JScrollPane appInfoScrollPane = new JBScrollPane(textArea);
+
       this.updateTextFields(sample);
       this.livenessPanel.add(this.livenessIndicator);
       this.livenessPanel.add(elapsedLabel);
       this.livenessPanel.add(this.etField);
 
       this.infoPanel.add(this.livenessPanel, "North");
-      this.infoPanel.add(var5, "Center");
-
+      this.infoPanel.add(appInfoScrollPane, BorderLayout.SOUTH);
+//      infoPanel.setMinimumSize(new Dimension(0, 400));
 //      this.infoPanel.add(), BorderLayout.SOUTH);
+   }
+
+   private void appendToPane(JTextArea tp, String msg, Color c)
+   {
+      StyleContext sc = StyleContext.getDefaultStyleContext();
+      AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
+
+      aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Lucida Console");
+      aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
+
+      int len = tp.getDocument().getLength();
+      tp.setCaretPosition(len);
+//      tp.setCharacterAttributes(aset, false);
+      tp.replaceSelection(msg);
    }
 
    private void buildStackedSurvivors(GCSample var1) {
@@ -201,29 +257,29 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       this.newPanel.add(this.s1Panel);
    }
 
-   private void resetPanel(GCSample var1) {
+   private void resetPanel(GCSample gcSample) {
       Container var2 = this.getContentPane();
       var2.removeAll();
       this.newPanel.removeAll();
       this.spacesPanel.removeAll();
-      this.buildStackedSurvivors(var1);
-      GridBagLayout var3 = new GridBagLayout();
-      this.spacesPanel.setLayout(var3);
+      this.buildStackedSurvivors(gcSample);
+      GridBagLayout gridBagLayout = new GridBagLayout();
+      this.spacesPanel.setLayout(gridBagLayout);
       GridBagConstraints var4 = new GridBagConstraints();
       var4.fill = 1;
       var4.gridheight = 0;
       var4.weighty = 1.0D;
-      double var5 = (double)(var1.permSize + var1.tenuredSize + var1.newGenMaxSize);
-      double var7 = (double)var1.permSize / var5;
-      double var9 = (double)var1.tenuredSize / var5;
+      double var5 = (double)(gcSample.permSize + gcSample.tenuredSize + gcSample.newGenMaxSize);
+      double var7 = (double)gcSample.permSize / var5;
+      double var9 = (double)gcSample.tenuredSize / var5;
       double var11 = 1.0D - (var7 + var9);
       var4.weightx = var7;
-      var3.setConstraints(this.permPanel, var4);
+      gridBagLayout.setConstraints(this.permPanel, var4);
       var4.weightx = var9;
-      var3.setConstraints(this.oldPanel, var4);
+      gridBagLayout.setConstraints(this.oldPanel, var4);
       var4.weightx = var11;
       var4.gridwidth = 0;
-      var3.setConstraints(this.newPanel, var4);
+      gridBagLayout.setConstraints(this.newPanel, var4);
       this.spacesPanel.add(this.permPanel);
       this.spacesPanel.add(this.oldPanel);
       this.spacesPanel.add(this.newPanel);
@@ -319,6 +375,24 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
 
    public void draw() {
       this.repaint();
+   }
+
+   public static void main(String[] args) {
+      JFrame frame = new JFrame();
+      JBTextArea textArea = new JBTextArea() {
+         public void setForeground(Color fg) {
+            Color oldFg = Color.red;
+            super.setForeground(oldFg);
+         }
+      };
+      textArea.setCaretColor(JBColor.red);
+      textArea.setForeground(JBColor.GRAY);
+      textArea.setRows(8);
+      textArea.setLineWrap(true);
+      textArea.setText("Hello");
+      frame.getContentPane().add(textArea);
+      frame.pack();
+      frame.setVisible(true);
    }
 
 }

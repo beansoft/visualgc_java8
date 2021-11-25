@@ -15,8 +15,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * GC 折线图区域.
+ */
 public class GCSpacePanel extends JPanel {
-   private static final int DATASET_SIZE = 1000;
+   private static final int DATASET_SIZE = 1000; // 数据点长度
    private Line line;
    @Obfuscation
    private String borderString;
@@ -51,7 +54,7 @@ public class GCSpacePanel extends JPanel {
       this.setPreferredSize(new Dimension(600, 100));
       this.setLayout(new BorderLayout());
       this.add(this.line, "Center");
-      this.addMouseListener(new MouseAdapter() {
+      line.addMouseListener(new MouseAdapter() {
          public void mousePressed(MouseEvent e) {
             this.maybeShowPopup(e);
          }
@@ -63,7 +66,8 @@ public class GCSpacePanel extends JPanel {
          private void maybeShowPopup(MouseEvent mouseEvent) {
             if (mouseEvent.isPopupTrigger()) {
                JPopupMenu jPopupMenu = new JPopupMenu();
-               JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem("Show Reserved Space", GCSpacePanel.this.isShowReservedSpace());
+               JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(Res.getString("show.reserved.space"),
+                       GCSpacePanel.this.isShowReservedSpace());
                menuItem.addItemListener(new ItemListener() {
                   public void itemStateChanged(ItemEvent e) {
                      GCSpacePanel.this.setShowReservedSpace(e.getStateChange() == ItemEvent.SELECTED);
