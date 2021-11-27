@@ -77,6 +77,7 @@ public class VisualGCPane implements ActionListener {
   public VisualGCPane() {
   }
 
+  /** 自定义图标颜色 */
   public static void customizeColors() {
     if (ORIGINAL_UI)
       return;

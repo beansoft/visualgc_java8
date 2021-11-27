@@ -1,10 +1,12 @@
 package com.github.beansoftapp.visualgc.idea;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
+import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.sun.jvmstat.tools.visualgc.VisualGCPane;
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 /**
  * Open the tool window.
@@ -30,7 +33,7 @@ public class VisualGCToolWindowFactory implements ToolWindowFactory, DumbAware {
     rootPane.add(gcPane.createComponent(rootPane), BorderLayout.CENTER);
 
     Content content = contentFactory.createContent(rootPane, "", false);
-    content.setIcon(new ImageIcon(VisualGCPane.class.getResource("/visualgc.png")));
+//    content.setIcon(new ImageIcon(VisualGCPane.class.getResource("/visualgc.png")));
     content.setDisposer(new Disposable() {
       @Override
       public void dispose() {
@@ -39,6 +42,12 @@ public class VisualGCToolWindowFactory implements ToolWindowFactory, DumbAware {
       }
     });
     toolWindow.getContentManager().addContent(content);
+
+    ToolWindowEx ex = (ToolWindowEx) toolWindow;
+    ActionManager actionManager = ActionManager.getInstance();
+    // Actions at toolbar left
+    ex.setTabActions(
+            actionManager.getAction("VisualGC"));
   }
 
   // Always could be opened, avoid index waiting

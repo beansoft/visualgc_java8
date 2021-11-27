@@ -20,4 +20,10 @@ public class VisualGCAction extends AnAction {
     frame.setSize(1024, 768);
     frame.setVisible(true);
   }
+
+  // Always available and enabled
+  @Override
+  public boolean isDumbAware() {
+    return true;
+  }
 }

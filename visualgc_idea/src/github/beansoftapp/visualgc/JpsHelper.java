@@ -75,13 +75,17 @@ public class JpsHelper {
 //            if (curVMId == lvmid) {
 //               output.append(" VisualGC Self");
 //            } else {
-        output.append(" ");
-        output.append(getMainClass(vm));
+
+        if (vm != null) {
+          output.append(" ");
+          output.append(getMainClass(vm));
 //            }
 
-        vms.add(output.toString());
+          vms.add(output.toString());
 
-        monitoredHost.detach(vm);
+          monitoredHost.detach(vm);
+        }
+
       }
     } catch (URISyntaxException e) {
       // TODO Auto-generated catch block
