@@ -1,9 +1,9 @@
 <idea-plugin>
   <id>com.github.beansoftapp.visualgc.plugin</id>
   <name>VisualGC</name>
-  <version>2021.3.1</version>
+  <version>2021.3.2</version>
   <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8">BeanSoft</vendor>
-
+  <product-descriptor code="PVISUALGC" release-date="20220113" release-version="20213" optional="true"/>
   <description><![CDATA[
   <h2>Visual Garbage Collection Monitoring Tool for Hotspot JVM</h2>
       This plugin displayed a Visual GC tool window in your IDE, only supports HotSpot JVM(JDK 1.5 to OpenJDK/Oracle JDK 17).
@@ -27,9 +27,10 @@
   <change-notes>
     <![CDATA[
       <ul>
-        <li><b>Note:</b>This plugin will be changed to optional donate mode after Jan 1 2022,
+        <li><b>Note:</b>This plugin will be changed to optional donate mode after Jan 13 2022,
           yet all functions are still free. 本插件计划在2022年1月1日后修改为接受捐赠的版本, 以便更好的优化插件界面,
           但所有功能依然保持免费(捐赠与否不影响使用).</li>
+        <li><b>2021.3.2</b> Accept donation but all functions are still free.</li>
         <li><b>2021.3.1</b> Fix NPE(修复空指针); Add tool window icon to easy open new window(工具窗增加打开新窗口按钮).</li>
         <li><b>2021.3</b> Move tool window to top right; fix display issue in Dark theme and chart grid color; easy to view context menu "Show Reserved Space".
           移动图表到右侧；适配暗色模式下的界面显示问题，优化网格颜色和文字显示；简化显示右键菜单"显示已预留空间"; 优化中文翻译。</li>
@@ -59,6 +60,9 @@
     <action id="VisualGC" class="com.github.beansoftapp.visualgc.idea.VisualGCAction"
             icon="AllIcons.Actions.MoveToWindow">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+
+    <action id="visualgc.MakeCoffeeAction" class="com.github.beansoftapp.visualgc.idea.MakeCoffeeAction" icon="/images/mug.png">
     </action>
   </actions>
 
