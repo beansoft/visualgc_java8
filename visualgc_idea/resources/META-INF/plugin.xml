@@ -1,5 +1,5 @@
 <idea-plugin>
-  <id>com.github.beansoftapp.visualgc.plugin</id>
+  <id>com.github.beansoft.visualgc.plugin</id>
   <name>VisualGC</name>
   <version>2021.3.2</version>
   <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8">BeanSoft</vendor>
@@ -47,22 +47,23 @@
   <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
   <depends>com.intellij.modules.platform</depends>
+  <depends optional="true" config-file="withJava.xml">com.intellij.modules.java</depends>
 
   <!-- for action i10n messages -->
   <resource-bundle>visualgc</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="VisualGC" secondary="true" icon="PluginIcons.visualgcToolWindow" anchor="right"
-                factoryClass="com.github.beansoftapp.visualgc.idea.VisualGCToolWindowFactory"/>
+                factoryClass="com.github.beansoft.visualgc.idea.VisualGCToolWindowFactory"/>
   </extensions>
 
   <actions>
-    <action id="VisualGC" class="com.github.beansoftapp.visualgc.idea.VisualGCAction"
+    <action id="VisualGCNewWindow" class="com.github.beansoft.visualgc.idea.VisualGCAction"
             icon="AllIcons.Actions.MoveToWindow">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </action>
 
-    <action id="visualgc.MakeCoffeeAction" class="com.github.beansoftapp.visualgc.idea.MakeCoffeeAction" icon="/images/mug.png">
+    <action id="visualgc.MakeCoffeeAction" class="com.github.beansoft.visualgc.idea.MakeCoffeeAction" icon="/images/mug.png">
     </action>
   </actions>
 

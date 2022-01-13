@@ -1,4 +1,4 @@
-package com.github.beansoftapp.visualgc.idea;
+package com.github.beansoft.visualgc.idea;
 
 import com.beansoft.lic.CheckLicense;
 import com.intellij.CommonBundle;
@@ -8,7 +8,6 @@ import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class MakeCoffeeAction extends AnAction {
     private static final String TITLE = "VisualGC";

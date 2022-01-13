@@ -1,9 +1,8 @@
-package com.github.beansoftapp.visualgc.idea;
+package com.github.beansoft.visualgc.idea;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.sun.jvmstat.tools.visualgc.VisualGCPane;
-import org.graalvm.visualvm.core.ui.components.DataViewComponent;
 
 import javax.swing.*;
 import java.awt.*;

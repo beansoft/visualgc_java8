@@ -1,0 +1,22 @@
+<idea-plugin>
+    <!--    <actions>-->
+    <!--        <action id="Plugin_ReactNative_CleanComment" class="com.github.beansoftapp.reatnative.idea.actions.CleanSourceCommentAction"-->
+    <!--                icon="/icons/error.svg" text="Remove Source Code Comments" description="Using WebStorm or IDEA ultimate to remove source code's comment">-->
+    <!--            <add-to-group group-id="ToolsMenu" anchor="last"/>-->
+    <!--            <add-to-group group-id="EditorPopupMenu" anchor="last"/>-->
+    <!--        </action>-->
+    <!--    </actions>-->
+
+
+    <!--    <extensions defaultExtensionNs="com.intellij">-->
+    <!--        <completion.contributor language="JAVA"-->
+    <!--                                implementationClass="com.github.beansoftapp.reatnative.idea.editor.AssetLiteralCompletionContributor" order="first"/>-->
+    <!--    </extensions>-->
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="VisualVMLauncher" displayType="BALLOON" isLogByDefault="true"/>
+
+        <executor implementation="com.github.beansoft.jvm.executor.RunVisualVMExecutor"/>
+        <!-- runner 和 Executor 关联起来才能正常运行 -->
+        <programRunner implementation="com.github.beansoft.jvm.runner.RunVisualVMRunner"/>
+    </extensions>
+</idea-plugin>

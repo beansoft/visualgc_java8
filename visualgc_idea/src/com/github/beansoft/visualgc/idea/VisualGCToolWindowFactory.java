@@ -1,4 +1,4 @@
-package com.github.beansoftapp.visualgc.idea;
+package com.github.beansoft.visualgc.idea;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -9,13 +9,10 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
-import com.sun.jvmstat.tools.visualgc.VisualGCPane;
-import org.graalvm.visualvm.core.ui.components.DataViewComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 
 /**
  * Open the tool window.
@@ -47,7 +44,7 @@ public class VisualGCToolWindowFactory implements ToolWindowFactory, DumbAware {
     ActionManager actionManager = ActionManager.getInstance();
     // Actions at toolbar left
     ex.setTabActions(
-            actionManager.getAction("VisualGC"), actionManager.getAction("visualgc.MakeCoffeeAction"));
+            actionManager.getAction("VisualGCNewWindow"), actionManager.getAction("visualgc.MakeCoffeeAction"));
   }
 
   // Always could be opened, avoid index waiting
