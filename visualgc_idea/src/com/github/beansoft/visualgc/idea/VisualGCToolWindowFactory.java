@@ -35,7 +35,7 @@ public class VisualGCToolWindowFactory implements ToolWindowFactory, DumbAware {
       @Override
       public void dispose() {
         System.out.println("VisualGC disposed");
-        gcPane.dispse();
+        gcPane.dispose();
       }
     });
     toolWindow.getContentManager().addContent(content);

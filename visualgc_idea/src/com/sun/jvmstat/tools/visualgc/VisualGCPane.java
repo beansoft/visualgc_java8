@@ -3,6 +3,7 @@ package com.sun.jvmstat.tools.visualgc;
 import beansoft.swing.OptionPane;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.HyperlinkLabel;
+import com.intellij.ui.components.JBList;
 import com.sun.jvmstat.graph.FIFOList;
 import com.sun.jvmstat.graph.GridDrawer;
 import com.sun.jvmstat.graph.Level;
@@ -73,6 +74,11 @@ public class VisualGCPane implements ActionListener {
   private Container contentPane;
   private String pName = "";
   private PsListModel psListModel = new PsListModel();
+
+  /**
+   * 是否隐藏 JVM 列表, 用于关联运行JVM进程时使用.
+   */
+  private boolean hideJvmBrowser = false;
 
   public VisualGCPane() {
   }
@@ -370,13 +376,14 @@ public class VisualGCPane implements ActionListener {
     }
   }
 
-  // 停止监控并转向选择进城列表
+  // 停止监控并转向选择进程列表
   public void stopMonitor() {
     if(timer != null) timer.stop();
     this.vmIdString = null;
     this.model = null;
     this.modelAvailable = false;
     terminated = true;
+    hideJvmBrowser = false;
     SwingUtilities.invokeLater(() -> {
       contentPane.removeAll();
       contentPane.add(createComponent(contentPane));
@@ -384,8 +391,8 @@ public class VisualGCPane implements ActionListener {
     });
   }
 
-  /** Complete destory the monitor */
-  public void dispse() {
+  /** Complete destroy the monitor */
+  public void dispose() {
     if(timer != null) timer.stop();
     this.vmIdString = null;
     this.model = null;
@@ -444,17 +451,23 @@ public class VisualGCPane implements ActionListener {
     }
   }
 
+  /**
+   * Monitor the JVM process and refresh content pane.
+   * @param processId
+   */
   public void monitorProcessAndRefreshPane(int processId) {
     startMonitor(processId + "");
 //              psListModel.stop();
+    hideJvmBrowser = true;
     contentPane.removeAll();
     contentPane.add(createComponent(contentPane));
+
   }
 
   protected DataViewComponent createComponent(Container contentPane) {
     this.contentPane = contentPane;
 
-    JList<String> psList = new JList<>(psListModel);
+    JBList<String> psList = new JBList<>(psListModel);
     psList.setBorder(BorderFactory.createTitledBorder(Res.getString("double.click.a.jvm.process.to.start")));
     psList.addMouseListener(new MouseAdapter() {
       @Override
@@ -498,19 +511,19 @@ public class VisualGCPane implements ActionListener {
     dvc.addDetailsView(this.graphGCViewSupport.getDetailsView(), DataViewComponent.TOP_RIGHT);
 //    dvc.addDetailsView( new DataViewComponent.DetailsView( "GC Policy", null, 10, new JLabel(GCSample.gcPolicyName), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
 
-
-    dvc.addDetailsView( new DataViewComponent.DetailsView(Res.getString("jvm.browser"), null,
-            10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
-    HyperlinkLabel createdByLink = new HyperlinkLabel(Res.getString("this.tool.created.by"));
-    createdByLink.addHyperlinkListener( (e) -> {
-      try {
-        Desktop.getDesktop().browse(new URI("https://github.com/beansoft/visualgc_jdk8"));
-      } catch (IOException | URISyntaxException ioException) {
-        ioException.printStackTrace();
-      }
-    });
-    dvc.addDetailsView(new DataViewComponent.DetailsView(Res.getString("info"), null, 10,
-            createdByLink,
+    if(!hideJvmBrowser) {
+      dvc.addDetailsView( new DataViewComponent.DetailsView(Res.getString("jvm.browser"), null,
+              10, new JScrollPane(psList), null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+      HyperlinkLabel createdByLink = new HyperlinkLabel(Res.getString("this.tool.created.by"));
+      createdByLink.addHyperlinkListener( (e) -> {
+        try {
+          Desktop.getDesktop().browse(new URI("https://github.com/beansoft/visualgc_jdk8"));
+        } catch (IOException | URISyntaxException ioException) {
+          ioException.printStackTrace();
+        }
+      });
+      dvc.addDetailsView(new DataViewComponent.DetailsView(Res.getString("info"), null, 10,
+              createdByLink,
 
 //            new LinkLabel(Res.getString("this.tool.created.by"), null) {
 //      @Override
@@ -524,7 +537,8 @@ public class VisualGCPane implements ActionListener {
 //        }
 //      }
 //    }
-     null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+              null), DataViewComponent.BOTTOM_RIGHT);// Add a Tab
+    }
 
     dvc.configureDetailsArea(new DataViewComponent.DetailsAreaConfiguration(
         Res.getString("histogram"), true), DataViewComponent.BOTTOM_LEFT);

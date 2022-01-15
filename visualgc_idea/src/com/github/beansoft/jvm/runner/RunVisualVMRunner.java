@@ -19,6 +19,9 @@ import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.registry.Registry;
@@ -59,6 +62,10 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner {
 			Content runnerContent = runnerLayoutUi.createContent("beansoft.vgc.1",
 					new JButton("test"), "test", null, null);
 			runnerLayoutUi.addContent(runnerContent);
+			DefaultActionGroup actionGroup = new DefaultActionGroup();
+			actionGroup.add(ActionManager.getInstance().getAction("visualgc.MakeCoffeeAction"));
+			// 添加左侧Action
+			runnerLayoutUi.getOptions().setTopLeftToolbar(actionGroup, ActionPlaces.UNKNOWN);
 		}
 
 		ProcessHandler myProcessHandler = runContentDescriptor.getProcessHandler();
