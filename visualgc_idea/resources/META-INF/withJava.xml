@@ -16,7 +16,9 @@
         <notificationGroup id="VisualVMLauncher" displayType="BALLOON" isLogByDefault="true"/>
 
         <executor implementation="com.github.beansoft.jvm.executor.RunVisualVMExecutor"/>
+        <executor implementation="com.github.beansoft.jvm.executor.DebugVisualVMExecutor"/>
         <!-- runner 和 Executor 关联起来才能正常运行 -->
         <programRunner implementation="com.github.beansoft.jvm.runner.RunVisualVMRunner"/>
+        <programRunner implementation="com.github.beansoft.jvm.runner.DebugVisualVMRunner"/>
     </extensions>
 </idea-plugin>
