@@ -63,15 +63,17 @@ public class RunVisualVMRunner extends DefaultJavaProgramRunner {
 
 		ProcessHandler myProcessHandler = runContentDescriptor.getProcessHandler();
 		if(myProcessHandler instanceof BaseProcessHandler) {
-			String pid = String.valueOf(OSProcessUtil.getProcessID(((BaseProcessHandler<?>)myProcessHandler).getProcess()));
+			int pid = OSProcessUtil.getProcessID(((BaseProcessHandler<?>)myProcessHandler).getProcess());
 			System.out.println("Open visualGC pid = " + pid);// TODO
+			if(pid > 0) {
+				RunnerUtil.startVisualGC(pid);
+			}
 		}
 
 //		if(myProcessHandler instanceof KillableColoredProcessHandler) {
 //			String pid = String.valueOf(OSProcessUtil.getProcessID(((KillableColoredProcessHandler)myProcessHandler).getProcess()));
 //			System.out.println("Open visualGC pid = " + pid);// TODO
 //		}
-
 
 //		RunnerUtils.runVisualVM(this, env, state);
 		System.out.println("Open visualGC");// TODO

@@ -444,6 +444,13 @@ public class VisualGCPane implements ActionListener {
     }
   }
 
+  public void monitorProcessAndRefreshPane(int processId) {
+    startMonitor(processId + "");
+//              psListModel.stop();
+    contentPane.removeAll();
+    contentPane.add(createComponent(contentPane));
+  }
+
   protected DataViewComponent createComponent(Container contentPane) {
     this.contentPane = contentPane;
 
