@@ -1,6 +1,6 @@
 package com.github.beansoft.jvm.runner;
 
-import com.github.beansoft.jvm.executor.RunVisualVMExecutor;
+import com.github.beansoft.jvm.executor.RunVisualGCExecutor;
 import com.intellij.debugger.settings.DebuggerSettings;
 import com.intellij.diagnostic.logging.AdditionalTabComponent;
 import com.intellij.diagnostic.logging.LogConsoleManagerBase;
@@ -37,11 +37,11 @@ public class RunVisualGCAddTabsRunner extends DefaultJavaProgramRunner {
 
 	@NotNull
 	public String getRunnerId() {
-		return RunVisualVMExecutor.RUN_WITH_VISUAL_VM;
+		return RunVisualGCExecutor.RUN_WITH_VISUAL_VM;
 	}
 
 	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-		return executorId.equals(RunVisualVMExecutor.RUN_WITH_VISUAL_VM) && (profile instanceof ModuleRunProfile || profile instanceof JarApplicationConfiguration) && !(profile instanceof RemoteConfiguration);
+		return executorId.equals(RunVisualGCExecutor.RUN_WITH_VISUAL_VM) && (profile instanceof ModuleRunProfile || profile instanceof JarApplicationConfiguration) && !(profile instanceof RemoteConfiguration);
 	}
 
 	@Override

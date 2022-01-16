@@ -72,6 +72,10 @@ public class VisualGCPane implements ActionListener {
   private VmIdentifier vmId;
 
   private Container contentPane;
+
+  /**
+   * 进程名
+   */
   private String pName = "";
   private PsListModel psListModel = new PsListModel();
 
@@ -453,9 +457,11 @@ public class VisualGCPane implements ActionListener {
 
   /**
    * Monitor the JVM process and refresh content pane.
-   * @param processId
+   * @param processId process Id
+   * @param pName process display name
    */
-  public void monitorProcessAndRefreshPane(int processId) {
+  public void monitorProcessAndRefreshPane(int processId, String pName) {
+    this.pName = processId + " " + pName;
     startMonitor(processId + "");
 //              psListModel.stop();
     hideJvmBrowser = true;

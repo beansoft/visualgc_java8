@@ -3,14 +3,14 @@ package com.github.beansoft.jvm.executor;
 import javax.swing.*;
 
 
-import com.github.beansoft.jvm.Resources;
+import icons.PluginIcons;
 import org.jetbrains.annotations.NotNull;
 
 import com.intellij.execution.executors.DefaultRunExecutor;
 
-public class RunVisualVMExecutor extends DefaultRunExecutor {
+public class RunVisualGCExecutor extends DefaultRunExecutor {
 
-	public static final String RUN_WITH_VISUAL_VM = "Run with VisualGC";
+	public static final String RUN_WITH_VISUAL_VM = "Run VisualGC with";
 	public static final String RUN_WITH_VISUAL_VM1 = "RunWithVisualGC";
 
 	@NotNull
@@ -19,12 +19,12 @@ public class RunVisualVMExecutor extends DefaultRunExecutor {
 	}
 
 	public Icon getToolWindowIcon() {
-		return Resources.RUN_13;
+		return PluginIcons.RunVisualGC_13;
 	}
 
 	@NotNull
 	public Icon getIcon() {
-		return Resources.RUN;
+		return PluginIcons.RunVisualGC;
 	}
 
 	public Icon getDisabledIcon() {

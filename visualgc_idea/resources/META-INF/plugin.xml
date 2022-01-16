@@ -1,13 +1,13 @@
 <idea-plugin>
   <id>com.github.beansoft.visualgc.plugin</id>
   <name>VisualGC</name>
-  <version>2021.3.2</version>
+  <version>2021.3.3</version>
   <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8">BeanSoft</vendor>
   <product-descriptor code="PVISUALGC" release-date="20220113" release-version="20213" optional="true"/>
   <description><![CDATA[
   <h2>Visual Garbage Collection Monitoring Tool for Hotspot JVM</h2>
       This plugin displayed a Visual GC tool window in your IDE, only supports HotSpot JVM(JDK 1.5 to OpenJDK/Oracle JDK 17).
-  New feature: monitoring the detailed GC activity eg G1 stop the world full connection time.<br>
+  New feature: run and monitor Java program GC directly in IDEA;<br>monitoring the detailed GC activity eg G1 stop the world full connection time.<br>
       Usage: 1. From main interface bottom;<br>
       2. From menu Tools > New VisualGC Window.<br>
 <br>
@@ -15,7 +15,7 @@
 <p>Chinese Instructions Below:</p>
   <h2>可视化 Hotspot JVM 垃圾回收监控工具</h2>
      在IDEA中显示 VisualGC 工具窗口或打开新窗口, 便于一边运行代码一边观察GC情况. 仅支持HotSpot JVM(JDK 1.5 到 OpenJDK 17).
-  增强功能: 允许监控详细的GC活动例如 G1 Full GC 消耗时间.<br><br>
+  增强功能: 在IDEA中直接运行并监视Java代码GC情况;<br> 允许监控详细的GC活动例如 G1 Full GC 消耗时间.<br><br>
 用法:<br>
 1) 点击停靠窗口下方的 VisualGC;<br>
 2) 打开新的独立运行窗口使用菜单 Tools > 新建 VisualGC 窗口.<br>
@@ -28,9 +28,10 @@
     <![CDATA[
       <ul>
         <li><b>Note:</b>This plugin will be changed to optional donate mode after Jan 13 2022,
-          yet all functions are still free. 本插件计划在2022年1月1日后修改为接受捐赠的版本, 以便更好的优化插件界面,
-          但所有功能依然保持免费(捐赠与否不影响使用).</li>
-        <li><b>2021.3.2</b> Accept donation but all functions are still free.</li>
+          yet all functions in the VisualGC tool window are still free. 本插件计划在2022年1月1日后修改为接受捐赠的版本, 以便更好的优化插件界面,
+          但VisualGC 工具窗口中的所有功能依然保持免费(捐赠与否不影响使用).</li>
+        <li><b>2021.3.3</b> New: run and monitor Java program GC directly in IDEA(requires donation to unlock).</li>
+        <li><b>2021.3.2</b> Accept donation but all functions in the VisualGC tool window are still free.</li>
         <li><b>2021.3.1</b> Fix NPE(修复空指针); Add tool window icon to easy open new window(工具窗增加打开新窗口按钮).</li>
         <li><b>2021.3</b> Move tool window to top right; fix display issue in Dark theme and chart grid color; easy to view context menu "Show Reserved Space".
           移动图表到右侧；适配暗色模式下的界面显示问题，优化网格颜色和文字显示；简化显示右键菜单"显示已预留空间"; 优化中文翻译。</li>

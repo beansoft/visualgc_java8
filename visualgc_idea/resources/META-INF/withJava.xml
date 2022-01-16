@@ -11,11 +11,11 @@
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="VisualGCLauncher" displayType="BALLOON" isLogByDefault="true"/>
 
-        <executor implementation="com.github.beansoft.jvm.executor.RunVisualVMExecutor"/>
-        <executor implementation="com.github.beansoft.jvm.executor.DebugVisualVMExecutor"/>
+        <executor implementation="com.github.beansoft.jvm.executor.RunVisualGCExecutor"/>
+        <executor implementation="com.github.beansoft.jvm.executor.DebugVisualGCExecutor"/>
         <!-- runner 和 Executor 关联起来才能正常运行 -->
-        <programRunner implementation="com.github.beansoft.jvm.runner.RunVisualVMRunner"/>
-        <programRunner implementation="com.github.beansoft.jvm.runner.DebugVisualVMRunner"/>
-        <consoleActionsPostProcessor implementation="com.github.beansoft.jvm.integration.VisualGCConsoleActionsPostProcessor"/>
+        <programRunner implementation="com.github.beansoft.jvm.runner.RunVisualGCRunner"/>
+        <programRunner implementation="com.github.beansoft.jvm.runner.DebugVisualGCRunner"/>
+<!--        <consoleActionsPostProcessor implementation="com.github.beansoft.jvm.integration.VisualGCConsoleActionsPostProcessor"/>-->
     </extensions>
 </idea-plugin>

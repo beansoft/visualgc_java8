@@ -1,11 +1,11 @@
 package com.github.beansoft.jvm.action;
 
 import com.github.beansoft.jvm.LogHelper;
-import com.github.beansoft.jvm.Resources;
 import com.github.beansoft.jvm.integration.VisualVMContext;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import icons.PluginIcons;
 
 
 import java.util.LinkedList;
@@ -22,7 +22,7 @@ public class StartVisualGCConsoleAction extends AnAction {
 	}
 
 	public StartVisualGCConsoleAction(VisualVMContext visualVMContext) {
-		super("Start VisualVM", null, Resources.CONSOLE_RUN);
+		super("Start VisualVM", null, PluginIcons.RunVisualGC);
 		this.visualVMContext = visualVMContext;
 		created = System.currentTimeMillis();
 		currentlyExecuted.add(this);

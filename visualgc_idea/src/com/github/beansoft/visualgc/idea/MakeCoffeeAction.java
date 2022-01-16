@@ -23,16 +23,16 @@ public class MakeCoffeeAction extends AnAction {
                     "Thank you and this will made the plugin better!";
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), message, TITLE, JOptionPane.INFORMATION_MESSAGE);
         } else {
-            final String message = "Unfortunately, you have not obtain the license yet. However you can still use this plugin for free.\n" +
+            final String message = "Unfortunately, you have not obtain the license yet. However you can still use this plugin for free with most functions.\n" +
                     "Would you like to register the plugin to make a donation?";
 //          JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), message, TITLE, JOptionPane.INFORMATION_MESSAGE);
-            boolean sureDelete = Messages.showYesNoDialog(e.getProject(), message, TITLE, CommonBundle.getContinueButtonText(), CommonBundle.getCancelButtonText(),
+            boolean sureReg = Messages.showYesNoDialog(e.getProject(), message, TITLE, CommonBundle.getContinueButtonText(), CommonBundle.getCancelButtonText(),
                     Messages.getQuestionIcon()) ==
                     Messages.YES;
-            if (sureDelete) {
+            if (sureReg) {
                 CheckLicense.requestLicense("Please consider register our plugin to make a donation!");
             } else {
-                Messages.showInfoMessage("Unfortunately, you have not obtain the license yet. \n However you can still use this plugin for free.", TITLE);
+                Messages.showInfoMessage("Unfortunately, you have not obtain the license yet. \n However you can still use this plugin for free with most functions.", TITLE);
             }
 
         }

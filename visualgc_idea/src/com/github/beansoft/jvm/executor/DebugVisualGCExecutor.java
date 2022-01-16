@@ -1,15 +1,15 @@
 package com.github.beansoft.jvm.executor;
 
-import com.github.beansoft.jvm.Resources;
 import com.intellij.execution.executors.DefaultRunExecutor;
+import icons.PluginIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class DebugVisualVMExecutor extends DefaultRunExecutor {
+public class DebugVisualGCExecutor extends DefaultRunExecutor {
 	@NonNls
-	public static final String EXECUTOR_ID = "Debug with VisualGC";
+	public static final String EXECUTOR_ID = "Debug VisualGC with";
 	public static final String DEBUG_WITH_VISUAL_VM = "DebugWithVisualGC";
 
 	@NotNull
@@ -18,12 +18,12 @@ public class DebugVisualVMExecutor extends DefaultRunExecutor {
 	}
 
 	public Icon getToolWindowIcon() {
-		return Resources.DEBUG_13;
+		return PluginIcons.DebugVisualGC_13;
 	}
 
 	@NotNull
 	public Icon getIcon() {
-		return Resources.DEBUG;
+		return PluginIcons.DebugVisualGC;
 	}
 
 	public Icon getDisabledIcon() {
