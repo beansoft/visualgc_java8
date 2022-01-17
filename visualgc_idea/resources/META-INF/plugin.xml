@@ -1,5 +1,5 @@
 <idea-plugin>
-  <id>com.github.beansoft.visualgc.plugin</id>
+  <id>com.github.beansoftapp.visualgc.plugin</id>
   <name>VisualGC</name>
   <version>2021.3.3</version>
   <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8">BeanSoft</vendor>
@@ -43,7 +43,7 @@
   </change-notes>
 
   <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="201.0"/>
+  <idea-version since-build="203.0"/>
 
   <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
