@@ -30,7 +30,7 @@
         <li><b>Note:</b>This plugin will be changed to optional donate mode after Jan 13 2022,
           yet all functions in the VisualGC tool window are still free. 本插件计划在2022年1月1日后修改为接受捐赠的版本, 以便更好的优化插件界面,
           但VisualGC 工具窗口中的所有功能依然保持免费(捐赠与否不影响使用).</li>
-        <li><b>2021.3.3</b> New: instant run and monitor Java program GC directly in IDEA(requires donation to unlock).</li>
+        <li><b>2021.3.3</b> New: Instant run and monitor Java / Local Server(Tomcat etc) program GC directly in IDEA(Donate to unlock this feature or using a 30 days free trail).</li>
         <li><b>2021.3.2</b> Accept donation but all functions in the VisualGC tool window are still free.</li>
         <li><b>2021.3.1</b> Fix NPE(修复空指针); Add tool window icon to easy open new window(工具窗增加打开新窗口按钮).</li>
         <li><b>2021.3</b> Move tool window to top right; fix display issue in Dark theme and chart grid color; easy to view context menu "Show Reserved Space".
@@ -54,6 +54,8 @@
   <resource-bundle>visualgc</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup id="VisualGC" displayType="BALLOON" isLogByDefault="true"/>
+
     <toolWindow id="VisualGC" secondary="true" icon="PluginIcons.visualgcToolWindow" anchor="right"
                 factoryClass="com.github.beansoft.visualgc.idea.VisualGCToolWindowFactory"/>
   </extensions>

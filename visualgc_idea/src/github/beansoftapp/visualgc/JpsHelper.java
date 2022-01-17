@@ -6,6 +6,7 @@ import sun.jvmstat.monitor.MonitoredHost;
 import sun.jvmstat.monitor.MonitoredVm;
 import sun.jvmstat.monitor.StringMonitor;
 import sun.jvmstat.monitor.VmIdentifier;
+import sun.jvmstat.perfdata.monitor.MonitorStructureException;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,11 +17,101 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
+/**
+ * JVM process helper.
+ */
 public class JpsHelper {
   private static final String JAR_SUFFIX = ".jar";  // NOI18N
 
   public static void main(String[] args) throws Exception {
     System.out.println(getJvmPSList());
+//    System.out.println(getJvmGcList());
+  }
+
+  /**
+   * 根据 AppId 找到 JVM 进城 ID.
+   * @param appId
+   * @return
+   */
+  public static int getJvmPidWithAppId(Long appId) {
+    List<String> vms = new ArrayList<String>();
+
+    try {
+      HostIdentifier hostId = new HostIdentifier((String) null);
+      MonitoredHost monitoredHost = MonitoredHost.getMonitoredHost(hostId);
+
+      // get the set active JVMs on the specified host.
+      Set<Integer> jvms = monitoredHost.activeVms();
+//      int curVMId = GetProcessID.getPid();
+      /* empty */
+      for (Integer lvmid : jvms) {
+        Throwable lastError = null;
+        StringBuilder output;
+//				System.out.println("lvmid=" + lvmid);
+        MonitoredVm vm = null;
+        String vmidString = "//" + lvmid + "?mode=r";
+        output = new StringBuilder();
+
+        output.append(lvmid);
+        try {
+          VmIdentifier id = new VmIdentifier(vmidString);
+          vm = monitoredHost.getMonitoredVm(id, 0);
+//               vms.add(vmidString);
+        } catch (URISyntaxException e) {
+          e.printStackTrace();
+          // unexpected as vmidString is based on a validated hostid
+          lastError = e;
+        } catch (Exception e) {
+          lastError = e;
+          e.printStackTrace();
+        } finally {
+          if (vm == null) {
+            /*
+             * we ignore most exceptions, as there are race conditions
+             * where a JVM in 'jvms' may terminate before we get a
+             * chance to list its information. Other errors, such as
+             * access and I/O exceptions should stop us from iterating
+             * over the complete set.
+             */
+            System.out.println(" -- process information unavailable");
+          }
+        }
+
+//            if (curVMId == lvmid) {
+//               output.append(" VisualGC Self");
+//            } else {
+
+        if (vm != null) {
+          output.append(" ");
+          output.append(getMainClass(vm));
+          String vmArgs = getJvmArgs(vm);
+          monitoredHost.detach(vm);
+
+          if(vmArgs != null) {
+            String model_string = "-Dvisualgc.id=" + appId;
+//            System.out.println(vmArgs);
+            if(vmArgs.contains(model_string)) {
+              int startIndex = vmArgs.indexOf(model_string);
+              return lvmid;
+            }
+          }
+//            }
+
+          vms.add(output.toString());
+
+
+        }
+
+      }
+    } catch (URISyntaxException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (MonitorException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return -1;
   }
 
   /**
@@ -37,7 +128,7 @@ public class JpsHelper {
 
       // get the set active JVMs on the specified host.
       Set<Integer> jvms = monitoredHost.activeVms();
-      int curVMId = GetProcessID.getPid();
+//      int curVMId = GetProcessID.getPid();
       /* empty */
       for (Integer lvmid : jvms) {
         Throwable lastError = null;
@@ -92,6 +183,8 @@ public class JpsHelper {
       e.printStackTrace();
     } catch (MonitorException e) {
       // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (Exception e) {
       e.printStackTrace();
     }
     return vms;

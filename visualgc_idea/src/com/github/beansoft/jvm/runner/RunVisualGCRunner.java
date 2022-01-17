@@ -12,6 +12,7 @@ import com.intellij.execution.target.TargetEnvironmentAwareRunProfileState;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.Promise;
@@ -40,15 +41,31 @@ public class RunVisualGCRunner extends DefaultJavaProgramRunner {
 //		RunnerUtil.startVisualGC(processHandler, env);
 	}
 
+	/**
+	 * In IDEA 2021.3, this method is called when you running a Java program, but in 2020.3 the doExecute is called.
+	 * @see #doExecute(RunProfileState, ExecutionEnvironment)
+	 * @param state
+	 * @param env
+	 * @return
+	 * @throws ExecutionException
+	 */
 	@NotNull
 	protected Promise<RunContentDescriptor> doExecuteAsync(@NotNull TargetEnvironmentAwareRunProfileState state,
 																	 @NotNull ExecutionEnvironment env)
 			throws ExecutionException {
 		Promise<RunContentDescriptor> result = super.doExecuteAsync(state,env);
 		result.thenAsync( runContentDescriptor -> {
-			System.out.println("run profile name=" + env.getRunProfile().getName());// 配置项的名字
+//			System.out.println("run profile name=" + env.getRunProfile().getName());// 配置项的名字
 			if(runContentDescriptor != null) {
 				ProcessHandler processHandler = runContentDescriptor.getProcessHandler();
+
+				RunnerLayoutUi runnerLayoutUi = runContentDescriptor.getRunnerLayoutUi();
+				if(runnerLayoutUi != null) {
+					// Run in UI thread
+					UIUtil.invokeLaterIfNeeded(() -> RunnerUtil.buildVgcRunnerUITab(env, runnerLayoutUi)
+					);
+				}
+
 				RunnerUtil.startVisualGC(processHandler, env);
 			}
 			return result;
@@ -62,13 +79,13 @@ public class RunVisualGCRunner extends DefaultJavaProgramRunner {
 			throws ExecutionException {
 		// 开始执行进程
 		RunContentDescriptor runContentDescriptor = super.doExecute(state, env);
-		System.out.println("run profile name=" + env.getRunProfile().getName());// 配置项的名字
+//		System.out.println("run profile name=" + env.getRunProfile().getName());// 配置项的名字
 		// environment.getRunProfile() 的实际类型可能是 com.intellij.execution.application.ApplicationConfiguration , 可以
 		// 获取到 main 类的名字
 
 		RunnerLayoutUi runnerLayoutUi = runContentDescriptor.getRunnerLayoutUi();
 
-//		RunnerUtil.buildVgcRunnerUITab(env,runnerLayoutUi);
+		RunnerUtil.buildVgcRunnerUITab(env,runnerLayoutUi);
 ////		if (runnerLayoutUi != null) {
 //			Content runnerContent = runnerLayoutUi.createContent("beansoft.vgc.help",
 //					new JButton("test"), "VisualGC", null, null);

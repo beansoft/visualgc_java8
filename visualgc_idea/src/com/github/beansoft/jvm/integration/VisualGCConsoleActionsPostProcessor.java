@@ -16,7 +16,7 @@ public class VisualGCConsoleActionsPostProcessor extends ConsoleActionsPostProce
 	@NotNull
 	@Override
 	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
-		VisualVMContext context = VisualVMContext.load();
+		VisualGCContext context = VisualGCContext.load();
 		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
 		anActions.add(new StartVisualGCConsoleAction(context));
 		anActions.addAll(Arrays.asList(actions));

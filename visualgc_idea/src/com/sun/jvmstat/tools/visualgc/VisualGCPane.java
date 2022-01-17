@@ -613,6 +613,8 @@ public class VisualGCPane implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+//      System.out.println(this.getClass() + "actionPerformed(" + e + ")");
+      // 定时器触发的任务
       List<String> ps = JpsHelper.getJvmPSList();
       super.removeAllElements();
       for (String pid : ps) {

@@ -1,5 +1,6 @@
 package com.github.beansoft.visualgc.idea;
 
+import com.github.beansoft.jvm.action.SettingsAction;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.DumbAware;
@@ -44,7 +45,9 @@ public class VisualGCToolWindowFactory implements ToolWindowFactory, DumbAware {
     ActionManager actionManager = ActionManager.getInstance();
     // Actions at toolbar left
     ex.setTabActions(
-            actionManager.getAction("VisualGCNewWindow"), actionManager.getAction("visualgc.MakeCoffeeAction"));
+            actionManager.getAction("VisualGCNewWindow"),
+            actionManager.getAction("visualgc.MakeCoffeeAction"),
+            new SettingsAction());
   }
 
   // Always could be opened, avoid index waiting

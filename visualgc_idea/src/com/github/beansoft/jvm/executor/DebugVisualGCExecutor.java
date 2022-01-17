@@ -10,7 +10,7 @@ import javax.swing.*;
 public class DebugVisualGCExecutor extends DefaultRunExecutor {
 	@NonNls
 	public static final String EXECUTOR_ID = "Debug VisualGC with";
-	public static final String DEBUG_WITH_VISUAL_VM = "DebugWithVisualGC";
+	public static final String DEBUG_WITH_VISUAL_VM = "Debug VisualGC";
 
 	@NotNull
 	public String getToolWindowId() {

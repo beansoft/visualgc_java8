@@ -16,6 +16,11 @@
         <!-- runner 和 Executor 关联起来才能正常运行 -->
         <programRunner implementation="com.github.beansoft.jvm.runner.RunVisualGCRunner"/>
         <programRunner implementation="com.github.beansoft.jvm.runner.DebugVisualGCRunner"/>
+        <!-- TODO finish in next version -->
 <!--        <consoleActionsPostProcessor implementation="com.github.beansoft.jvm.integration.VisualGCConsoleActionsPostProcessor"/>-->
+        <java.programPatcher implementation="com.github.beansoft.jvm.integration.VisualGCJavaProgramPatcher"/>
+        <applicationConfigurable groupId="tools" instance="com.github.beansoft.jvm.MyConfigurable" id="visualgc.settings"
+                                 displayName="VisualGC"/>
+        <applicationService serviceImplementation="com.github.beansoft.jvm.ApplicationSettingsService"/>
     </extensions>
 </idea-plugin>

@@ -19,6 +19,8 @@ public class PluginIcons {
     public static Icon DebugVisualGC = load("/images/debugWithVisualGC.svg");
     public static Icon DebugVisualGC_13 = load("/images/debugWithVisualGC_13.svg");
 
+    public static Icon Donate = load("/images/donate.png");
+
     private static Icon load(String path) {
         try {
             return IconLoader.getIcon(path, PluginIcons.class);

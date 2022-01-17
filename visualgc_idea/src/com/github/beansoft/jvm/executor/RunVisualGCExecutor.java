@@ -11,7 +11,7 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 public class RunVisualGCExecutor extends DefaultRunExecutor {
 
 	public static final String RUN_WITH_VISUAL_VM = "Run VisualGC with";
-	public static final String RUN_WITH_VISUAL_VM1 = "RunWithVisualGC";
+	public static final String RUN_WITH_VISUAL_VM1 = "Run VisualGC";
 
 	@NotNull
 	public String getToolWindowId() {
