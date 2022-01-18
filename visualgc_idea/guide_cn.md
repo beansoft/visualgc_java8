@@ -1,12 +1,16 @@
+### 概述
+
 整个界面主要分为四个区域，分别为：`Spaces`、`Graphs`、`Histogram`和`JVM浏览器`。
 
 如果需要不依赖IDEA单独运行, 请移步: [VisualGC 3.0 独立运行增强版, 支持JDK 8](https://www.cnblogs.com/beansoft/p/visualgc_jdk8_standalone.html)
 
 **停止监控** 按钮: 点击后会停止当前JVM进程的GC监控.
 
-<img src="https://plugins.jetbrains.com/files/14557/screenshot_78815004-980b-49f5-81f5-8cdb699585bd" alt="Screenshot 2" style="zoom:50%;" />
+<img src="https://plugins.jetbrains.com/files/14557/screenshot_064405a5-6be5-4cc6-a84c-0376cd906e5a" style="zoom:50%;" />
 
-
+### 和 Java, Spring Boot 项目及 Tomcat 项目集成
+<img src="https://plugins.jetbrains.com/files/14557/screenshot_de36b883-b7d9-4f47-aff5-995cd57e4440" style="zoom:50%;" />
+<img src="https://plugins.jetbrains.com/files/14557/screenshot_fdde87dd-4836-4d22-9616-66f5cd532ae0" style="zoom:50%;" />
 
 ### JVM 浏览器窗口：
 
