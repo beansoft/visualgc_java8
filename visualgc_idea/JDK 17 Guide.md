@@ -28,3 +28,5 @@ The below configuration is required by VisualGC plugin:
 --add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED
 --add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor.event=ALL-UNNAMED
 ```
+
+Under Mac, please add `-Dsun.java2d.metal=true`
