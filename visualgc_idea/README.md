@@ -27,7 +27,7 @@ Usage:
 
 截图:
 
-![vgc_idea_mac_en](vgc_idea.png)
+![vgc_idea_mac_en](screenshot/vgc_idea.png)
 
 [![vgc_idea_cn](https://img2020.cnblogs.com/blog/2073018/202006/2073018-20200620133346407-155505802.png)](https://img2020.cnblogs.com/blog/2073018/202006/2073018-20200620133345259-810121084.png)
 

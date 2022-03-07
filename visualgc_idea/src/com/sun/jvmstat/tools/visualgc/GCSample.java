@@ -45,6 +45,7 @@ public class GCSample {
 
    long stopGCTime;
    long stopGCEvents;
+   boolean zgc;
 
    static long maxTenuringThreshold;
    public static long osFrequency;
@@ -147,6 +148,7 @@ public class GCSample {
 
       this.stopGCTime = model.getCollector2GCTime();
       this.stopGCEvents = model.getCollector2Events();
+      this.zgc = model.isZgc();
    }
 
    public double getAdjustedEdenSize() {

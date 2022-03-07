@@ -200,6 +200,13 @@ class GraphGC extends JFrame implements ActionListener, ComponentListener {
     this.oldPanel = new GCSpacePanel(Res.getString("old.gen"), gcSample.tenuredSize, gcSample.tenuredCapacity, oldColor);
     Color permColor = Color.getColor("perm.color", new Color(240, 200, 150));
     this.permPanel = new GCSpacePanel(Res.getString("perm.gen"), gcSample.permSize, gcSample.permCapacity, permColor);
+
+    if(gcSample.zgc) {
+      this.edenPanel.setVisible(false);
+      this.s0Panel.setVisible(false);
+      this.s1Panel.setVisible(false);
+    }
+
     this.addComponentListener(this);
     this.update(gcSample);
     this.resetPanel(gcSample);

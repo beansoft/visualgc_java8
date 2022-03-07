@@ -134,4 +134,10 @@ interface Model {
 
    long getCollector2GCTime();
    long getCollector2Events();
+
+   /**
+    * mark is ZGC
+    * @since 2022-3-7
+    */
+   boolean isZgc();
 }

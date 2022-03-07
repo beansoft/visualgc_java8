@@ -1,7 +1,12 @@
 package com.sun.jvmstat.tools.visualgc;
 
 import beansoft.swing.OptionPane;
+import com.beansoft.lic.CheckLicense;
+import com.github.beansoft.visualgc.idea.MakeCoffeeAction;
+import com.intellij.CommonBundle;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.components.JBList;
 import com.sun.jvmstat.graph.FIFOList;
@@ -14,10 +19,7 @@ import github.beansoftapp.visualgc.JpsHelper;
 import org.graalvm.visualvm.core.ui.components.DataViewComponent;
 import org.graalvm.visualvm.core.ui.components.NotSupportedDisplayer;
 import org.netbeans.modules.bugtracking.tasks.LinkLabel;
-import sun.jvmstat.monitor.MonitorException;
-import sun.jvmstat.monitor.MonitoredHost;
-import sun.jvmstat.monitor.MonitoredVm;
-import sun.jvmstat.monitor.VmIdentifier;
+import sun.jvmstat.monitor.*;
 import sun.jvmstat.monitor.event.HostEvent;
 import sun.jvmstat.monitor.event.HostListener;
 import sun.jvmstat.monitor.event.VmStatusChangeEvent;
@@ -84,7 +86,13 @@ public class VisualGCPane implements ActionListener {
    */
   private boolean hideJvmBrowser = false;
 
+  protected Project myProject;
+
   public VisualGCPane() {
+  }
+
+  public VisualGCPane(Project project) {
+    this.myProject = project;
   }
 
   /** 自定义图标颜色 */
@@ -271,7 +279,6 @@ public class VisualGCPane implements ActionListener {
 
     VisualGCPane gcPane = new VisualGCPane();
 
-
 //    frame.setTitle("VisualGC 3.0" + pName);
 //    gcPane.startMonitor(arguments.vmIdString());
     frame.getContentPane().add(gcPane.createComponent(frame.getContentPane()), BorderLayout.CENTER);
@@ -341,17 +348,23 @@ public class VisualGCPane implements ActionListener {
       monitoredVm = getMonitoredVm();
       if (monitoredVm != null) {
         MonitoredVmModel testModel = new MonitoredVmModel(monitoredVm);
-//        List<Monitor> monitors = monitoredVm.findByPattern(".*");
-//        if(monitors != null) {
-//          for(Monitor m : monitors) {
+        List<Monitor> monitors = monitoredVm.findByPattern(".*");
+        if(monitors != null) {
+          for(Monitor m : monitors) {
 //            System.out.println(m.getName());
-//          }
-//        }
+          }
+        }
 
+        StringMonitor gen1name = (StringMonitor) monitoredVm.findByName("sun.gc.generation.1.name");
+        System.out.println("sun.gc.generation.1.name = " + gen1name.stringValue());//ZGC is old
         this.hasMetaspace = ModelFixer.fixMetaspace(testModel, monitoredVm);
         GCSample gcsample = new GCSample(testModel);
         this.histogramSupported = gcsample.ageTableSizes != null;
         this.model = testModel;
+        // ZGC 的支持需要付费
+        if (testModel.isZgc() && !checkLic()) {
+          return false;
+        }
         terminated = false;
         return true;
       }
@@ -363,6 +376,25 @@ public class VisualGCPane implements ActionListener {
     if (monitoredVm != null)
       monitoredVm.detach();
     return false;
+  }
+
+  private boolean checkLic() {
+    final Boolean isLicensed = CheckLicense.isLicensed();
+    if (Boolean.FALSE.equals(isLicensed)) {
+      final String message = "Unfortunately, ZGC support is locked as you have not obtain the license yet. However you can still use this plugin for free with most functions.\n" +
+              "Would you like to register the plugin to make a donation and unlock the ZGC support?";
+//          JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), message, TITLE, JOptionPane.INFORMATION_MESSAGE);
+      boolean sureReg = Messages.showYesNoDialog(myProject, message, MakeCoffeeAction.TITLE, CommonBundle.getContinueButtonText(), CommonBundle.getCancelButtonText(),
+              Messages.getQuestionIcon()) ==
+              Messages.YES;
+      if (sureReg) {
+        CheckLicense.requestLicense("Please consider register our plugin to make a donation and unlock the ZGC support!");
+      } else {
+        Messages.showInfoMessage("Unfortunately, you have not obtain the license yet. \n However you can still use this plugin for free with most functions.", MakeCoffeeAction.TITLE);
+      }
+    }
+
+    return Boolean.TRUE.equals(isLicensed);
   }
 
   private MonitoredVm getMonitoredVm() throws MonitorException {
@@ -495,6 +527,7 @@ public class VisualGCPane implements ActionListener {
       }
     });
 
+    // GC 数据不可用时只显示进程列表
     if (!this.modelAvailable) {
       DataViewComponent.MasterView masterView = new DataViewComponent.MasterView("Visual GC", null, new JScrollPane(psList));
 //          new NotSupportedDisplayer(NotSupportedDisplayer.JVM));
@@ -523,7 +556,7 @@ public class VisualGCPane implements ActionListener {
       HyperlinkLabel createdByLink = new HyperlinkLabel(Res.getString("this.tool.created.by"));
       createdByLink.addHyperlinkListener( (e) -> {
         try {
-          Desktop.getDesktop().browse(new URI("https://github.com/beansoft/visualgc_jdk8"));
+          Desktop.getDesktop().browse(new URI("https://github.com/beansoft/visualgc_java8/tree/master/visualgc_idea"));
         } catch (IOException | URISyntaxException ioException) {
           ioException.printStackTrace();
         }
@@ -560,7 +593,7 @@ public class VisualGCPane implements ActionListener {
   }
 
   static class PsListModel extends DefaultListModel<String> implements ActionListener {
-    private final Timer timer = new Timer(2000, this);
+    private final Timer timer = new Timer(3000, this);// Slower update from 2 secs to 3 secs
 
     public PsListModel() {
       timer.start();

@@ -1,5 +1,6 @@
 package com.sun.jvmstat.tools.visualgc;
 
+import com.sun.jvmstat.monitor.HolderStringMonitor;
 import com.yworks.util.annotation.Obfuscation;
 import sun.jvmstat.monitor.LongMonitor;
 import sun.jvmstat.monitor.MonitorException;
@@ -81,8 +82,12 @@ class MonitoredVmModel implements Model {
 
    private LongMonitor stopGCEvents;
    private LongMonitor stopGCTime;
-   private StringMonitor gcPolicyName;
+   private StringMonitor gcPolicyName;// GC policy name, such as GarbageFirst; but ZGC has no value
    private StringMonitor collector2name;
+
+   private boolean zgc = false;
+
+   private static final String ZGC_COLLECTOR2_NAME = "Z concurrent cycle pauses";
 
    synchronized void initialize_finalizer() {
       if (!this.finalizerInitialized) {
@@ -113,22 +118,33 @@ class MonitoredVmModel implements Model {
       this.collector2name = (StringMonitor)this.vm.findByName("sun.gc.collector.2.name");
       this.gcPolicyName =  (StringMonitor)this.vm.findByName("sun.gc.policy.name");
 
-//      try {
-//         System.out.println("collector0name=" + collector0name.stringValue());
-//         System.out.println("collector1name=" + collector1name.stringValue());
-//
-//         if(collector2name != null) {
-//            System.out.println("collector2name=" + collector2name.stringValue());
-//         }
-//         if(gcPolicyName != null) {
-//            System.out.println("gc policy name=" + gcPolicyName.stringValue());
-//         }
-//         // collector0name=PCopy
-//         //collector1name=CMS
-//         //collector2name=CMS stop-the-world phases
-//      } catch (Exception e) {
-//         e.printStackTrace();
-//      }
+      try {
+         if(gcPolicyName != null) {
+            System.out.println("gc policy name=" + gcPolicyName.stringValue());
+         }
+
+         if(collector0name != null) {
+            System.out.println("collector0name=" + collector0name.stringValue());
+         }
+
+         if(collector1name != null) {
+            System.out.println("collector1name=" + collector1name.stringValue());
+         }
+
+         if(collector2name != null) {
+            System.out.println("collector2name=" + collector2name.stringValue());
+            if(ZGC_COLLECTOR2_NAME.equals(collector2name.stringValue())) {
+               this.gcPolicyName = new HolderStringMonitor("sun.gc.policy.name", "Z Garbage Collector");
+               zgc = true;
+            }
+         }
+
+         // collector0name=PCopy
+         //collector1name=CMS
+         //collector2name=CMS stop-the-world phases
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
    }
 
    private void initialize_common() throws MonitorException {
@@ -228,14 +244,23 @@ class MonitoredVmModel implements Model {
    }
 
    public long getNewGenMaxSize() {
+      if(isZgc()) {
+         return 0;
+      }
       return this.newGenMaxSize != null ? this.newGenMaxSize.longValue() : this.edenSize.longValue() + this.survivor0Size.longValue() + this.survivor1Size.longValue();
    }
 
    public long getNewGenMinSize() {
+      if(isZgc()) {
+         return 0;
+      }
       return this.newGenMinSize != null ? this.newGenMinSize.longValue() : this.edenSize.longValue() + this.survivor0Size.longValue() + this.survivor1Size.longValue();
    }
 
    public long getNewGenCurSize() {
+      if(isZgc()) {
+         return 0;
+      }
       return this.newGenCurSize != null ? this.newGenCurSize.longValue() : this.edenSize.longValue() + this.survivor0Size.longValue() + this.survivor1Size.longValue();
    }
 
@@ -248,19 +273,19 @@ class MonitoredVmModel implements Model {
    }
 
    public long getEdenUsed() {
-      return this.edenUsed.longValue();
+      return safeMonitorValue(this.edenUsed);
    }
 
    public long getTenuredUsed() {
-      return this.tenuredUsed.longValue();
+      return safeMonitorValue(this.tenuredUsed);
    }
 
    public long getSurvivor0Used() {
-      return this.survivor0Used.longValue();
+      return safeMonitorValue(this.survivor0Used);
    }
 
    public long getSurvivor1Used() {
-      return this.survivor1Used.longValue();
+      return safeMonitorValue(this.survivor1Used);
    }
 
    public long getPermUsed() {
@@ -268,15 +293,15 @@ class MonitoredVmModel implements Model {
    }
 
    public long getEdenSize() {
-      return this.edenSize.longValue();
+      return safeMonitorValue(this.edenSize);
    }
 
    public long getSurvivor0Size() {
-      return this.survivor0Size.longValue();
+      return safeMonitorValue(this.survivor0Size);
    }
 
    public long getSurvivor1Size() {
-      return this.survivor1Size.longValue();
+      return safeMonitorValue(this.survivor1Size);
    }
 
    public long getTenuredSize() {
@@ -288,15 +313,15 @@ class MonitoredVmModel implements Model {
    }
 
    public long getEdenCapacity() {
-      return this.edenCapacity.longValue();
+      return safeMonitorValue(this.edenCapacity);
    }
 
    public long getSurvivor0Capacity() {
-      return this.survivor0Capacity.longValue();
+      return safeMonitorValue(this.survivor0Capacity);
    }
 
    public long getSurvivor1Capacity() {
-      return this.survivor1Capacity.longValue();
+      return safeMonitorValue(this.survivor1Capacity);
    }
 
    public long getTenuredCapacity() {
@@ -308,36 +333,36 @@ class MonitoredVmModel implements Model {
    }
 
    public long getEdenGCEvents() {
-      return this.edenGCEvents.longValue();
+      return safeMonitorValue(this.edenGCEvents);
    }
 
    public long getTenuredGCEvents() {
-      return this.tenuredGCEvents.longValue();
+      return safeMonitorValue(this.tenuredGCEvents);
    }
 
    public long getEdenGCTime() {
-      return this.edenGCTime.longValue();
+      return safeMonitorValue(this.edenGCTime);
    }
 
    public long getTenuredGCTime() {
-      return this.tenuredGCTime.longValue();
+      return safeMonitorValue(this.tenuredGCTime);
    }
 
 
    public long getTenuringThreshold() {
-      return this.tenuringThreshold == null ? 0L : this.tenuringThreshold.longValue();
+      return safeMonitorValue(this.tenuringThreshold);
    }
 
    public long getMaxTenuringThreshold() {
-      return this.maxTenuringThreshold == null ? 0L : this.maxTenuringThreshold.longValue();
+      return safeMonitorValue(this.maxTenuringThreshold);
    }
 
    public long getDesiredSurvivorSize() {
-      return this.desiredSurvivorSize == null ? 0L : this.desiredSurvivorSize.longValue();
+      return safeMonitorValue(this.desiredSurvivorSize);
    }
 
    public long getAgeTableSize() {
-      return this.ageTableSize == null ? 0L : this.ageTableSize.longValue();
+      return safeMonitorValue(this.ageTableSize);
    }
 
    public long[] getAgeTableSizes() {
@@ -538,6 +563,11 @@ class MonitoredVmModel implements Model {
       return safeMonitorValue(stopGCEvents);
    }
 
+   public boolean isZgc() {
+      return zgc;
+   }
+
+   // Avoid NPE
    private long safeMonitorValue(LongMonitor monitor) {
       return monitor == null ? 0 : monitor.longValue();
    }

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class MakeCoffeeAction extends AnAction {
-    private static final String TITLE = "VisualGC";
+    public static final String TITLE = "VisualGC";
 
     public MakeCoffeeAction() {
         super();
@@ -34,7 +34,6 @@ public class MakeCoffeeAction extends AnAction {
             } else {
                 Messages.showInfoMessage("Unfortunately, you have not obtain the license yet. \n However you can still use this plugin for free with most functions.", TITLE);
             }
-
         }
     }
 

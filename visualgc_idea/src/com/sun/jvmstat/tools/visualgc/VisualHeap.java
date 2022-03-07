@@ -24,7 +24,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * 可视化堆空间(柱图区).
+ * 可视化堆空间(柱图区), on the left.
  */
 class VisualHeap extends JFrame implements ActionListener, ComponentListener {
    private static final boolean debug = false;
@@ -38,9 +38,9 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
    private JPanel spacesPanel;
    private JPanel oldPanel;
    private JPanel newPanel;
-   private JPanel edenPanel;
-   private JPanel s0Panel;
-   private JPanel s1Panel;
+   private final JPanel edenPanel;
+   private final JPanel s0Panel;
+   private final JPanel s1Panel;
    @Obfuscation
    private JPanel permPanel;
    @Obfuscation
@@ -139,6 +139,13 @@ class VisualHeap extends JFrame implements ActionListener, ComponentListener {
       this.spacesPanel = new JPanel();
       this.spacesPanel.setBackground(Color.BLACK);
       this.spacesPanel.setBorder(var12);
+
+      if(gcSample.zgc) {
+         this.edenPanel.setVisible(false);
+         this.s0Panel.setVisible(false);
+         this.s1Panel.setVisible(false);
+      }
+
       this.initializeInfoPanel(gcSample);
       this.resetPanel(gcSample);
    }
