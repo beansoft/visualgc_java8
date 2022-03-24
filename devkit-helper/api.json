@@ -1,0 +1,100 @@
+{
+  "id": 17501,
+  "name": "Notes",
+  "link": "/plugin/17501-notes",
+  "approve": false,
+  "xmlId": "com.github.beansoft.iscratch",
+  "description": "\n        \n        <p>A code-centric notes manager inside your IDE without altering the source file, connects note and your source code just in editor,\n            Supports SQLite local storage or sync with Evernote(IDEA/安卓代码收集及笔记管理). <br>\n            For more info about the Evernote sync support, please click <a href=\"https://plugins.jetbrains.com/plugin/17501-notes/sync-with-evernote\">Sync with Evernote</a>. In editor notes create, edit and delete with Alt + Enter intention and the note will display in place. Quick notes create in the Notes/iNotes window. Supports for all language files as\n            the Jetbrains IDE supports, full <a href=\"https://plugins.jetbrains.com/plugin/7793-markdown\">Markdown</a>/<a href=\"https://plugins.jetbrains.com/plugin/7391-asciidoc\">AsciiDoc</a>/<a href=\"https://plugins.jetbrains.com/plugin/8045-idea-mind-map\">IDEA Mind Map</a>/<a href=\"https://plugins.jetbrains.com/plugin/7017-plantuml-integration\">PlantUML integration</a> capabilities,\n            provides powerful organization and search features, add and edit code notes and link to source file without altering the source file.<br>\n            Helps you build your personal coding knowledge-base, and makes sure it is always at the ready for use. <br>\n            It is aiming to be a single tool for saving your day to day working notes, snippets of code, and just a good helper when you are working on some complex projects.<br>\n </p>\n        <h2>Save, edit, find and reuse code snippets straight from your IDE</h2>\n        <p>Select some code in your editor, right click to add it to Notes or using editor intentions, after that, you can see favorite icons in the editor gutter, there you can edit the title or delete it.</p>\n        <p>A Notes tool window will be created in the bottom of your IDE, there you can manually add remove virtual folder, create and edit any type of programming language code fragments.</p>\n        <p>Notes is still in active developing so it'll be pleasure if you have issues or suggestions.</p>\n\n        <p><strong> Main Features </strong></p>\n        <ul>\n            <li>Save on the fly when you typing in the editor or change the title</li>\n            <li>Virtual code tree navigation and Full Size window mode code scratches editing</li>\n            <li>Support same code fragments across multiple running IDEs at the same machine(such as WebStorm, Android Studio and IDEA)</li>\n            <li>Speed search : Find just the right code when you need it</li>\n        </ul>\n        <ul>\n            <li>Editor with the syntax highlighting</li>\n\n        </ul>\n        <ul>\n            <li>Support code navigation of as many programming languages as the IDE supports plus third-party extensions such as: <a href=\"https://plugins.jetbrains.com/plugin/8045-idea-mind-map\">IDEA Mind Map</a>, <a href=\"https://plugins.jetbrains.com/plugin/7017-plantuml-integration\">PlantUML integration</a>, Scala and Rust</li>\n\n        </ul>\n        <ul>\n            <li>Markdown with preview mode(with Intellij Markdown plugin installed)</li>\n\n        </ul>\n        <ul>\n            <li>Easily backup since only one SQLite db file is created</li>\n\n        </ul>\n        <ul>\n            <li>Favorite code fragments from editor and insert to active editor</li>\n\n        </ul>\n        <ul>\n            <li>Smart filtering by your favorite programming languge</li>\n\n        </ul>\n        <p>&nbsp;</p>\n        <p><strong>* Editor *</strong></p>\n        <p>Built by developer for developers. It supports all major programming languages, and provides a syntax highlighting for 120 programming languages in total including all IDEA editor features:</p>\n        <ul>\n            <li>Reader mode</li>\n\n        </ul>\n        <ul>\n            <li>Showing of invisible characters</li>\n\n        </ul>\n        <ul>\n            <li>Showing of line numbers</li>\n\n        </ul>\n        <ul>\n            <li>Jump to referenced source file</li>\n\n        </ul>\n        <ul>\n            <li>Run code scratches(* only Java supported so far and need disable the Reader Mode)</li>\n\n        </ul>\n        <p>&nbsp;</p>\n        <p><strong>* Local Storage *</strong></p>\n        <p>Notes is the offline-first application, it is designed to keep your data safe, and nothing will be sent\n            to the internet when you using SQLite, you can backup and copy the single notes.db file use any 3rd-party file-based sync services or  with a USB stick.</p>\n        <p>&nbsp;</p>\n        <p><strong>* Sync with Evernote *</strong></p>\n        This mode all your code notes are store and sync with Evernote(internet connection required). Don't forget to click the \"Refresh\" button in the iNotes tool window when you edit the content in a Evernote Application.\n        \n    ",
+  "customIdeList": false,
+  "preview": "A code-centric notes manager inside your IDE without altering the source file, connects note and your source code just in editor,\n            Supports SQLite local...",
+  "email": "beansoft@126.com",
+  "cdate": 1645535063000,
+  "family": "intellij",
+  "copyright": "2022 beansoft@126.com",
+  "downloads": 1459,
+  "purchaseInfo": {
+    "productCode": "PISCRATCH",
+    "buyUrl": null,
+    "purchaseTerms": null,
+    "optional": false
+  },
+  "vendor": {
+    "name": "BeanSoft",
+    "url": "https://github.com/beansoft",
+    "totalPlugins": 10,
+    "totalUsers": 1,
+    "link": "/organizations/BeanSoft",
+    "publicName": "BeanSoft",
+    "description": "A JetBrains verified IDEA Plugin vendor and member of JetBrains Community Contributor.",
+    "email": "beansoft@126.com",
+    "countryCode": "CN",
+    "country": "China Mainland",
+    "isVerified": true,
+    "servicesDescription": [
+      "IntelliJ IDEA platform plugin development"
+    ],
+    "vendorId": 151
+  },
+  "urls": {
+    "url": "",
+    "forumUrl": "",
+    "licenseUrl": "https://github.com/beansoft/iscratch-support/blob/main/LICENSE.md",
+    "bugtrackerUrl": "https://github.com/beansoft/iscratch-support/issues",
+    "docUrl": "",
+    "sourceCodeUrl": ""
+  },
+  "tags": [
+    {
+      "id": 89,
+      "name": "Code Editing",
+      "privileged": false,
+      "searchable": true,
+      "link": "/tag/89-code-editing"
+    },
+    {
+      "id": 99,
+      "name": "Administration Tools",
+      "privileged": false,
+      "searchable": true,
+      "link": "/tag/99-administration-tools"
+    }
+  ],
+  "hasUnapprovedUpdate": false,
+  "pricingModel": "PAID",
+  "screens": [
+    {
+      "url": "/files/17501/screenshot_1912187d-12c2-421f-8524-d5cf93e4681c"
+    },
+    {
+      "url": "/files/17501/screenshot_eefa9000-e789-4044-b2b3-9d38df385fe0"
+    },
+    {
+      "url": "/files/17501/screenshot_a6386ee1-89d9-4523-9e6c-9766aab769e2"
+    },
+    {
+      "url": "/files/17501/screenshot_ceecb71c-9c5e-4cf1-b9ea-7f2806ea65d1"
+    },
+    {
+      "url": "/files/17501/screenshot_066c9e93-e2d8-4ee8-96a7-dd90d82b983b"
+    },
+    {
+      "url": "/files/17501/screenshot_912603a2-40e2-4864-b5b3-f0176a636ccc"
+    },
+    {
+      "url": "/files/17501/screenshot_6b8d37e3-8824-4a4a-afe1-394bbc4cba0b"
+    },
+    {
+      "url": "/files/17501/screenshot_90bb2cb4-e919-4406-bc08-026c847ec339"
+    },
+    {
+      "url": "/files/17501/screenshot_ac1925f6-41be-4fe9-b6df-ddcc807cb207"
+    }
+  ],
+  "icon": "/files/17501/159582/icon/pluginIcon.svg",
+  "zendeskTickets": [
+    {
+      "id": 3471307,
+      "type": "PAID"
+    }
+  ]
+}

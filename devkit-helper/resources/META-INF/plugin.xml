@@ -56,7 +56,7 @@
         ]]>
   </change-notes>
 
-    <idea-version since-build="201"/>
+    <idea-version since-build="203"/>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
@@ -90,7 +90,7 @@
         <colorSettingsPage implementation="com.github.beansoft.devkit.javadoc.JdcrColorSettingsPage" />
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/JdcrLangDarcula.xml"/>
         <additionalTextAttributes scheme="Default" file="colorSchemes/JdcrLangDefault.xml"/>
-
+        <lang.documentationProvider language="JAVA" order="first" implementationClass="com.github.beansoft.devkit.provider.ByteCodeDocumentationProvider"/>
     </extensions>
 
     <actions>

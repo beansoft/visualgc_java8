@@ -39,8 +39,12 @@ public class JdcrFoldingBuilder implements FoldingBuilder {
         foldingDescriptors = new ArrayDeque<>();
 
         long startTime = System.currentTimeMillis();
+        PsiTreeUtil.findChildrenOfType(root, PsiIdentifier.class).stream()
+                .forEach(this::replacePsiIdentifier);
+
         PsiTreeUtil.findChildrenOfType(root, PsiAnnotation.class).stream()
                 .forEach(this::replaceAnnotation);
+
 
         for (PsiDocComment psiDocComment : PsiTreeUtil.findChildrenOfType(root, PsiDocComment.class)) {
             foldingGroup = FoldingGroup.newGroup("JDCR fold: " + psiDocComment.getTextRange().toString());
@@ -158,6 +162,21 @@ public class JdcrFoldingBuilder implements FoldingBuilder {
         }
     }
 
+    // 替换部分固定的字节码指令
+    private void replacePsiIdentifier(@NotNull PsiIdentifier annotation) {
+        String qualifiedName = annotation.getText();
+        System.out.println("replacePsiIdentifier.qualifiedName=" + qualifiedName);
+
+//        if(javaannotationTagReplaces.containsKey(qualifiedName)) {
+        if("GETSTATIC".equals(qualifiedName)) {// JavaDocBundle.containsKey(qualifiedName)
+            System.out.println("发现 PsiIdentifier " + qualifiedName);
+            if(qualifiedName != null) {
+                TextRange range = new TextRange(0, qualifiedName.length());
+                addFoldingDescriptor(annotation, range, "Get Static");//JavaDocBundle.message(qualifiedName));
+            }
+        }
+    }
+
     // 替换部分固定的Annotation
     private void replaceAnnotation(@NotNull PsiAnnotation annotation) {
         String qualifiedName = annotation.getQualifiedName();
@@ -172,7 +191,6 @@ public class JdcrFoldingBuilder implements FoldingBuilder {
                 addFoldingDescriptor(nameElement, range, JavaDocBundle.message(qualifiedName));
             }
         }
-
     }
 
     /**
