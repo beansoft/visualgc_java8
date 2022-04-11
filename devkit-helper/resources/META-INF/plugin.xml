@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.beansoft.devkit.helper</id>
     <name>Plug-in DevKit Helper</name>
-    <version>2.2</version>
+    <version>2022.1.0</version>
     <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8/issues">BeanSoft</vendor>
     <category>Plugin Development</category>
 
@@ -34,6 +34,10 @@
         ]]></description>
 
     <change-notes><![CDATA[
+            <h2>2022.1.0</h2>
+        <ul>
+            <li>Add supports for IDEA 2022.1.0.</li>
+        </ul>
         <h2>2.2</h2>
         <ul>
             <li>Cleanup the PSIViewerCopyable code.</li>

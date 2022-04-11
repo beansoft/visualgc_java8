@@ -8,6 +8,7 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import icons.DevkitIcons;
+import icons.PluginIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.devkit.util.ExtensionCandidate;
 
@@ -26,7 +27,7 @@ public final class ExtensionDeclarationRelatedItemLineMarkerProvider extends Dev
   @NotNull
   @Override
   public Icon getIcon() {
-    return DevkitIcons.Gutter.Plugin;
+    return PluginIcons.Gutter_Plugin; //DevkitIcons.Gutter.Plugin;
   }
 
   @Override

@@ -22,6 +22,7 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomUtil;
 import icons.DevkitIcons;
+import icons.PluginIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
@@ -92,7 +93,7 @@ final class LineMarkerInfoHelper {
                                                                                   @Nls(capitalization = Nls.Capitalization.Title) String popup,
                                                                                   NullableFunction<PointableCandidate, String> namer) {
     return NavigationGutterIconBuilder
-      .create(DevkitIcons.Gutter.Plugin, CONVERTER, RELATED_ITEM_PROVIDER)//DevkitHelpIcons.XmlFile_12
+      .create(PluginIcons.Gutter_Plugin, CONVERTER, RELATED_ITEM_PROVIDER)//DevkitHelpIcons.XmlFile_12
       .setTargets(targets)
       .setPopupTitle(popup)
       .setNamer(namer)

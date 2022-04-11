@@ -25,7 +25,7 @@ abstract class DevkitRelatedClassLineMarkerProviderBase extends DevkitRelatedLin
     if (identifier == null) {
       return;
     }
-    process(identifier, ((UClass)uElement).getPsi(), result);
+    process(identifier, ((UClass)uElement).getJavaPsi(), result);
   }
 
   protected abstract void process(@NotNull PsiElement identifier,
