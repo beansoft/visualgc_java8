@@ -4,14 +4,16 @@ package com.github.beansoft.devkit.javadoc;
 import com.github.beansoft.devkit.javadoc.utils.JdcrPsiTreeUtils;
 import com.github.beansoft.devkit.javadoc.utils.JdcrStringUtils;
 import com.github.beansoft.devkit.javadoc.utils.Tag;
-import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
+import com.github.beansoft.devkit.provider.BrowserJvmSpecIntentionAction;
+import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.lang.annotation.*;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.JavaDocTokenType;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.impl.source.javadoc.PsiDocMethodOrFieldRef;
 import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.psi.javadoc.PsiInlineDocTag;
@@ -45,6 +47,31 @@ public class JdcrAnnotator implements Annotator {
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     this.holder = holder;
     this.element = element;
+
+    if (element instanceof PsiIdentifier) {
+      PsiIdentifier identifier = (PsiIdentifier)element;
+      String qualifiedName = identifier.getText();
+      if("GETSTATIC".equals(qualifiedName)) {// JavaDocBundle.containsKey(qualifiedName)
+        System.out.println("JdcrAnnotator 发现 PsiIdentifier " + qualifiedName);
+        StringUtil.escapeXmlEntities("Get Static");//JavaDocBundle.message(qualifiedName));
+        String explain = "Get Static";
+        TextRange tagStart = new TextRange(0, explain.length());
+        TextRange range = tagStart.shiftRight(element.getTextRange().getStartOffset());
+        AnnotationBuilder builder = holder
+                .newAnnotation(HighlightSeverity.INFORMATION, explain)
+        .tooltip("beansoft")
+        .withFix(new BrowserJvmSpecIntentionAction("test"))
+        .range(element)
+//        .highlightType(ProblemHighlightType.INFORMATION)
+        .textAttributes(JdcrColorSettingsPage.CODE_TAG);
+        builder.create();
+//        annotation.setTextAttributes(JdcrColorSettingsPage.CODE_TAG);
+
+        return;
+      }
+
+//            return "\"" + renderPropertyValue((PsiIdentifier)element) + "\"" + getLocationString(element);
+    }
 
     if (element instanceof PsiDocToken
         && ((PsiDocToken) element).getTokenType() == JavaDocTokenType.DOC_COMMENT_DATA

@@ -86,7 +86,7 @@
 
         <!-- Javadoc and annotation highlighter -->
         <lang.foldingBuilder language="JAVA" implementationClass="com.github.beansoft.devkit.javadoc.JdcrFoldingBuilder"/>
-        <annotator language="JAVA" implementationClass="com.github.beansoft.devkit.javadoc.JdcrAnnotator"/>
+        <annotator language="JAVA" implementationClass="com.github.beansoft.devkit.javadoc.JdcrAnnotator" order="first"/>
         <colorSettingsPage implementation="com.github.beansoft.devkit.javadoc.JdcrColorSettingsPage" />
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/JdcrLangDarcula.xml"/>
         <additionalTextAttributes scheme="Default" file="colorSchemes/JdcrLangDefault.xml"/>
