@@ -8,12 +8,8 @@ public class PluginSettings {
 	private String visualVmExecutable;
 	private String durationToSetContextToButton = "10000";
 	private String delayForVisualVMStart = "10000";
-	private String jdkHome;
-	private boolean useTabIndex;
-	private String tabIndex = "2";
-	private boolean sourceConfig = false;
-	private boolean useModuleJdk = true;
-	private String laf = "";
+	/** Remote JVM host address */
+	private String remoteJvmURL;
 
 
 	public String getVisualVmExecutable() {
@@ -54,52 +50,11 @@ public class PluginSettings {
 	}
 
 
-	public String getJdkHome() {
-		return jdkHome;
+	public String getRemoteJvmURL() {
+		return remoteJvmURL;
 	}
 
-	public void setJdkHome(final String jdkHome) {
-		this.jdkHome = jdkHome;
-	}
-
-	public boolean isUseTabIndex() {
-		return useTabIndex;
-	}
-
-	public void setUseTabIndex(final boolean useTabIndex) {
-		this.useTabIndex = useTabIndex;
-	}
-
-	public String getTabIndex() {
-		return tabIndex;
-	}
-
-	public void setTabIndex(final String tabIndex) {
-		this.tabIndex = tabIndex;
-	}
-
-	public boolean isSourceConfig() {
-		return sourceConfig;
-	}
-
-	public void setSourceConfig(final boolean sourceConfig) {
-		this.sourceConfig = sourceConfig;
-	}
-
-	public boolean isUseModuleJdk() {
-		return useModuleJdk;
-	}
-
-	public void setUseModuleJdk(final boolean useModuleJdk) {
-		this.useModuleJdk = useModuleJdk;
-	}
-
-
-	public String getLaf() {
-		return laf;
-	}
-
-	public void setLaf(final String laf) {
-		this.laf = laf;
+	public void setRemoteJvmURL(String remoteJvmURL) {
+		this.remoteJvmURL = remoteJvmURL;
 	}
 }

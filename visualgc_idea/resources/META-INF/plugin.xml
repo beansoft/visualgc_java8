@@ -1,29 +1,52 @@
 <idea-plugin>
   <id>com.github.beansoftapp.visualgc.plugin</id>
-  <name>VisualGC</name>
-  <version>2022.1.0</version>
+  <name>JDK VisualGC</name>
+  <version>2022.2.0</version>
   <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8">BeanSoft</vendor>
-  <product-descriptor code="PVISUALGC" release-date="20220307" release-version="20221" optional="true"/>
+  <product-descriptor code="PVISUALGC" release-date="20220921" release-version="20222" optional="true"/>
   <description><![CDATA[
-  <h2>A realtime Visual Garbage Collection Monitoring Tool for Hotspot JVM, supports G1 and ZGC(实时垃圾回收监控)</h2>
-      This plugin displayed a Visual GC tool window in your IDE, only supports HotSpot JVM(JDK 1.5 to OpenJDK/Oracle JDK 17, JBR 8 ~ JBR 17).
+  <h2>A realtime Visual Garbage Collection Monitoring Tool for local or remote running Hotspot JVM, supports G1 and ZGC</h2>
+      This plugin displayed a Visual GC tool window in your IDE, only supports HotSpot JVM(JDK 1.5 to OpenJDK/Oracle JDK 20, JBR 8 ~ JBR 17).
   New feature: Instant run and monitor Java program GC directly in IDEA(Paid feature);<br>
   View ZGC(Z Garbage Collector) details (Paid feature);<br>
+  View Remote JVM's GC details (Paid feature);<br>
   monitoring the detailed GC activity such as G1 stop the world full connection time.<br>
-      Usage: 1. From main interface bottom;<br>
-      2. From menu Tools > New VisualGC Window.<br>
+      Usage: 1). From main interface bottom;<br>
+      2). From menu Tools > New VisualGC Window.<br>
+  3) Support monitoring remote JVMs, please use this guide: <a href="https://plugins.jetbrains.com/plugin/14557-visualgc/remote-jvm">Remote JVM Connection</a>
 <br>
+  <p>If you are using IDEA 2022.2, then must follow the guide to make the plugin
+    works:</p>
+  <p>From the main menu, select<span>&nbsp;</span><strong>Help | Edit Custom VM Options</strong>.</p>
+  <p>If you do not have any project open, on the Welcome screen, click<span>&nbsp;</span><strong>Configure</strong><span>&nbsp;</span>and
+    then<span>&nbsp;</span><strong>Edit Custom VM Options</strong>.</p>
+  <p>In the editor, append following line and then restart your IDE:</p>
+  <pre><code>--add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED
+--add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor.event=ALL-UNNAMED
+--add-exports=jdk.internal.jvmstat/sun.jvmstat.perfdata.monitor=ALL-UNNAMED
+</code></pre>
 
 <p>Chinese Instructions Below:</p>
-  <h2>实时可视化 Hotspot JVM 垃圾回收监控工具</h2>
-     在IDEA中显示 VisualGC 工具窗口或打开新窗口, 便于一边运行代码一边观察GC情况. 仅支持HotSpot JVM(JDK 1.5 到 OpenJDK/Oracle JDK 17, JBR 8 ~ JBR 17).
+  <h2>实时可视化 Hotspot JVM 垃圾回收监控工具, 支持查看本地和远程JVM进程, 支持G1 and ZGC算法</h2>
+     在IDEA中显示 VisualGC 工具窗口或打开新窗口, 便于一边运行代码一边观察GC情况. 仅支持HotSpot JVM(JDK 1.5 到 OpenJDK/Oracle JDK 20, JBR 8 ~ JBR 17).
   新功能: 在IDEA中直接运行并监视Java代码GC情况(付费解锁);<br>
   实时监控 ZGC(Z Garbage Collector) 详情(付费解锁);<br>
+  实时监控远程服务器JVM列表和GC详情(付费解锁);<br>
   允许监控详细的GC活动例如 G1 Full GC 消耗时间.<br><br>
 用法:<br>
 1) 点击停靠窗口下方的 VisualGC;<br>
 2) 打开新的独立运行窗口使用菜单 Tools > 新建 VisualGC 窗口.<br>
-      <h2>ISSUES</h2>
+  3) 支持监视远程运行的JVM进程的GC, 参考文档: <a href="https://plugins.jetbrains.com/plugin/14557-visualgc/remote-jvm">远程 JVM 连接配置</a>.<br>
+
+  <p>如果你用的是 IDEA 2022.版本, 那么按照如下步骤进行修改才能正常运行插件:</p>
+  <p>从IDEA的主菜单, 选择<span>&nbsp;</span><strong>帮助 | 编辑自定义VM选项…</strong>.</p>
+  <p>如果还没打开任何项目, 则从欢迎屏幕, 点击<span>&nbsp;</span><strong>选项菜单</strong>小齿轮然后选择<span>&nbsp;</span><strong>编辑自定义VM选项…</strong>.
+    在编辑器中, 追加下列配置并重启 IDE:</p>
+  <pre><code>--add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED
+--add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor.event=ALL-UNNAMED
+--add-exports=jdk.internal.jvmstat/sun.jvmstat.perfdata.monitor=ALL-UNNAMED</code></pre>
+
+  <h2>ISSUES</h2>
 <p>
 <a href='https://github.com/beansoft/visualgc_idea/issues'>Submit Suggestions or Bugs</a></p>
     ]]></description>
@@ -45,7 +68,7 @@
   </change-notes>
 
   <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="203.0"/>
+  <idea-version since-build="203.5981.155" until-build="222.*"/>
 
   <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
@@ -60,6 +83,8 @@
 
     <toolWindow id="VisualGC" secondary="true" icon="PluginIcons.visualgcToolWindow" anchor="right"
                 factoryClass="com.github.beansoft.visualgc.idea.VisualGCToolWindowFactory"/>
+
+    <applicationService serviceImplementation="com.github.beansoft.jvm.ApplicationSettingsService"/>
   </extensions>
 
   <actions>

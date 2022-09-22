@@ -282,7 +282,7 @@ public class VisualGCPatch {
       customizeComponents(child, gridDrawers);
   }
 
-  public static void main(String args[]) {
+  public static void main(String args[]) throws Exception {
 //		args = new String[]{"412"};
 //		args = new String[]{ GetProcessID.getPid() + ""};
     customizeColors();

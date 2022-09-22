@@ -28,7 +28,7 @@ public class VisualGCPerfTest {
 
   private Timer timer;
   private boolean modelAvailable = false;
-  public static void main(String args[]) {
+  public static void main(String args[]) throws Exception {
 //		args = new String[]{"412"};
 //		args = new String[]{ GetProcessID.getPid() + ""};
     String pName = "";

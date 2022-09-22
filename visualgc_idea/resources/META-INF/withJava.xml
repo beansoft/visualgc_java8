@@ -21,6 +21,5 @@
         <java.programPatcher implementation="com.github.beansoft.jvm.integration.VisualGCJavaProgramPatcher"/>
         <applicationConfigurable groupId="tools" instance="com.github.beansoft.jvm.MyConfigurable" id="visualgc.settings"
                                  displayName="VisualGC"/>
-        <applicationService serviceImplementation="com.github.beansoft.jvm.ApplicationSettingsService"/>
     </extensions>
 </idea-plugin>

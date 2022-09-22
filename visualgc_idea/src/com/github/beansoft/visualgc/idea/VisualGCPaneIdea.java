@@ -9,6 +9,12 @@ public class VisualGCPaneIdea extends VisualGCPane {
     static {
       VisualGCPane.customizeColors();
     }
+
+    /**
+     * Change visibility to public.
+     * @param container
+     * @return
+     */
     public DataViewComponent createComponent(final Container container) {
       return super.createComponent(container);
     }

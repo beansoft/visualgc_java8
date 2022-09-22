@@ -22,6 +22,7 @@ Edit file `idea.vmoptions` (Mac OS) under the IDEA installation home /bin folder
 --add-exports=java.desktop/com.apple.eawt.event=ALL-UNNAMED
 --add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED
 --add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor.event=ALL-UNNAMED
+--add-exports=jdk.internal.jvmstat/sun.jvmstat.perfdata.monitor=ALL-UNNAMED
 ```
 # Windows
 Edit `idea64.exe.vmoptions` under the IDEA installation home /bin folder, append following line:
@@ -51,6 +52,7 @@ Edit `idea64.exe.vmoptions` under the IDEA installation home /bin folder, append
 ```properties
 --add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED
 --add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor.event=ALL-UNNAMED
+--add-exports=jdk.internal.jvmstat/sun.jvmstat.perfdata.monitor=ALL-UNNAMED
 ```
 
 # ZGC support
