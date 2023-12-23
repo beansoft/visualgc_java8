@@ -1,4 +1,4 @@
-YYou can run your IDEA with JBR/OpenJDK 17 together with VisualGC.
+You can run your IDEA with JBR/OpenJDK 17 together with VisualGC.
 
 # Mac OS
 Edit file `idea.vmoptions` (Mac OS) under the IDEA installation home /bin folder, append following line:

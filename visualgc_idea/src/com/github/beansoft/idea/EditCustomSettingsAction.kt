@@ -33,13 +33,15 @@ import com.intellij.util.io.write
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.swing.JFrame
 import javax.swing.ScrollPaneConstants
+import kotlin.io.path.exists
 
 /**
- * Modified from IJ source codel
+ * Modified from IJ source code
  * @see com.intellij.ide.actions.EditCustomSettingsAction
  */
 abstract class EditCustomSettingsAction : DumbAwareAction() {
@@ -84,7 +86,7 @@ abstract class EditCustomSettingsAction : DumbAwareAction() {
       }
     }
     else if (frame != null) {
-      val text = StringUtil.convertLineSeparators(if (file.exists()) FileUtil.loadFile(file.toFile()) else template())
+      val text = StringUtil.convertLineSeparators(if (file.exists(LinkOption.NOFOLLOW_LINKS)) FileUtil.loadFile(file.toFile()) else template())
 
       object : DialogWrapper(frame, true) {
         private val editor: EditorTextField

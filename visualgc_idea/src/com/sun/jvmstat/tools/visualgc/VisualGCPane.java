@@ -6,6 +6,7 @@ import com.github.beansoft.jvm.ApplicationSettingsService;
 import com.github.beansoft.jvm.PluginSettings;
 import com.github.beansoft.visualgc.idea.MakeCoffeeAction;
 import com.intellij.CommonBundle;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.HelpTooltip;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DefaultProjectFactory;
@@ -13,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.components.*;
 import com.sun.jvmstat.graph.FIFOList;
@@ -20,7 +22,6 @@ import com.sun.jvmstat.graph.GridDrawer;
 import com.sun.jvmstat.graph.Level;
 import com.sun.jvmstat.graph.Line;
 import com.sun.jvmstat.tools.visualgc.resource.Res;
-import com.twelvemonkeys.lang.StringUtil;
 import github.beansoftapp.visualgc.Exceptions;
 import github.beansoftapp.visualgc.JpsHelper;
 import github.beansoftapp.visualgc.MonitoredHostHelper;
@@ -48,14 +49,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // 单面板模式
 public class VisualGCPane implements ActionListener {
-    private static final Logger LOGGER = Logger.getLogger(VisualGCPane.class.getName());
+    private static final com.intellij.openapi.diagnostic.Logger LOGGER = com.intellij.openapi.diagnostic.Logger.getInstance(VisualGCPane.class.getName());
     // Begin >>>
     private static final boolean ORIGINAL_UI = Boolean.getBoolean("org.graalvm.visualvm.modules.visualgc.originalUI");
     private static final Color NORMAL_GRAY_ALPHA = new Color(165, 165, 165, 255 / 2);// Half transparent 50% 透明度图表
@@ -386,9 +386,11 @@ public class VisualGCPane implements ActionListener {
                 return true;
             }
         } catch (MonitorException ex) {
-            LOGGER.log(java.util.logging.Level.INFO, "Could not get MonitoredVM", (Throwable) ex);
+            LOGGER.debug( "Could not get MonitoredVM", (Throwable) ex);
         } catch (Exception ex) {
-            LOGGER.log(java.util.logging.Level.INFO, "Could not create GCSample", ex);
+            LOGGER.debug( "Could not create GCSample", ex);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
         if (monitoredVm != null)
             monitoredVm.detach();
@@ -422,8 +424,19 @@ public class VisualGCPane implements ActionListener {
             int refreshInterval = 1000;
             monitoredHost.addHostListener(new TerminationHandler(this.vmId.getLocalVmId(), monitoredHost));
             return monitoredHost.getMonitoredVm(this.vmId, refreshInterval);
-        } catch (Exception ex) {
-            LOGGER.log(java.util.logging.Level.INFO, "getMonitoredVm failed", ex);
+        } catch (Throwable ex) {
+            String message = "Error: getMonitoredVm failed, please read https://plugins.jetbrains.com/plugin/14557-jdk-visualgc/idea-2022-2-fix for how to fix this issue";
+            boolean sureOpen = Messages.showYesNoDialog(message, "Open Help Doc?",
+                    CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText(),
+                    Messages.getErrorIcon()) ==
+                    Messages.YES;
+
+            if (sureOpen) {
+                BrowserUtil.browse("https://plugins.jetbrains.com/plugin/14557-jdk-visualgc/idea-2022-2-fix");
+            }
+
+            // LOGGER.error(", please read https://plugins.jetbrains.com/plugin/14557-jdk-visualgc/idea-2022-2-fix for how to fix this issue");
+            // LOGGER.log(java.util.logging.Level.INFO, "getMonitoredVm failed", ex);
             return null;
         }
     }

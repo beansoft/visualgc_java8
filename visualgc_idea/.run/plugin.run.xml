@@ -3,6 +3,7 @@
     <module name="visualgc_idea" />
     <option name="VM_PARAMETERS" value="-Xmx1024m -Xms256m -ea -XX:+UnlockExperimentalVMOptions" />
     <option name="PROGRAM_PARAMETERS" value="" />
+    <alternative-path path="$APPLICATION_HOME_DIR$" alternative-path-enabled="true" />
     <predefined_log_file enabled="true" id="idea.log" />
     <method v="2">
       <option name="Make" enabled="true" />

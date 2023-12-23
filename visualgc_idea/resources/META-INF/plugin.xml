@@ -1,9 +1,11 @@
 <idea-plugin>
   <id>com.github.beansoftapp.visualgc.plugin</id>
   <name>JDK VisualGC</name>
-  <version>2022.2.0</version>
+  <version>2023.3.0</version>
   <vendor email="beansoft@126.com" url="https://github.com/beansoft/visualgc_java8">BeanSoft</vendor>
-  <product-descriptor code="PVISUALGC" release-date="20220921" release-version="20222" optional="true"/>
+  <product-descriptor code="PVISUALGC" release-date="20231214" release-version="20230" optional="true"/>
+  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="231" until-build="233.*"/>
   <description><![CDATA[
   <h2>A realtime Visual Garbage Collection Monitoring Tool for local or remote running Hotspot JVM, supports G1 and ZGC</h2>
       This plugin displayed a Visual GC tool window in your IDE, only supports HotSpot JVM(JDK 1.5 to OpenJDK/Oracle JDK 20, JBR 8 ~ JBR 17).
@@ -54,6 +56,7 @@
   <change-notes>
     <![CDATA[
       <ul>
+        <li><b>2023.3.0</b> Support IDEA 2023.3 .</li>
         <li><b>2021.3.3</b> New: Better IDEA process detect; View ZGC(Z Garbage Collector) details (Paid feature, Donate to unlock this feature or using a 30 days free trial).</li>
         <li><b>2021.3.3</b> New: Instant run and monitor Java / Local Server(Tomcat etc) program GC directly in IDEA(Donate to unlock this feature or using a 30 days free trial).</li>
         <li><b>2021.3.2</b> Accept donation but all functions in the VisualGC tool window are still free.</li>
@@ -66,9 +69,6 @@
       </ul>
     ]]>
   </change-notes>
-
-  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="203.5981.155" until-build="222.*"/>
 
   <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
