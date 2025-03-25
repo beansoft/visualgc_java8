@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,24 +25,15 @@
 
 package sun.jvmstat.perfdata.monitor.protocol.rmi;
 
-import sun.jvmstat.monitor.Monitor;
-import sun.jvmstat.monitor.MonitorException;
-import sun.jvmstat.monitor.VmIdentifier;
-import sun.jvmstat.monitor.event.MonitorStatusChangeEvent;
-import sun.jvmstat.monitor.event.VmEvent;
-import sun.jvmstat.monitor.event.VmListener;
-import sun.jvmstat.monitor.remote.RemoteVm;
-import sun.jvmstat.perfdata.monitor.AbstractMonitoredVm;
-import sun.jvmstat.perfdata.monitor.CountedTimerTask;
-import sun.jvmstat.perfdata.monitor.CountedTimerTaskUtils;
-import sun.jvmstat.perfdata.monitor.MonitorStatus;
-
+import sun.jvmstat.monitor.*;
+import sun.jvmstat.monitor.event.*;
+import sun.jvmstat.monitor.remote.*;
+import sun.jvmstat.perfdata.monitor.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.io.*;
 import java.nio.ByteBuffer;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Timer;
+import java.rmi.*;
 
 /**
  * Concrete implementation of the AbstractMonitoredVm class for the
@@ -279,7 +270,7 @@ public class RemoteMonitoredVm extends AbstractMonitoredVm {
                 System.err.println("Exception updating monitors for "
                                    + getVmIdentifier());
                 e.printStackTrace();
-                // XXX: should we cancle the notifierTask here?
+                // XXX: should we cancel the notifierTask here?
                 // this.cancel();
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -26,20 +26,14 @@
 package sun.jvmstat.perfdata.monitor.protocol.rmi;
 
 import sun.jvmstat.monitor.*;
-import sun.jvmstat.monitor.event.HostEvent;
-import sun.jvmstat.monitor.event.HostListener;
-import sun.jvmstat.monitor.event.VmStatusChangeEvent;
-import sun.jvmstat.monitor.remote.RemoteHost;
-import sun.jvmstat.monitor.remote.RemoteVm;
-import sun.jvmstat.perfdata.monitor.CountedTimerTask;
-import sun.jvmstat.perfdata.monitor.CountedTimerTaskUtils;
-
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
+import sun.jvmstat.monitor.event.*;
+import sun.jvmstat.monitor.remote.*;
+import sun.jvmstat.perfdata.monitor.*;
 import java.util.*;
+import java.net.*;
+import java.io.*;
+import java.rmi.*;
+import java.util.HashMap;
 
 /**
  * Concrete implementation of the MonitoredHost interface for the
@@ -69,15 +63,15 @@ public class MonitoredHostProvider extends MonitoredHost {
     public MonitoredHostProvider(HostIdentifier hostId)
            throws MonitorException {
         this.hostId = hostId;
-        this.listeners = new ArrayList<HostListener>();
+        this.listeners = new ArrayList<> ();
         this.interval = DEFAULT_POLLING_INTERVAL;
-        this.activeVms = new HashSet<Integer>();
+        this.activeVms = new HashSet<> ();
 
         String rmiName;
         String sn = serverName;
         String path = hostId.getPath();
 
-        if ((path != null) && (path.length() > 0)) {
+        if ((path != null) && (!path.isEmpty ())) {
             sn = path;
         }
 
@@ -89,6 +83,7 @@ public class MonitoredHostProvider extends MonitoredHost {
 
         try {
             remoteHost = (RemoteHost)Naming.lookup(rmiName);
+
         } catch (RemoteException e) {
             /*
              * rmi registry not available
@@ -146,8 +141,7 @@ public class MonitoredHostProvider extends MonitoredHost {
         VmIdentifier nvmid = null;
         try {
             nvmid = hostId.resolve(vmid);
-            RemoteVm rvm = remoteHost.attachVm(vmid.getLocalVmId(),
-                                               vmid.getMode());
+            RemoteVm rvm = remoteHost.attachVm(vmid.getLocalVmId());
             RemoteMonitoredVm rmvm = new RemoteMonitoredVm(rvm, nvmid, timer,
                                                            interval);
             rmvm.attach();
